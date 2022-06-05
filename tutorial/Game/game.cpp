@@ -42,66 +42,25 @@ unsigned int Game::CreateTex(int width,int height)
 
 void Game::Init()
 {		
-	unsigned int texIDs[4] = { 0 , 1, 2, 3};
-	unsigned int slots[4] = { 0 , 1, 2, 3 };
+	unsigned int texIDs[4] = { 0 , 1, 0, 0};
+	unsigned int slots[4] = { 0 , 1, 0 , 0 };
 	
-	AddShader("shaders/pickingShader");
-	AddShader("shaders/cubemapShader");
-	AddShader("shaders/basicShader");
-	//AddShader("shaders/pickingShader");
-	AddShader("shaders/basicShader2");
-	
-	AddTexture("textures/grass.bmp", 2);
-	AddTexture("textures/cubemaps/Daylight Box_", 3);
-	AddTexture("textures/box0.bmp", 2);
-	CreateTex(800, 800);
-	//AddTexture("../res/textures/Cat_bump.jpg", 2);
-
-	AddMaterial(texIDs,slots, 1);
-	AddMaterial(texIDs+1, slots+1, 1);
-	AddMaterial(texIDs + 2, slots + 2, 1);
-	AddMaterial(texIDs + 3, slots + 3, 1);
-	
+	AddShader("./shaders/pickingShader");
+	AddShader("./shaders/cubemapShader");
+	AddShader("./shaders/basicShader");
+	AddShader("./shaders/basicShader2");
+	 
+	AddTexture("./textures/cubemaps/Daylight Box_", 3);  
+ 
 	AddShape(Cube, -2, TRIANGLES);
 	AddShape(Tethrahedron, -1, TRIANGLES);
 	
 	AddShape(Octahedron, -1, TRIANGLES);
 	AddShape(Octahedron, 2, LINE_LOOP);
     AddShape(Tethrahedron, 1, LINE_LOOP);
-
-//    AddShape(Cube, -1, TRIANGLES);
-	AddShapeFromFile("data/sphere.obj", -1, TRIANGLES);
-	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
-	AddShape(Plane, -1, TRIANGLES,1);
-
-	SetShapeShader(1, 2);
-	SetShapeShader(2, 2);
-	SetShapeShader(5, 2);
-	SetShapeShader(6, 3);
-//	SetShapeMaterial(7, 2);
-
-	SetShapeMaterial(1, 0);
-	SetShapeMaterial(0, 1);
-	SetShapeMaterial(2, 3);
-	SetShapeMaterial(5, 2);
-	//SetShapeMaterial(6, 0);
-	pickedShape = 0;
-	float s = 60;
-	ShapeTransformation(scaleAll, s,0);
-	pickedShape = 1;
-	ShapeTransformation(xTranslate, 10,0);
-	//pickedShape = 2;
-	//ShapeTransformation(yTranslate, 10, 0);
-	pickedShape = 5;
-	ShapeTransformation(xTranslate, -10,0);
-	//pickedShape = 6;
-	//ShapeTransformation(zTranslate, -1.1,0);
-	pickedShape = -1;
-	SetShapeStatic(0);
-	SetShapeStatic(6);
-	//SetShapeViewport(0, -1);
-	//SetShapeViewport(6, 1);
-//	ReadPixel(); //uncomment when you are reading from the z-buffer
+	 
+	AddShapeFromFile("./data/sphere.obj", -1, TRIANGLES); 
+	AddShape(Plane, -1, TRIANGLES,1); 
 }
 
 void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
@@ -118,26 +77,13 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	s->SetUniformMat4f("Model", Model);
 	s->SetUniform1i("time", time);
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
-	{
-//		materials[shapes[pickedShape]->GetMaterial()]->Bind(textures);
+	{ 
 		BindMaterial(s, data_list[shapeIndx]->GetMaterial());
-	}
-
+	} 
 	if (shaderIndx == 0)
 		s->SetUniform4f("lightColor", r / 255.0f, g / 255.0f, b / 255.0f, 0.0f);
 	else
-		s->SetUniform4f("lightColor", 4/100.0f, 6 / 100.0f, 99 / 100.0f, 0.5f);
-	//textures[0]->Bind(0);
-
-	
-	
-
-	//s->SetUniform1i("sampler2", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(1));
-	//s->SetUniform4f("lightDirection", 0.0f , 0.0f, -1.0f, 0.0f);
-//	if(shaderIndx == 0)
-//		s->SetUniform4f("lightColor",r/255.0f, g/255.0f, b/255.0f,1.0f);
-//	else 
-//		s->SetUniform4f("lightColor",0.7f,0.8f,0.1f,1.0f);
+		s->SetUniform4f("lightColor", 4/100.0f, 6 / 100.0f, 99 / 100.0f, 0.5f); 
 	s->Unbind();
 }
 

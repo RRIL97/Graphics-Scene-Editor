@@ -3,9 +3,10 @@
 
 class Game : public igl::opengl::glfw::Viewer
 {
-	int time;
+	int time; 
 public:
-	
+	int pickedShape;
+
 	Game();
 //	Game(float angle,float relationWH,float near, float far);
 	void Init();

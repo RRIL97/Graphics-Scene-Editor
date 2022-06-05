@@ -5,6 +5,7 @@ class Assignment3 : public igl::opengl::glfw::Viewer
 {
 	
 public:
+	int pickedShape;
 	
 	Assignment3();
 //	Assignment3(float angle,float relationWH,float near, float far);
