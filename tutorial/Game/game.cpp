@@ -44,7 +44,6 @@ void Game::Init()
 {		
 	unsigned int texIDs[4] = { 0 , 1, 0, 0};
 	unsigned int slots[4] = { 0 , 1, 0 , 0 };
-	
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/cubemapShader");
 	AddShader("./shaders/basicShader");
@@ -60,7 +59,12 @@ void Game::Init()
     AddShape(Tethrahedron, 1, LINE_LOOP);
 	 
 	AddShapeFromFile("./data/sphere.obj", -1, TRIANGLES); 
-	AddShape(Plane, -1, TRIANGLES,1); 
+	AddShape(Plane, -1, TRIANGLES,0);
+	pickedShape = 6;
+	ShapeTransformation(scaleAll,6, 0);
+	pickedShape = -1;
+	//SetShapeStatic(0);
+	SetShapeStatic(6);
 }
 
 void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
