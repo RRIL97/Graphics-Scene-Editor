@@ -12,6 +12,7 @@
 #include "../Camera.h"
 #include "../ViewerData.h"
 
+
 struct GLFWwindow;
 
 
@@ -173,15 +174,20 @@ public:
         isMany = false;
     }
 
+    inline void Pick() {
+        isPicked = true;
+    }
     inline void UnPick(int viewportIndx) {
         isPicked = false;
         scn->ClearPickedShapes(viewportIndx);
     }
     inline bool IsPicked() { return isPicked; }
     inline bool IsMany() const { return isMany; }
+    inline void setTryToPickMany(bool many)  {  tryToPickMany = many; }
+    inline bool IsTryToPickMany() const { return tryToPickMany; }
     void Init(igl::opengl::glfw::Viewer *scene, std::list<int> xViewport, std::list<int> yViewport, int pickingBits,igl::opengl::glfw::imgui::ImGuiMenu *_menu);
 
-
+    int lastButtonPressed = -1;
 private:
     // Stores all the viewing options
 //    std::vector<igl::opengl::ViewerCore> core_list;
@@ -207,7 +213,7 @@ private:
 	double doubleVariable;
 	igl::opengl::glfw::imgui::ImGuiMenu* menu;
 	double z;
-
+    bool tryToPickMany = false;
     void draw_by_info(int info_index = 1);
 
     void ActionDraw(int viewportIndx);

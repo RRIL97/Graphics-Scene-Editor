@@ -166,7 +166,6 @@ public:
     Shader* overlay_shader;
     Shader* overlay_point_shader;
     std::vector<Shader*> shaders;
-
     
 
     // List of registered plugins
@@ -233,6 +232,8 @@ public:
       int AddShader(const std::string &Vertex_Shader, const std::string &Fragment_shader);
 
       void SetParent(int indx, int newValue, bool savePosition);
+
+    
   };
 
 } // end namespace

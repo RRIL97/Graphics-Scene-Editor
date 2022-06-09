@@ -234,6 +234,7 @@ void Renderer::AddViewport(int left, int bottom, int width, int height)
 void Renderer::AddDraw(int viewportIndx, int cameraIndx, int shaderIndx, int buffIndx, unsigned int flags)
 {
     drawInfos.emplace_back(new DrawInfo(viewportIndx, cameraIndx, shaderIndx, buffIndx, flags,next_property_id));
+    std::cout << drawInfos.size() << std::endl;
     next_property_id <<= 1;
 }
 
@@ -278,15 +279,15 @@ Renderer::~Renderer()
 
 bool Renderer::Picking(int x, int y)
 {
-
-    Eigen::Vector4d pos;
-
+    int i = 3;
+    ActionDraw(0);
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+ 
     unsigned char data[4];
-    //glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
-    int i = 0;
-    isPicked =  scn->Picking(data,i);
-    return isPicked;
-
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    return  scn->Picking(data, i);
 }
 
 void Renderer::OutLine()
@@ -314,6 +315,9 @@ void Renderer::PickMany(int viewportIndx)
             depth = 0;
 
     }
+    else {
+        scn->ClearPickedShapes(3);
+    }
 }
 
 void Renderer::ActionDraw(int viewportIndx)
@@ -325,7 +329,7 @@ void Renderer::ActionDraw(int viewportIndx)
     }
     for (int i = 0; i < drawInfos.size(); i++)
     {
-        if ((drawInfos[i]->flags & inAction) && viewportIndx == drawInfos[i]->viewportIndx)
+        if ((drawInfos[i]->flags & inAction)&& viewportIndx == drawInfos[i]->viewportIndx)
             draw_by_info(i);
     }
     if (menu)
@@ -472,9 +476,9 @@ int Renderer::Create2Dmaterial(int infoIndx, int code)
 void Renderer::SetBuffers()
 {
     AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10,2);
-    int materialIndx = Create2Dmaterial(1,1);
-    scn->SetShapeMaterial(6, materialIndx);
-    SwapDrawInfo(2, 3);
+    //int materialIndx = Create2Dmaterial(1,1);
+   //scn->SetShapeMaterial(6, materialIndx);
+   // SwapDrawInfo(2, 3);
 }
 
 IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>xViewport, std::list<int>yViewport,int pickingBits,igl::opengl::glfw::imgui::ImGuiMenu *_menu)
@@ -511,7 +515,7 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
                 //}
                 drawInfos.emplace_back(new_draw_info);
             }
-            DrawInfo* temp = new DrawInfo(indx, 0, 1, 0, (int)(indx < 1) | depthTest | clearDepth ,next_property_id);
+            DrawInfo* temp = new DrawInfo(indx, 0, 1, 0, (int)(indx < 1) | depthTest | clearDepth | stencilTest | passStencil | clearStencil,next_property_id);
             next_property_id <<= 1;
             drawInfos.emplace_back(temp);
             indx++;
@@ -523,8 +527,9 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
         menu->callback_draw_viewer_menu = [&]()
         {
             // Draw parent menu content
-            auto temp = Eigen::Vector4i(0,0,0,0); // set imgui to min size and top left corner
-            menu->draw_viewer_menu(scn,cameras,temp, drawInfos);
+            auto temp = Eigen::Vector4i(0, 0, 0, 0); // set imgui to min size and top left corner
+            menu->draw_viewer_menu(scn, cameras, temp, drawInfos);
+             
         };
     }
 }

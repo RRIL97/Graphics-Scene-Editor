@@ -30,6 +30,7 @@
 		else
 		{
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
+			rndr->PickMany(0);
 			rndr->UnPick(2);
 		}
 	}

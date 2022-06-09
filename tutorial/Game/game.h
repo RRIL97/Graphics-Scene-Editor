@@ -1,5 +1,6 @@
 #pragma once
 #include "igl/opengl/glfw/Viewer.h"
+enum class editorState { DESIGN, ANIMATION };
 
 class Game : public igl::opengl::glfw::Viewer
 {
@@ -17,5 +18,14 @@ public:
 	void ScaleAllShapes(float amt, int viewportIndx);
 	unsigned int Game::CreateTex(int width, int height);
 	~Game(void);
+	void setState(editorState newState) {
+		 state = newState;
+	}
+	editorState getState() {
+		return state;
+	}
+
+private:
+	editorState state = editorState::DESIGN;
 };
 

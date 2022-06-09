@@ -413,7 +413,6 @@ IGL_INLINE bool
 
     IGL_INLINE void Viewer::Draw(int shaderIndx, const Eigen::Matrix4f &Proj, const Eigen::Matrix4f &View, int viewportIndx, unsigned int flgs,unsigned int property_id)
     {
-
         Eigen::Matrix4f Normal;
 
         if (!(staticScene & (1<<viewportIndx)))
@@ -713,7 +712,18 @@ IGL_INLINE bool
 
     bool Viewer::Picking(unsigned char data[4], int newViewportIndx)
     {
+        selected_data_index = 0;
+        float id = data[0];
 
+        if (id > 1 && id<=data_list.size())
+        {
+            selected_data_index = id - 1;
+            std::cout << "picked shape id " << selected_data_index << std::endl;
+            pShapes.push_back(selected_data_index);
+            data_list[selected_data_index]->AddViewport(newViewportIndx);
+            return true;
+     
+        }
         return false;
 
     }

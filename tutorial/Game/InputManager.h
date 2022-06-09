@@ -8,29 +8,39 @@
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
 		if (action == GLFW_PRESS)
-		{
+		{ 
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
+			rndr->lastButtonPressed = button;
 			Game* scn = (Game*)rndr->GetScene();
 			double x2, y2;
-			
 			glfwGetCursorPos(window, &x2, &y2);
 			rndr->UpdatePress(x2, y2);
-			if (rndr->Picking((int)x2, (int)y2))
-			{
-				rndr->UpdatePosition(x2, y2);
-				if(button == GLFW_MOUSE_BUTTON_LEFT)
-					rndr->Pressed();
-			}
-			else
-			{
-				rndr->UnPick(2);
-			}
-		
+			
+		  if (rndr->Picking((int)x2, (int)y2))
+				{
+					rndr->UpdatePosition(x2, y2);
+					rndr->Pick();
+
+				}
+				else
+				{
+				rndr->Pressed();
+				rndr->UnPick(3);
+				rndr->setTryToPickMany(true);
+				}
+
 		}
 		else
 		{
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-			rndr->UnPick(2);
+			if (rndr->IsTryToPickMany()) {
+				rndr->PickMany(3);
+				rndr->Pressed();
+				rndr->setTryToPickMany(false);
+
+			}
+			else
+			  rndr->UnPick(3);
 		}
 	}
 	
@@ -38,16 +48,7 @@
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Game* scn = (Game*)rndr->GetScene();
-		
-		if (rndr->IsPicked())
-		{
-			rndr->UpdateZpos((int)yoffset);
-			rndr->MouseProccessing(GLFW_MOUSE_BUTTON_MIDDLE);
-		}
-		else
-		{
-			rndr->MoveCamera(0, rndr->zTranslate, (float)yoffset);
-		}
+		rndr->MoveCamera(0, scn->zTranslate, (float)-0.4f * yoffset);
 	}
 	
 	void glfw_cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -57,7 +58,7 @@
 
 		rndr->UpdatePosition((float)xpos,(float)ypos);
 
-		if (rndr->CheckViewport(xpos,ypos, 0))
+		if (!rndr->IsPressed()&&rndr->CheckViewport(xpos,ypos, 0))
 		{
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
@@ -69,9 +70,13 @@
 				
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 			}
-			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE && rndr->IsPicked() && rndr->IsMany())
-					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+			else if (rndr->lastButtonPressed == GLFW_MOUSE_BUTTON_LEFT && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE && rndr->IsPicked() && rndr->IsMany())
+			{
 
+				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+			}
+			else if (rndr->lastButtonPressed == GLFW_MOUSE_BUTTON_RIGHT && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE && rndr->IsPicked() && rndr->IsMany())
+					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 		}
 	}
 

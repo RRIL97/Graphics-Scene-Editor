@@ -42,29 +42,40 @@ unsigned int Game::CreateTex(int width,int height)
 
 void Game::Init()
 {		
-	unsigned int texIDs[4] = { 0 , 1, 0, 0};
-	unsigned int slots[4] = { 0 , 1, 0 , 0 };
-	AddShader("./shaders/pickingShader");
-	AddShader("./shaders/cubemapShader");
-	AddShader("./shaders/basicShader");
-	AddShader("./shaders/basicShader2");
-	 
-	AddTexture("./textures/cubemaps/Daylight Box_", 3);  
- 
-	AddShape(Cube, -2, TRIANGLES);
-	AddShape(Tethrahedron, -1, TRIANGLES);
+	unsigned int texIDs[4] = { 0 , 1, 0};
+	unsigned int slots[4] = { 0 , 1, 0};
+
+	AddShader("shaders/pickingShader");
+	AddShader("shaders/basicShader");
+	AddShader("shaders/basicShader2");
+	AddShader("shaders/cubemapShader");
+	AddShader("shaders/pickingShader");
+
+
+	AddTexture("textures/box0.bmp", 2);
+	AddTexture("textures/cubemaps/Daylight Box_", 3);
+	CreateTex(800, 800); 
+
+	AddMaterial(texIDs, slots, 1);
+	AddMaterial(texIDs + 1, slots + 1, 1);
+	//cube map
+	AddShape(Cube, -1, TRIANGLES);
+	SetShapeShader(0, 3);
+	SetShapeMaterial(0, 1);   
+	pickedShape = 0;
+	ShapeTransformation(scaleAll, 100, 0);
+	SetShapeStatic(pickedShape);
+	//
+	AddShape(Plane, -2, TRIANGLES, 2);
+	SetShapeShader(1, 4);
+	pickedShape = 1;
+	SetShapeMaterial(pickedShape, 0);
+	ShapeTransformation(zTranslate, -1.1, 1);
+	SetShapeStatic(pickedShape);
+	pickedShape = 0;
 	
-	AddShape(Octahedron, -1, TRIANGLES);
-	AddShape(Octahedron, 2, LINE_LOOP);
-    AddShape(Tethrahedron, 1, LINE_LOOP);
-	 
-	AddShapeFromFile("./data/sphere.obj", -1, TRIANGLES); 
-	AddShape(Plane, -1, TRIANGLES,0);
-	pickedShape = 6;
-	ShapeTransformation(scaleAll,6, 0);
-	pickedShape = -1;
-	//SetShapeStatic(0);
-	SetShapeStatic(6);
+	AddShape(Cube, -1, TRIANGLES);
+	SetShapeMaterial(2, 0);
 }
 
 void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
