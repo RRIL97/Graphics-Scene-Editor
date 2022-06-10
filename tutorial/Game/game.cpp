@@ -1,5 +1,7 @@
 #include "game.h"
 #include <iostream>
+#include "igl/unproject.h"
+#include <GLFW/glfw3.h>
 
  
 std::vector <Eigen::Vector2f> bezierControlPoints; 
@@ -111,32 +113,24 @@ void Game::setPressControlPoint(float x, float y) {
 void Game::updateCurve(float x,  float y) {
 	bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x  , 800 - y);
 }
+ 
 
 
-Eigen::Vector3f Game::Convert2DClickTo3DSpace(float xpos, float ypos,const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, int SCR_WIDTH, int SCR_HIEGHT) {
-	// converts a position from the 2d xpos, ypos to a normalized 3d direction
-	float x = (2.0f * xpos) / SCR_WIDTH - 1.0f;
-	float y = 1.0f - (2.0f * ypos) / SCR_HIEGHT;
-	// or (2.0f * ypos) / SCR_HEIGHT - 1.0f; depending on how you calculate ypos/lastY
-	float z = 1.0f;
-	Eigen::Vector3f  ray_nds = Eigen::Vector3f(x, y, z);
-	Eigen::Vector4f  ray_clip = Eigen::Vector4f(ray_nds.x(), ray_nds.y(), -1.0f, 1.0f);
+Eigen::Vector3f Game::GetPositionUnprojected(float posX , float posY , const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model) {
 
-	// eye space to clip we would multiply by projection so
-	// clip space to eye space is the inverse projection
-	Eigen::Matrix4f projCopy = Proj;
 
-	Eigen::Vector4f ray_eye = projCopy.inverse()  * ray_clip;
-	// convert point to forwards
-	ray_eye = Eigen::Vector4f(ray_eye.x(), ray_eye.y(), -1.0f, 0.0f);
+	Eigen::Matrix4f modelview = View * Model;
+	Eigen::Vector4f viewport = { 0.0, 0.0, 800, 800 };
 
-	Eigen::Matrix4f viewCopy = View;
-	// world space to eye space is usually multiply by view so
-	// eye space to world space is inverse view
-	Eigen::Vector4f inv_ray_wor = (viewCopy.inverse() * ray_eye);
-	Eigen::Vector3f ray_wor = Eigen::Vector3f(inv_ray_wor.x(), inv_ray_wor.y(), inv_ray_wor.z());
-	ray_wor = ray_wor.normalized();
-	return ray_wor;
+	float winX = posX;
+	float winY = viewport[3] - posY;
+	float winZ;
+
+	glReadPixels(winX, winY, 1, 1, 0x1902, 0x1406, &winZ);
+	Eigen::Vector3f screenCoords = { winX, winY, winZ };
+	Eigen::Vector3f threeDimensionalPosition = igl::unproject(screenCoords, modelview, Proj, viewport);
+
+	return threeDimensionalPosition;
 }
 
 void Game::MoveObjectsAccordingToBezier(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model) {
@@ -148,22 +142,22 @@ void Game::MoveObjectsAccordingToBezier(const Eigen::Matrix4f& Proj, const Eigen
 	Eigen::RowVector4f            T;
 	Eigen::Vector3f               currentPosition;
 	float                         t = 0;
+ 
 
-
-	curvePoints.row(0) = Convert2DClickTo3DSpace(bezierControlPoints[0].x(), bezierControlPoints[0].y(), Proj, View, Model, 800, 800);
-	curvePoints.row(1) = Convert2DClickTo3DSpace(bezierControlPoints[1].x(), bezierControlPoints[1].y(), Proj, View, Model, 800, 800);
-	curvePoints.row(2) = Convert2DClickTo3DSpace(bezierControlPoints[2].x(), bezierControlPoints[2].y(), Proj, View, Model, 800, 800);
-	curvePoints.row(3) = Convert2DClickTo3DSpace(bezierControlPoints[3].x(), bezierControlPoints[3].y(), Proj, View, Model, 800, 800);
-
-
+	curvePoints.row(0) = GetPositionUnprojected(bezierControlPoints[0].x() - 800, bezierControlPoints[0].y(), Proj,View,Model);
+	curvePoints.row(1) = GetPositionUnprojected(bezierControlPoints[1].x() - 800, bezierControlPoints[1].y(), Proj, View, Model);
+	curvePoints.row(2) = GetPositionUnprojected(bezierControlPoints[2].x() - 800, bezierControlPoints[2].y(), Proj, View, Model);
+	curvePoints.row(3) = GetPositionUnprojected(bezierControlPoints[3].x() - 800, bezierControlPoints[3].y(), Proj, View, Model);
+	  
 	M << -1, 3, -3, 1,
 		3, -6, 3, 0,
 		-3, 3, 0, 0,
 		1, 0, 0, 0;
 
 	MG_Result = M * curvePoints;
+	data_list[2]->ZeroTrans();
 
-	float stepSize = 0.1;
+	float stepSize = 0.01;
 	while (t <= 1) {
 
 		T[0] = powf(t, 3);
@@ -171,7 +165,7 @@ void Game::MoveObjectsAccordingToBezier(const Eigen::Matrix4f& Proj, const Eigen
 		T[2] = t;
 		T[3] = 1; 
 		currentPosition = (T * MG_Result);
-		data_list[2]->SetTranslation(currentPosition.cast<double>() * 2);
+		data_list[2]->SetTranslation(currentPosition.cast<double>());
 		t += stepSize;
 	}
 	shouldMoveAccordingToBeizer = false;
