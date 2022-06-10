@@ -6,7 +6,8 @@ class Game : public igl::opengl::glfw::Viewer
 {
 	int time; 
 public:
-	int pickedShape;
+	int  pickedShape;
+	bool shouldMoveAccordingToBeizer;
 
 	Game();
 //	Game(float angle,float relationWH,float near, float far);
@@ -17,6 +18,10 @@ public:
 	void Animate() override;
 	void ScaleAllShapes(float amt, int viewportIndx);
 	unsigned int Game::CreateTex(int width, int height);
+	void setPressControlPoint(float x, float y);
+	void updateCurve(float x, float y);
+	void MoveObjectsAccordingToBezier(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model);
+	Eigen::Vector3f Convert2DClickTo3DSpace(float xpos, float ypos, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, int SCR_WIDTH, int SCR_HIEGHT);
 	~Game(void);
 	void setState(editorState newState) {
 		 state = newState;

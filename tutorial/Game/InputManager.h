@@ -8,14 +8,21 @@
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
 		if (action == GLFW_PRESS)
-		{ 
+		{
+			 
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 			rndr->lastButtonPressed = button;
 			Game* scn = (Game*)rndr->GetScene();
 			double x2, y2;
 			glfwGetCursorPos(window, &x2, &y2);
 			rndr->UpdatePress(x2, y2);
-			
+
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+			{ 
+				if (rndr->CheckViewport(x2,y2,1)) {
+					scn->setPressControlPoint(x2,y2);
+				}
+			}
 		  if (rndr->Picking((int)x2, (int)y2))
 				{
 					rndr->UpdatePosition(x2, y2);
@@ -32,7 +39,7 @@
 		}
 		else
 		{
-			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
+ 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 			if (rndr->IsTryToPickMany()) {
 				rndr->PickMany(3);
 				rndr->Pressed();
@@ -57,12 +64,17 @@
 		Game* scn = (Game*)rndr->GetScene();
 
 		rndr->UpdatePosition((float)xpos,(float)ypos);
-
+	
+		if (rndr->IsPressed() && rndr->CheckViewport(xpos, ypos, 1)) {
+			if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+			{
+				scn->updateCurve(xpos, ypos);
+			}
+		}
 		if (!rndr->IsPressed()&&rndr->CheckViewport(xpos,ypos, 0))
 		{
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-			{
-
+			{ 
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -140,7 +152,8 @@
 				break;
 			
 			case GLFW_KEY_B:
-				rndr->MoveCamera(0, scn->zTranslate, 0.5f);
+				//rndr->MoveCamera(0, scn->zTranslate, 0.5f);
+				scn->shouldMoveAccordingToBeizer = true;
 				break;
 			case GLFW_KEY_F:
 				rndr->MoveCamera(0, scn->zTranslate, -0.5f);

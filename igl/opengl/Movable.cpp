@@ -85,16 +85,17 @@ void Movable::ZeroTrans() {
     Tout = Eigen::Affine3d::Identity();
 }
 
+void Movable::SetTranslation(Eigen::Vector3d position)
+{
+	Eigen::Vector3d oldPositionOfObject = (Tout * Tin).matrix().block(0, 3, 3, 1);
+	Tout.pretranslate(position - oldPositionOfObject);
+}
 
 
 
-
-
-
-
-
-
-
+Eigen::Vector3d Movable::GetTranslation() {
+	return (Tout * Tin).matrix().block(0, 3, 3, 1);
+}
 
 
 

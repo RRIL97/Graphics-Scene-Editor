@@ -25,6 +25,8 @@ public:
     void MyScale(Eigen::Vector3d amt);
 
 	void ZeroTrans();
+	void SetTranslation(Eigen::Vector3d position);
+	Eigen::Vector3d GetTranslation();
 
 	Eigen::Matrix3d GetRotation() const{ return Tout.rotation().matrix(); }
     virtual ~Movable() {}
