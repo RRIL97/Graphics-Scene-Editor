@@ -1,6 +1,9 @@
 #include "game.h"
 #include <iostream>
 
+ 
+const int g_numStepsBeizer = 20;
+std::vector <Eigen::Vector3d> bezierControlPoints;
 
 static void printMat(const Eigen::Matrix4d& mat)
 {
@@ -39,21 +42,22 @@ unsigned int Game::CreateTex(int width,int height)
 	delete [] data;
 	return texIndx;
 }
+ 
 
 void Game::Init()
 {		
 	unsigned int texIDs[4] = { 0 , 1, 0};
 	unsigned int slots[4] = { 0 , 1, 0};
 
-	AddShader("shaders/pickingShader");
-	AddShader("shaders/basicShader");
-	AddShader("shaders/basicShader2");
-	AddShader("shaders/cubemapShader");
-	AddShader("shaders/pickingShader");
+	AddShader("./shaders/pickingShader");
+	AddShader("./shaders/basicShader");
+	AddShader("./shaders/basicShader2");
+	AddShader("./shaders/cubemapShader");
+	AddShader("./shaders/pickingShader");
+	AddShader("./shaders/bezierShader");
 
-
-	AddTexture("textures/box0.bmp", 2);
-	AddTexture("textures/cubemaps/Daylight Box_", 3);
+	AddTexture("./textures/box0.bmp", 2);
+	AddTexture("./textures/cubemaps/Daylight Box_", 3);
 	CreateTex(800, 800); 
 
 	AddMaterial(texIDs, slots, 1);
@@ -76,6 +80,14 @@ void Game::Init()
 	
 	AddShape(Cube, -1, TRIANGLES);
 	SetShapeMaterial(2, 0);
+
+
+	AddShape(Axis, -1, TRIANGLES, 1);
+	AddShape(Plane, -1, TRIANGLES, 1);
+	SetShapeShader(4, 5);
+	SetShapeStatic(4);
+	SetShapeStatic(3);
+  
 }
 
 void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
@@ -98,7 +110,9 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	if (shaderIndx == 0)
 		s->SetUniform4f("lightColor", r / 255.0f, g / 255.0f, b / 255.0f, 0.0f);
 	else
-		s->SetUniform4f("lightColor", 4/100.0f, 6 / 100.0f, 99 / 100.0f, 0.5f); 
+		s->SetUniform4f("lightColor", 4/100.0f, 6 / 100.0f, 99 / 100.0f, 0.5f);
+	 
+	 
 	s->Unbind();
 }
 

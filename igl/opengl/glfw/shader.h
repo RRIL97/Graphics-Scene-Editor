@@ -16,8 +16,8 @@ public:
     void Bind() const;
 	void Unbind() const;
 
-		//Set uniforms
-	void SetUniform1i(const std::string& name, int value);
+	//Set uniforms
+	void SetUniform1i(const std::string& name, int value); 
 	void SetUniform4i(const std::string& name, int vi0,int vi1,int vi2,int vi3);
 	void SetUniform1f(const std::string& name, float value);
 	void SetUniform4f(const std::string& name, float v0, float v1, float f2, float f3 );
