@@ -9,6 +9,7 @@ public:
 	int  pickedShape;
 	bool shouldMoveAccordingToBeizer;
 
+	std::vector<Eigen::Vector3f> uanim;
 	Game();
 //	Game(float angle,float relationWH,float near, float far);
 	void Init();
@@ -22,6 +23,7 @@ public:
 	void updateCurve(float x, float y);
 	void MoveObjectsAccordingToBezier(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model);
 	Eigen::Vector3f GetPositionUnprojected (float posX, float posY, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model);
+
 
 	~Game(void);
 	void setState(editorState newState) {
