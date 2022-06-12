@@ -26,7 +26,7 @@ int main(int argc,char *argv[])
 	rndr->AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10, 2);//adding camera
 	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for plane
 	//blending
-	rndr->AddDraw(2, 0, 0, 0, rndr->inAction2 | rndr->scissorTest | rndr->blend);
+	rndr->AddDraw(2, 0, 0, 0, rndr->inAction2 | rndr->scissorTest | rndr->blend );
 	//line 
 	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shapes
 	rndr->AddDraw(3, 0, 4, 0, rndr->stencilTest| rndr->stencil2 | rndr->scaleAbit | rndr->inAction2 |rndr->onPicking);

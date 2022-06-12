@@ -305,18 +305,21 @@ void Renderer::PickMany(int viewportIndx)
         int xMax = std::max(xWhenPress, xold);
         int yMax = std::max(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
 		depth = scn->AddPickedShapes(cameras[0]->GetViewProjection().cast<double>() * (cameras[0]->MakeTransd()).inverse(), viewports[viewportCurrIndx], viewportCurrIndx, xMin, xMax, yMin, yMax,viewportIndx);
-        if (depth != -1)
+        if (depth != 0)
         {
+            std::cout << "here" << std::endl;
             depth = (depth*2.0f - cameras[0]->GetFar()) / (cameras[0]->GetNear() - cameras[0]->GetFar());
             isMany = true;
             isPicked = true;
         }
-        else
+        else {
             depth = 0;
-
+        }
     }
     else {
-        scn->ClearPickedShapes(3);
+        scn->ClearPickedShapes(viewportIndx);
+        isPicked = false;
+        isMany = false;
     }
 }
 

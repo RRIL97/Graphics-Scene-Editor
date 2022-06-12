@@ -648,8 +648,11 @@ IGL_INLINE bool
 
             if (button == 0)
             {
-//                if (selected_data_index > 0 )
+                for (int pShape : pShapes)
+                {
+                    selected_data_index = pShape;
                     WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff);
+                }
 
             }
             else

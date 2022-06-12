@@ -82,11 +82,9 @@ void Game::Init()
 	SetShapeMaterial(pickedShape, 0);
 	ShapeTransformation(zTranslate, -1.1, 1);
 	SetShapeStatic(pickedShape);
-	pickedShape = 0;
-	
+	pickedShape = 2;
 	AddShape(Cube, -1, TRIANGLES);
 	SetShapeMaterial(2, 0);
-
 
 	AddShape(Axis, -1, TRIANGLES, 1);
 	AddShape(Plane, -1, TRIANGLES, 1);
@@ -98,6 +96,7 @@ void Game::Init()
 	bezierControlPoints.push_back(Eigen::Vector2f(1100.0, 350.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1500.0, 450.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1550.0, 650.0));
+	pickedShape = 0;
 
 }
 
