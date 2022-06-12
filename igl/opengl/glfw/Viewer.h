@@ -162,11 +162,11 @@ public:
     int next_shader_id; // for flags to mack sure all shaders are initlize with data
 	bool isActive;
     unsigned int staticScene;
-
     Shader* overlay_shader;
     Shader* overlay_point_shader;
     std::vector<Shader*> shaders;
-    
+    int pickedViewPort;
+
 
     // List of registered plugins
 //    std::vector<ViewerPlugin*> plugins;

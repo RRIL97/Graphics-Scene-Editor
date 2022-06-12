@@ -9,46 +9,56 @@
 	{	
 		if (action == GLFW_PRESS)
 		{
-			 
+
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 			rndr->lastButtonPressed = button;
 			Game* scn = (Game*)rndr->GetScene();
 			double x2, y2;
 			glfwGetCursorPos(window, &x2, &y2);
 			rndr->UpdatePress(x2, y2);
-
-			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-			{ 
-				if (rndr->CheckViewport(x2,y2,1)) {
-					scn->setPressControlPoint(x2,y2);
-				}
+			if (rndr->CheckViewport(x2, y2, 1)) //bezier curve
+			{
+				//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+					scn->setPressControlPoint(x2, y2);
+				scn->pickedViewPort = 1;
 			}
-		  if (rndr->Picking((int)x2, (int)y2))
+			else
+			{
+				if (rndr->Picking((int)x2, (int)y2))
 				{
 					rndr->UpdatePosition(x2, y2);
 					rndr->Pick();
+					scn->pickedViewPort = 3;
+
 
 				}
 				else
 				{
-				rndr->Pressed();
-				rndr->UnPick(3);
-				rndr->setTryToPickMany(true);
+					rndr->Pressed();
+					rndr->UnPick(3);
+					rndr->setTryToPickMany(true);
+					scn->pickedViewPort = 3;
+
 				}
 
+			}
 		}
 		else
 		{
- 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-			if (rndr->IsTryToPickMany()) {
-				rndr->PickMany(3);
-				rndr->Pressed();
-				rndr->setTryToPickMany(false);
+			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
+			Game* scn = (Game*)rndr->GetScene();
+			if (scn->pickedViewPort != 1) {
+				if (rndr->IsTryToPickMany()) {
+					rndr->PickMany(3);
+					rndr->Pressed();
+					rndr->setTryToPickMany(false);
 
+				}
+				else
+					rndr->UnPick(3);
 			}
-			else
-			  rndr->UnPick(3);
 		}
+
 	}
 	
 	void glfw_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -65,8 +75,8 @@
 
 		rndr->UpdatePosition((float)xpos,(float)ypos);
 	
-		if (rndr->IsPressed() && rndr->CheckViewport(xpos, ypos, 1)) {
-			if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		if ( rndr->CheckViewport(xpos, ypos, 1)) {
+			if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
 				scn->updateCurve(xpos, ypos);
 			}
