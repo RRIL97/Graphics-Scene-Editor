@@ -1,5 +1,7 @@
 #pragma once
+
 #include "igl/opengl/glfw/Viewer.h"
+
 enum class editorState { DESIGN, ANIMATION };
 
 class Game : public igl::opengl::glfw::Viewer
@@ -9,7 +11,8 @@ public:
 	int  pickedShape;
 	bool shouldMoveAccordingToBeizer;
 
-	std::vector<Eigen::Vector3f> uanim;
+	std::vector<Eigen::Vector3f> uanim; 
+
 	Game();
 //	Game(float angle,float relationWH,float near, float far);
 	void Init();
@@ -21,9 +24,7 @@ public:
 	unsigned int Game::CreateTex(int width, int height);
 	void setPressControlPoint(float x, float y);
 	void updateCurve(float x, float y);
-	void MoveObjectsAccordingToBezier(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model);
-	Eigen::Vector3f GetPositionUnprojected (float posX, float posY, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model);
-
+	 
 
 	~Game(void);
 	void setState(editorState newState) {
