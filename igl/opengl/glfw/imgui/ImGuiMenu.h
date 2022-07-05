@@ -96,6 +96,9 @@ public:
   std::function<void(void)> callback_draw_viewer_window;
   std::function<void(void)> callback_draw_viewer_menu;
   std::function<void(void)> callback_draw_custom_window;
+  std::string errorMsg;
+  char layerName[30] = "";
+  int prevSelectedTheme = 0;
 
 //  IGL_INLINE void draw_labels_window(igl::opengl::glfw::Viewer* viewer, const igl::opengl::ViewerCore* core);
 

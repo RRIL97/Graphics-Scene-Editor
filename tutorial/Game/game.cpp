@@ -52,8 +52,8 @@ unsigned int Game::CreateTex(int width,int height)
 
 void Game::Init()
 {		
-	unsigned int texIDs[4] = { 0 , 1, 0};
-	unsigned int slots[4] = { 0 , 1, 0};
+	unsigned int texIDs[6] = { 0 , 1, 2, 3, 4, 0};
+	unsigned int slots[6] = { 0 , 1, 2, 3, 4, 0};
 
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/basicShader");
@@ -64,10 +64,20 @@ void Game::Init()
 
 	AddTexture("./textures/box0.bmp", 2);
 	AddTexture("./textures/cubemaps/Daylight Box_", 3);
+	AddTexture("./textures/cubemaps/ocean/ocean_", 3);
+	AddTexture("./textures/cubemaps/land/land_", 3);
+	AddTexture("./textures/cubemaps/mountain/mountain_", 3);
+
+
+
 	CreateTex(800, 800); 
 
 	AddMaterial(texIDs, slots, 1);
 	AddMaterial(texIDs + 1, slots + 1, 1);
+	AddMaterial(texIDs + 2, slots + 2, 1);
+	AddMaterial(texIDs + 3, slots + 3, 1);
+	AddMaterial(texIDs + 4, slots + 4, 1);
+
 	//cube map
 	AddShape(Cube, -1, TRIANGLES);
 	SetShapeShader(0, 3);

@@ -290,7 +290,7 @@ public:
   bool hide;
   bool show_vertid; // shared across viewports for now
   bool show_faceid; // shared across viewports for now
-
+  int layer = 0;
   // Point size / line width
   float point_size;
   // line_width is NOT SUPPORTED on Mac OS and Windows
@@ -334,6 +334,9 @@ public:
     void Draw_overlay(Shader *shader, bool cond);
 
     void Draw_overlay_pints(Shader *shader, bool cond);
+    void changeLayer(int new_layer) {
+        layer = new_layer;
+    }
 };
 
 } // namespace opengl

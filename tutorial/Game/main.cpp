@@ -28,10 +28,9 @@ int main(int argc,char *argv[])
 	//blending
 	rndr->AddDraw(2, 0, 0, 0, rndr->inAction2 | rndr->scissorTest | rndr->blend );
 	//line 
-	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shapes
-	rndr->AddDraw(3, 0, 4, 0, rndr->stencilTest| rndr->stencil2 | rndr->scaleAbit | rndr->inAction2 |rndr->onPicking);
-	rndr->AddDraw(2, 0, 4, 0, rndr->stencilTest | rndr->inAction2);
-
+	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shape
+	//rndr->AddDraw(3, 0, 4, 0, rndr->stencilTest| rndr->depthTest | rndr->stencil2 | rndr->scaleAbit | rndr->inAction2 |rndr->onPicking);
+	//rndr->AddDraw(2, 0, 4, 0, rndr->stencilTest | rndr->inAction2 | rndr->depthTest);
 
 	disp.SetRenderer(rndr);
     disp.launch_rendering(rndr);

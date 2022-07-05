@@ -35,6 +35,13 @@
 #define IGL_MOD_SUPER           0x0008
 
 
+struct layer {
+    std::string name;
+    int layerNum;
+    bool isVisible;
+    layer(std::string name, int layerNum, bool visible = true) : name(name),layerNum(layerNum), isVisible(visible) {
+    }
+};
 
 namespace igl
 {
@@ -142,6 +149,49 @@ namespace glfw
     inline void Activate() { isActive = true; }
     inline void Deactivate() { isActive = false; }
     int AddShader(const std::string& fileName);
+    void addLayer(std::string name) {
+        printf("is triggered ");
+        layers.push_back(new layer(name,nextLayerId));
+        nextLayerId++;
+    }
+    bool removeLayer(std::string name) {
+        if (name == "default") {
+            return false;
+        }
+        for (auto iter = layers.begin(); iter != layers.end(); iter++) {
+            if ((*iter)->name == name) {
+                int layerNum = (*iter)->layerNum;
+                for (auto data : data_list) { //set to default 
+                    if (data->layer == layerNum)
+                        data->layer = 0;
+                }
+                layers.erase(iter);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool setLayer(std::string name) {
+        int layerNum = 0;
+        bool found = false;
+        for (auto iter = layers.begin(); iter != layers.end(); iter++) {
+            if ((*iter)->name == name) {
+                found = true;
+                break;
+            }
+            layerNum++;
+        }
+        if (!found) {
+            return false;
+        }
+        for (int pShape : pShapes)
+        {
+            data_list[pShape]->layer = layerNum;
+
+        }
+        return true;
+    }
 public:
     //////////////////////
     // Member variables //
@@ -166,7 +216,10 @@ public:
     Shader* overlay_point_shader;
     std::vector<Shader*> shaders;
     int pickedViewPort;
-
+    int nextLayerId = 1;
+    std::vector<layer*> layers;
+    std::vector<std::string> ThemeNames;
+    int themeIndex = 0;
 
     // List of registered plugins
 //    std::vector<ViewerPlugin*> plugins;

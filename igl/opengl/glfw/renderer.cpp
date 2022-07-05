@@ -228,6 +228,7 @@ void Renderer::AddViewport(int left, int bottom, int width, int height)
 {
     viewports.emplace_back(Eigen::Vector4i(left, bottom, width, height));
     glViewport(left, bottom, width, height);
+    printf("view ports%d\n", viewports.size());
 
 }
 
@@ -479,8 +480,8 @@ int Renderer::Create2Dmaterial(int infoIndx, int code)
 void Renderer::SetBuffers()
 {
     AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10,2);
-    //int materialIndx = Create2Dmaterial(1,1);
-   //scn->SetShapeMaterial(6, materialIndx);
+   int materialIndx = Create2Dmaterial(1,1);
+   scn->SetShapeMaterial(6, materialIndx);
    // SwapDrawInfo(2, 3);
 }
 

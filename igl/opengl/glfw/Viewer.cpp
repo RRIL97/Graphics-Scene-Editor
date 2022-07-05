@@ -76,6 +76,7 @@ namespace glfw
     staticScene = 0;
     overlay_point_shader = nullptr;
     overlay_shader = nullptr;
+    layers.push_back(new layer("default",0));
 
 
     // Temporary variables initialization
@@ -87,7 +88,10 @@ namespace glfw
 
     // Per face
     data()->set_face_based(false);
-
+    ThemeNames.push_back("Daylight");
+    ThemeNames.push_back("Ocean");
+    ThemeNames.push_back("River");
+    ThemeNames.push_back("Mountains");
     
 //#ifndef IGL_VIEWER_VIEWER_QUIET
 //    const std::string usage(R"(igl::opengl::glfw::Viewer usage:
@@ -423,7 +427,7 @@ IGL_INLINE bool
         for (int i = 0; i < data_list.size(); i++)
         {
             auto shape = data_list[i];
-            if (shape->Is2Render(viewportIndx))
+            if (shape->Is2Render(viewportIndx)&& layers[shape->layer]->isVisible)
             {
 
                 Eigen::Matrix4f Model = shape->MakeTransScale();
@@ -615,10 +619,11 @@ IGL_INLINE bool
 
     void Viewer::ClearPickedShapes(int viewportIndx)
     {
-        for (int pShape : pShapes)
+       for (int pShape : pShapes)
         {
             data_list[pShape]->RemoveViewport(viewportIndx);
-        }
+       
+     }
         selected_data_index = 0;
         pShapes.clear();
     }
@@ -724,6 +729,8 @@ IGL_INLINE bool
             std::cout << "picked shape id " << selected_data_index << std::endl;
             pShapes.push_back(selected_data_index);
             data_list[selected_data_index]->AddViewport(newViewportIndx);
+            std::cout << "viewports " << data_list[selected_data_index]->viewports << std::endl;
+
             return true;
      
         }

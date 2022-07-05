@@ -157,6 +157,7 @@ IGL_INLINE bool ImGuiMenu::key_up(GLFWwindow* window,int key, int modifiers)
 
 IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, std::vector<igl::opengl::Camera*> &camera,Eigen::Vector4i& viewWindow,std::vector<DrawInfo *> drawInfos)
 {
+    int current_selected_radio;
     bool* p_open = NULL;
     static bool no_titlebar = false;
     static bool no_scrollbar = false;
@@ -168,7 +169,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     static bool no_nav = false;
     static bool no_background = false;
     static bool no_bring_to_front = false;
-
     ImGuiWindowFlags window_flags = 0;
     if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
     if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
@@ -183,8 +183,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         "Viewer", p_open,
         window_flags
     );
-
-    ImGui::SetWindowPos(ImVec2((float)0, (float)0), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2((float)0, (float)0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2((float)0, (float)0), ImGuiCond_Always);
     ImGui::End();
     no_move = true;
@@ -193,12 +192,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         "Viewer", p_open,
         window_flags
     );
-
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
   // Mesh
   if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
   {
-    float w = ImGui::GetContentRegionAvailWidth();
-    float p = ImGui::GetStyle().FramePadding.x;
+
     if (ImGui::Button("Load##Mesh", ImVec2((w-p)/2.f, 0)))
     {
         int savedIndx = viewer->selected_data_index;
@@ -226,7 +225,19 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       viewer->open_dialog_save_mesh();
     }
   }
-
+  // Choose theme
+  if (ImGui::CollapsingHeader("Theme", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+      for(int i =0 ; i< viewer->ThemeNames.size();i++)
+      if (ImGui::RadioButton(viewer->ThemeNames[i].c_str(),&current_selected_radio,i))
+      {
+          if (current_selected_radio != prevSelectedTheme) {
+              prevSelectedTheme = current_selected_radio;
+              viewer->SetShapeMaterial(0, prevSelectedTheme + 1);
+              printf("set shape mat\n");
+          }
+      }
+  }
   // Viewing options
   if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_DefaultOpen))
   {
@@ -274,34 +285,54 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       ImGui::ColorEdit4("Background", drawInfos[1]->Clear_RGBA.data(),
       ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
 
-  // Draw options
-  if (ImGui::CollapsingHeader("Draw Options", ImGuiTreeNodeFlags_DefaultOpen))
+  
+  if (ImGui::CollapsingHeader("layers", ImGuiTreeNodeFlags_DefaultOpen))
   {
-    if (ImGui::Checkbox("Face-based", &(viewer->data()->face_based)))
-    {
-      viewer->data()->dirty = MeshGL::DIRTY_ALL;
-    }
-//
-//    make_checkbox("Show texture", viewer->data().show_texture);
-//    if (ImGui::Checkbox("Invert normals", &(viewer->data().invert_normals)))
-//    {
-//      viewer->data().dirty |= igl::opengl::MeshGL::DIRTY_NORMAL;
-//    }
-    make_checkbox("Show overlay", viewer->data()->show_overlay);
-    make_checkbox("Show overlay depth", viewer->data()->show_overlay_depth);
+      ImGui::InputText("Name", layerName , 30);
+      if (ImGui::Button("add layer", ImVec2((w - p) , 0)))
+      {
+          std::string name(layerName);
+          if (!name.empty()) {
+              viewer->addLayer(name);
+              errorMsg = "Successfully added layer";
+          }
+          else {
+              errorMsg = "please enter layer name";
+          }
+      }
+      if (ImGui::Button("remove layer", ImVec2((w - p), 0)))
+      {
+          std::string name(layerName);
+          if (!name.empty())
+              if (!viewer->removeLayer(name))
+                  errorMsg = "layer doesnt exists";
+              else
+                  errorMsg = "Successfully removed the layer";
 
-    ImGui::ColorEdit4("Line color", viewer->data()->line_color.data(),
-        ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-    ImGui::DragFloat("Shininess", &(viewer->data()->shininess), 0.05f, 0.0f, 100.0f);
-    ImGui::PopItemWidth();
-  }
-
-  // Overlays
-  if (ImGui::CollapsingHeader("Overlays", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-    make_checkbox("Wireframe", viewer->data()->show_lines);
-    make_checkbox("Fill", viewer->data()->show_faces);
+          else {
+                  errorMsg = "please enter layer name";
+          }
+      }
+      if (ImGui::Button("set layer", ImVec2((w - p), 0)))
+      {
+          std::string name(layerName);
+          if (!name.empty())
+              if (!viewer->setLayer(name))
+                  errorMsg = "layer doesnt exists";
+              else
+                  errorMsg = "Successfully set layer\n for picked objects";
+              else {
+                  errorMsg = "please enter layer name";
+              }
+      }
+      for (auto iter : viewer->layers) {
+          std::string text = "show layer";
+          ImGui::Checkbox(iter->name.c_str(),
+              [&]() { return iter->isVisible; },
+              [&](bool value) { iter->isVisible = value; });
+      }
+      ImGui::Text(errorMsg.c_str());
+    
 
   }
   ImGui::End();

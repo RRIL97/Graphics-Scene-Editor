@@ -7,6 +7,10 @@
 
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
+		auto& io = ImGui::GetIO();
+		if (io.WantCaptureMouse) {
+			return;
+		}
 		if (action == GLFW_PRESS)
 		{
 
@@ -115,6 +119,10 @@
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Game* scn = (Game*)rndr->GetScene();
+		auto& io = ImGui::GetIO();
+		if (io.WantCaptureKeyboard) {
+			return;
+		}
 		//rndr->FreeShapes(2);
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{

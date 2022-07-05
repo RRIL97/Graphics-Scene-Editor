@@ -186,6 +186,7 @@ public:
     inline void setTryToPickMany(bool many)  {  tryToPickMany = many; }
     inline bool IsTryToPickMany() const { return tryToPickMany; }
     void Init(igl::opengl::glfw::Viewer *scene, std::list<int> xViewport, std::list<int> yViewport, int pickingBits,igl::opengl::glfw::imgui::ImGuiMenu *_menu);
+    void SwapDrawInfo(int indx1, int indx2);
 
     int lastButtonPressed = -1;
 private:
@@ -220,6 +221,5 @@ private:
 
     void Clear(float r, float g, float b, float a, unsigned int flags);
 
-    void SwapDrawInfo(int indx1, int indx2);
 };
 
