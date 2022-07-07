@@ -1,15 +1,17 @@
-#include "game.h"
+#include "game.h" 
 #include <iostream>
 #include "igl/unproject.h"
 #include "igl/project.h"
 #include <GLFW/glfw3.h>
-
+#include "BezierMove.h"
  
 std::vector <Eigen::Vector2f> bezierControlPoints; 
+
 const float g_pointRadius    = 3.0f; 
 const float g_distanceClickControlThreshold = 10.0f;
-int  g_chosenControlPoint = 0;
- 
+int         g_chosenControlPoint = 0;
+
+std::vector<BezierMove*> g_bezierObjects;
 
 static void printMat(const Eigen::Matrix4d& mat)
 {
@@ -122,71 +124,7 @@ void Game::setPressControlPoint(float x, float y) {
 void Game::updateCurve(float x,  float y) {
 	bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x  , 800 - y);
 }
- 
-
-
-Eigen::Vector3f Game::GetPositionUnprojected(float posX , float posY , const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model) {
-
-
-	Eigen::Matrix4f modelview = View * Model;
-	Eigen::Vector4f viewport = { 0.0, 0.0, 800, 800 };
-
-	float winX = posX;
-	float winY = viewport[3] - posY; 
-
-	float depth;
-	glReadPixels(winX, winY - posY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-
-	const float epsi = 0.00001f;
-	if (depth > 1.0f - epsi)
-	{
-		Eigen::Vector3f world_origin{ 0.0f, 0.0f, 0.0f };
-		Eigen::Vector3f origin_ndc = igl::project(world_origin, View, Proj, viewport);
-		depth = origin_ndc[2];
-	}
-
-	Eigen::Vector3f screenCoords{ winX, winY, depth };
-	Eigen::Vector3f cursorPosition = igl::unproject(screenCoords, modelview, Proj, viewport);
-
-	return cursorPosition;
-}
-
-void Game::MoveObjectsAccordingToBezier(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model) {
-
-	Eigen::Matrix4f               M;
-	Eigen::Matrix <float, 4, 3 >  MG_Result;
-	Eigen::Matrix <float, 4, 3 >  curvePoints;
-
-	Eigen::RowVector4f            T;
-	Eigen::Vector3f               currentPosition;
-	float                         t = 0;
- 
-
-	for(int i = 0 ; i < 4 ;i ++)
-	curvePoints.row(i) = GetPositionUnprojected(bezierControlPoints[i].x() - 800 , bezierControlPoints[i].y() , Proj, View, Model);
- 
-	M << -1, 3, -3, 1,
-		3, -6, 3, 0,
-		-3, 3, 0, 0,
-		1, 0, 0, 0;
-
-	MG_Result = M * curvePoints;
-	data_list[2]->ZeroTrans();
-
-	float stepSize = 0.05;
-	while (t <= 1) {
-
-		T[0] = powf(t, 3);
-		T[1] = powf(t, 2);
-		T[2] = t;
-		T[3] = 1; 
-		currentPosition = (T * MG_Result);
-		data_list[2]->SetTranslation(currentPosition.cast<double>());
-		t += stepSize; 
-		std::cout << currentPosition.transpose() << std::endl;
-	}
-	shouldMoveAccordingToBeizer = false;
-}
+  
 
 void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
 {
@@ -222,8 +160,11 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("POINT_RADIUS", g_pointRadius); 
 	}
 
-	if (shouldMoveAccordingToBeizer && shapeIndx == 2) {
-		MoveObjectsAccordingToBezier(Proj, View, Model);
+	if (shouldMoveAccordingToBeizer && shapeIndx == 2) { 
+		BezierMove *  bezier = new BezierMove (this,shapeIndx, bezierControlPoints, Proj,View,Model);
+		g_bezierObjects.push_back(bezier);
+
+		shouldMoveAccordingToBeizer = false;
 	}
 	s->Unbind();
 }
@@ -237,10 +178,13 @@ void Game::WhenTranslate()
 {
 }
 
-void Game::Animate() {
-	if (isActive) {
-
-	 }
+void Game::Animate() { 
+		for (auto currBezierObj : g_bezierObjects) {
+			if (!currBezierObj->hasDoneMoving()) {
+				data_list[currBezierObj->GetObjectId()]->SetTranslation(currBezierObj->GetNextMove().cast<double>()); 
+			}
+		}
+	  
 }
 
 void Game::ScaleAllShapes(float amt,int viewportIndx)

@@ -34,7 +34,7 @@ int main(int argc,char *argv[])
 
 	disp.SetRenderer(rndr);
     disp.launch_rendering(rndr);
-
+	 
 
 	delete scn;
 	delete rndr;
