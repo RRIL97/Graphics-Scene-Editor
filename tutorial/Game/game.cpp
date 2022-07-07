@@ -173,10 +173,7 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 
 		_bezierObjectCount--;
 	}
-
-	if(shaderIndx == 6)
-	   s->SetUniform1f("blurEffect", CalculateBlurFactor(shapeIndx));
-
+	 
 	s->Unbind();
 }
 
