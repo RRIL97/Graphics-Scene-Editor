@@ -83,8 +83,8 @@ void Assignment1::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& Vie
 
 	
 	
-
-	//s->SetUniform1i("sampler2", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(1));
+	std::cout << materials[data_list[shapeIndx]->GetMaterial()]->GetSlot(0) << std::endl;
+	s->SetUniform1i("sampler1", materials[data_list[shapeIndx]->GetMaterial()]->GetSlot(1));
 	//s->SetUniform4f("lightDirection", 0.0f , 0.0f, -1.0f, 0.0f);
 //	if(shaderIndx == 0)
 //		s->SetUniform4f("lightColor",r/255.0f, g/255.0f, b/255.0f,1.0f);

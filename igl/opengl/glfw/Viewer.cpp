@@ -851,7 +851,7 @@ IGL_INLINE bool
 
         for (int i = 0; i < materials[materialIndx]->GetNumOfTexs(); i++)
         {
-            materials[materialIndx]->Bind(textures, i);
+            materials[materialIndx]->Bind(textures, i); 
             s->SetUniform1i("sampler" + std::to_string(i + 1), materials[materialIndx]->GetSlot(i));
         }
     }

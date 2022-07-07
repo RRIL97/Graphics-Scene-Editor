@@ -63,6 +63,7 @@ void Game::Init()
 	AddShader("./shaders/cubemapShader");
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/bezierShader");
+	AddShader("./shaders/blurShader");
 
 	AddTexture("./textures/cubemaps/Daylight Box_", 3);
 	AddTexture("./textures/cubemaps/ocean/ocean_", 3);
@@ -102,7 +103,11 @@ void Game::Init()
 	SetShapeShader(4, 5);
 	SetShapeStatic(4);
 	SetShapeStatic(3);
-  
+	 
+	AddShape(Cube, -1, TRIANGLES);
+	SetShapeShader(5, 6);
+	SetShapeMaterial(5, 4);
+
 	bezierControlPoints.push_back(Eigen::Vector2f(880.0, 200.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1100.0, 350.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1500.0, 450.0));
@@ -158,7 +163,7 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("p4_x", bezierControlPoints[3].x());
 		s->SetUniform1f("p4_y", bezierControlPoints[3].y());
 		s->SetUniform1f("POINT_RADIUS", g_pointRadius); 
-	}
+	} 
 
 	//Move only selected objects according to the bezier curve.  
 	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {
@@ -168,6 +173,10 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 
 		_bezierObjectCount--;
 	}
+
+	if(shaderIndx == 6)
+	   s->SetUniform1f("blurEffect", CalculateBlurFactor(shapeIndx));
+
 	s->Unbind();
 }
 
@@ -186,7 +195,7 @@ void Game::Animate() {
 				data_list[currBezierObj->GetObjectId()]->SetTranslation(currBezierObj->GetNextMove().cast<double>()); 
 			}
 		}
-	  
+	    
 }
 
 void Game::ScaleAllShapes(float amt,int viewportIndx)
