@@ -321,6 +321,21 @@ IGL_INLINE bool
     this->load_mesh_from_file(fname.c_str());
   }
 
+  IGL_INLINE void Viewer::open_dialog_load_Texture()
+  {
+      unsigned int texIDs[1];
+      unsigned int slots[1];
+      std::string fname = igl::file_dialog_open();
+      if (fname.length() == 0)
+          return;
+      texIDs[0] = slots[0] = next_texture_id;
+      AddTexture(fname, 2);
+      std::string base_filename = fname.substr(fname.find_last_of("/\\") + 1);
+      std::string::size_type const p(base_filename.find_last_of('.'));
+      std::string file_without_extension = base_filename.substr(0, p);
+      materials.push_back(new Material(texIDs, slots, 1, file_without_extension));
+  }
+
   IGL_INLINE void Viewer::open_dialog_save_mesh()
   {
     std::string fname = igl::file_dialog_save();
@@ -774,9 +789,9 @@ IGL_INLINE bool
         WhenScroll(dy);
     }
 
-    int Viewer::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size)
+    int Viewer::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size, std::string name)
     {
-        materials.push_back(new Material(texIndices, slots, size));
+        materials.push_back(new Material(texIndices, slots, size,name));
         return (materials.size() - 1);
     }
 
@@ -827,6 +842,7 @@ IGL_INLINE bool
     int Viewer::AddTexture(const std::string& textureFileName, int dim)
     {
         textures.push_back(new Texture(textureFileName, dim));
+        next_texture_id++;
         return(textures.size() - 1);
     }
 
@@ -876,6 +892,58 @@ IGL_INLINE bool
             Eigen::Vector4d tmp = data_list[newValue]->MakeTransd() * (data_list[indx]->MakeTransd()).inverse() * Eigen::Vector4d(0,0,0,1);
             data_list[indx]->ZeroTrans();
             data_list[indx]->MyTranslate(-tmp.head<3>(), false);
+        }
+    }
+
+
+    void Viewer::addLayer(std::string name) {
+        printf("is triggered ");
+        layers.push_back(new layer(name, nextLayerId));
+        nextLayerId++;
+    }
+    bool Viewer::removeLayer(std::string name) {
+        if (name == "default") {
+            return false;
+        }
+        for (auto iter = layers.begin(); iter != layers.end(); iter++) {
+            if ((*iter)->name == name) {
+                int layerNum = (*iter)->layerNum;
+                for (auto data : data_list) { //set to default 
+                    if (data->layer == layerNum)
+                        data->layer = 0;
+                }
+                layers.erase(iter);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool Viewer::setLayer(std::string name) {
+        int layerNum = 0;
+        bool found = false;
+        for (auto iter = layers.begin(); iter != layers.end(); iter++) {
+            if ((*iter)->name == name) {
+                found = true;
+                break;
+            }
+            layerNum++;
+        }
+        if (!found) {
+            return false;
+        }
+        for (int pShape : pShapes)
+        {
+            data_list[pShape]->layer = layerNum;
+
+        }
+        return true;
+    }
+
+    void Viewer::updateMaterialForSelectedShapes(int materialIndx) {
+        printf("update was called");
+        for (int pShape : pShapes) {
+            SetShapeMaterial(pShape, materialIndx);
         }
     }
 

@@ -52,8 +52,8 @@ unsigned int Game::CreateTex(int width,int height)
 
 void Game::Init()
 {		
-	unsigned int texIDs[6] = { 0 , 1, 2, 3, 4, 0};
-	unsigned int slots[6] = { 0 , 1, 2, 3, 4, 0};
+	unsigned int texIDs[6] = {  0, 1, 2, 3, 4 , 5};
+	unsigned int slots[6] = {  0, 1, 2, 3, 4 , 5};
 
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/basicShader");
@@ -62,26 +62,25 @@ void Game::Init()
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/bezierShader");
 
-	AddTexture("./textures/box0.bmp", 2);
 	AddTexture("./textures/cubemaps/Daylight Box_", 3);
 	AddTexture("./textures/cubemaps/ocean/ocean_", 3);
 	AddTexture("./textures/cubemaps/land/land_", 3);
 	AddTexture("./textures/cubemaps/mountain/mountain_", 3);
-
-
-
+	AddTexture("./textures/box0.bmp", 2);
 	CreateTex(800, 800); 
+
 
 	AddMaterial(texIDs, slots, 1);
 	AddMaterial(texIDs + 1, slots + 1, 1);
 	AddMaterial(texIDs + 2, slots + 2, 1);
 	AddMaterial(texIDs + 3, slots + 3, 1);
-	AddMaterial(texIDs + 4, slots + 4, 1);
+	AddMaterial(texIDs + 4, slots + 4, 1, " box");
+	AddMaterial(texIDs + 5, slots + 5, 1, "some");
 
 	//cube map
 	AddShape(Cube, -1, TRIANGLES);
 	SetShapeShader(0, 3);
-	SetShapeMaterial(0, 1);   
+	SetShapeMaterial(0, 0);   
 	pickedShape = 0;
 	ShapeTransformation(scaleAll, 100, 0);
 	SetShapeStatic(pickedShape);
@@ -89,12 +88,12 @@ void Game::Init()
 	AddShape(Plane, -2, TRIANGLES, 2);
 	SetShapeShader(1, 4);
 	pickedShape = 1;
-	SetShapeMaterial(pickedShape, 0);
+	SetShapeMaterial(pickedShape, 4);
 	ShapeTransformation(zTranslate, -1.1, 1);
 	SetShapeStatic(pickedShape);
 	pickedShape = 2;
 	AddShape(Cube, -1, TRIANGLES);
-	SetShapeMaterial(2, 0);
+	SetShapeMaterial(2, 4);
 
 	AddShape(Axis, -1, TRIANGLES, 1);
 	AddShape(Plane, -1, TRIANGLES, 1);

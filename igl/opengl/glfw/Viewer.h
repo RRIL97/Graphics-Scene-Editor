@@ -96,6 +96,7 @@ namespace glfw
 
     IGL_INLINE void open_dialog_load_mesh();
     IGL_INLINE void open_dialog_save_mesh();
+    IGL_INLINE void open_dialog_load_Texture();
 
 	IGL_INLINE void draw() {}
     ////////////////////////
@@ -149,49 +150,12 @@ namespace glfw
     inline void Activate() { isActive = true; }
     inline void Deactivate() { isActive = false; }
     int AddShader(const std::string& fileName);
-    void addLayer(std::string name) {
-        printf("is triggered ");
-        layers.push_back(new layer(name,nextLayerId));
-        nextLayerId++;
-    }
-    bool removeLayer(std::string name) {
-        if (name == "default") {
-            return false;
-        }
-        for (auto iter = layers.begin(); iter != layers.end(); iter++) {
-            if ((*iter)->name == name) {
-                int layerNum = (*iter)->layerNum;
-                for (auto data : data_list) { //set to default 
-                    if (data->layer == layerNum)
-                        data->layer = 0;
-                }
-                layers.erase(iter);
-                return true;
-            }
-        }
-        return false;
-    }
 
-    bool setLayer(std::string name) {
-        int layerNum = 0;
-        bool found = false;
-        for (auto iter = layers.begin(); iter != layers.end(); iter++) {
-            if ((*iter)->name == name) {
-                found = true;
-                break;
-            }
-            layerNum++;
-        }
-        if (!found) {
-            return false;
-        }
-        for (int pShape : pShapes)
-        {
-            data_list[pShape]->layer = layerNum;
+    void addLayer(std::string name);
+    bool removeLayer(std::string name);
+    bool setLayer(std::string name);
+    void updateMaterialForSelectedShapes(int materialIndx);
 
-        }
-        return true;
-    }
 public:
     //////////////////////
     // Member variables //
@@ -210,6 +174,7 @@ public:
     int selected_data_index;
     int next_data_id;
     int next_shader_id; // for flags to mack sure all shaders are initlize with data
+    int next_texture_id = 1;
 	bool isActive;
     unsigned int staticScene;
     Shader* overlay_shader;
@@ -238,8 +203,7 @@ public:
 
       void ClearPickedShapes(int viewportIndx);
 
-      int AddMaterial(unsigned int *texIndices, unsigned int *slots, unsigned int size);
-
+      int AddMaterial(unsigned int *texIndices, unsigned int *slots, unsigned int size,std::string name = "default");
       Eigen::Matrix4d GetPriviousTrans(const Eigen::Matrix4d &View, unsigned int index);
 
       float

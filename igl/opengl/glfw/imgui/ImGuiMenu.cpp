@@ -233,8 +233,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       {
           if (current_selected_radio != prevSelectedTheme) {
               prevSelectedTheme = current_selected_radio;
-              viewer->SetShapeMaterial(0, prevSelectedTheme + 1);
-              printf("set shape mat\n");
+              viewer->SetShapeMaterial(0, prevSelectedTheme);
           }
       }
   }
@@ -330,6 +329,32 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           ImGui::Checkbox(iter->name.c_str(),
               [&]() { return iter->isVisible; },
               [&](bool value) { iter->isVisible = value; });
+      }
+      if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
+      {
+          if (ImGui::BeginCombo("", currentMaterial.c_str())) {
+              for (int i = 4; i < viewer->materials.size(); i++) {
+
+                  bool selected = strcmp(currentMaterial.c_str(), viewer->materials[i]->getName().c_str());
+                  if (ImGui::Selectable(viewer->materials[i]->getName().c_str(), selected)) {
+                      currentMaterial = viewer->materials[i]->getName();
+                      materialIndx = i;
+                  }
+                  if (selected) {
+                      ImGui::SetItemDefaultFocus();
+                  }
+              }
+              ImGui::EndCombo();
+            }
+          if (ImGui::Button("set Material", ImVec2((w - p), 0)))
+          {
+              viewer->updateMaterialForSelectedShapes(materialIndx);
+          }
+          if (ImGui::Button("add Material", ImVec2((w - p), 0)))
+          {
+              viewer->open_dialog_load_Texture();
+          }
+
       }
       ImGui::Text(errorMsg.c_str());
     

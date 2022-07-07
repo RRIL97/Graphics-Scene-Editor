@@ -99,6 +99,8 @@ public:
   std::string errorMsg;
   char layerName[30] = "";
   int prevSelectedTheme = 0;
+  std::string currentMaterial = "box";
+  int materialIndx = 4;
 
 //  IGL_INLINE void draw_labels_window(igl::opengl::glfw::Viewer* viewer, const igl::opengl::ViewerCore* core);
 
