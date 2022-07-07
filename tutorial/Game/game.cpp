@@ -160,11 +160,13 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("POINT_RADIUS", g_pointRadius); 
 	}
 
-	if (shouldMoveAccordingToBeizer && shapeIndx == 2) { 
-		BezierMove *  bezier = new BezierMove (this,shapeIndx, bezierControlPoints, Proj,View,Model);
+	//Move only selected objects according to the bezier curve.  
+	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {
+		std::cout << shapeIndx << std::endl;
+		BezierMove* bezier = new BezierMove(this, shapeIndx, bezierControlPoints, Proj, View, Model);
 		g_bezierObjects.push_back(bezier);
 
-		shouldMoveAccordingToBeizer = false;
+		_bezierObjectCount--;
 	}
 	s->Unbind();
 }
@@ -180,7 +182,7 @@ void Game::WhenTranslate()
 
 void Game::Animate() { 
 		for (auto currBezierObj : g_bezierObjects) {
-			if (!currBezierObj->hasDoneMoving()) {
+			if (!currBezierObj->getHasDoneMoving()) {
 				data_list[currBezierObj->GetObjectId()]->SetTranslation(currBezierObj->GetNextMove().cast<double>()); 
 			}
 		}

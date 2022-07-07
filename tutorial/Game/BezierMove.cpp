@@ -13,24 +13,25 @@ BezierMove::BezierMove(Game * game, int objectId , std::vector<Eigen::Vector2f> 
 /// </summary>
 
 
-void BezierMove::CalculateBezierMoves() { 
+void BezierMove::CalculateBezierMoves() {
 	Eigen::Matrix4f               M;
 	Eigen::Matrix <float, 4, 3 >  MG_Result;
 	Eigen::Matrix <float, 4, 3 >  curvePoints;
 
 	Eigen::RowVector4f            T;
-	Eigen::Vector3f               currentPosition;
+	Eigen::Vector3f               calculatedNewPos;
 	float                         t = 0;
-	  
-	for (int i = 0; i < 4;i++)
-		curvePoints.row(i) = GetPositionUnprojected(_bezierControlPoints[i].x() - 800, 800- _bezierControlPoints[i].y(), _proj, _view, _model);
 
+	for (int i = 0; i < 4;i++)
+		curvePoints.row(i) = GetPositionUnprojected(_bezierControlPoints[i].x() - 800, 800 - _bezierControlPoints[i].y(), _proj, _view, _model);
 	M << -1, 3, -3, 1,
 		3, -6, 3, 0,
 		-3, 3, 0, 0,
 		1, 0, 0, 0;
 
-	MG_Result = M * curvePoints; 
+	MG_Result = M * curvePoints;
+
+	std::vector<Eigen::Vector3f> moves;
 
 	float stepSize = 0.05;
 	while (t <= 1) {
@@ -40,12 +41,16 @@ void BezierMove::CalculateBezierMoves() {
 		T[2] = t;
 		T[3] = 1;
 
-		currentPosition = (T * MG_Result);
-		std::cout << currentPosition << std::endl;
-		_objectCalculatedMoves.push_back(currentPosition);
-		t += stepSize; 
-	} 
+		calculatedNewPos = (T * MG_Result);
+		moves.push_back(calculatedNewPos);
+		t += stepSize;
+	}
+	float smoothFactor = 0.7;
+	for (int i = 1;i < moves.size(); i++)
+		_objectCalculatedMoves.push_back((moves[i] - moves[i - 1]) * smoothFactor + _game->data_list[_objectId]->GetTranslation().cast<float>());
 }
+
+
 Eigen::Vector3f BezierMove::GetPositionUnprojected(float posX, float posY, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model) {
 
 
