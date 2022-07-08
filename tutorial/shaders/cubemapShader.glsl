@@ -27,7 +27,7 @@ void main()
    vec4 tmpColor = texture(sampler1, lookat);
 
   float fogDistance = gl_FragCoord.z / gl_FragCoord.w;;
-  float fogAmount =  fogEffect(fogDistance, 0.008);
-   vec4 fogColor = vec4(1,0,0,0);
+  float fogAmount =  fogEffect(fogDistance, 0.015);
+   vec4 fogColor = vec4(0.5,0.6,0.7,0);
   Color = mix(tmpColor, fogColor, fogAmount);
 }  
