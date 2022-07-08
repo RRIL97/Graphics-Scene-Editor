@@ -18,6 +18,7 @@
 #include "../ViewerData.h"
 #include "ViewerPlugin.h"
 #include "igl/opengl/Movable.h"
+#include "igl/opengl/Camera.h"
 #include "igl/opengl/glfw/Material.h"
 
 
@@ -64,7 +65,11 @@ namespace glfw
     virtual void Init(const std::string config);
 	virtual void Animate() {}
 	virtual void WhenTranslate() {}
-	virtual Eigen::Vector3d GetCameraPosition() { return Eigen::Vector3d(0, 0, 0); }
+    void setCamere(igl::opengl::Camera* Camera) {
+        currCamera = Camera;
+
+    }
+    virtual Eigen::Vector3d GetCameraPosition() { return currCamera->MakeTransd().col(3).head(3); }
 	virtual Eigen::Vector3d GetCameraForward() { return Eigen::Vector3d(0, 0, -1); }
 	virtual Eigen::Vector3d GetCameraUp() { return Eigen::Vector3d(0, 1, 0); }
 
@@ -155,6 +160,11 @@ namespace glfw
     bool removeLayer(std::string name);
     bool setLayer(std::string name);
     void updateMaterialForSelectedShapes(int materialIndx);
+    void makeBlur();
+    void removeBlur();
+    void makeTransparent();
+    void removeTransparent();
+
 
 public:
     //////////////////////
@@ -185,7 +195,10 @@ public:
     std::vector<layer*> layers;
     std::vector<std::string> ThemeNames;
     int themeIndex = 0;
-
+    float fogDensity = 0.01f;
+    bool showFog = false;
+    float sigmaBlur = 1.0f;
+    igl::opengl::Camera* currCamera;
     // List of registered plugins
 //    std::vector<ViewerPlugin*> plugins;
 

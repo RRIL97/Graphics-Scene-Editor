@@ -226,7 +226,28 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     }
   }
   // Choose theme
-  if (ImGui::CollapsingHeader("Theme", ImGuiTreeNodeFlags_DefaultOpen))
+ /* if (ImGui::CollapsingHeader("Theme", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+      if (ImGui::BeginCombo("", viewer->ThemeNames[prevSelectedTheme].c_str())) {
+          for (int i = 0; i < viewer->ThemeNames.size(); i++) {
+              bool selected = prevSelectedTheme == i;
+              if (ImGui::Selectable(viewer->ThemeNames[i].c_str(), selected)) {
+                  prevSelectedTheme = i;
+              }
+              if (selected) {
+                  ImGui::SetItemDefaultFocus();
+              }
+          }
+          ImGui::EndCombo();
+      }
+
+      if (ImGui::Button("set Theme", ImVec2((w - p), 0)))
+      {
+          viewer->SetShapeMaterial(0, prevSelectedTheme);
+      }
+  }*/
+
+   if (ImGui::CollapsingHeader("Theme", ImGuiTreeNodeFlags_DefaultOpen))
   {
       for(int i =0 ; i< viewer->ThemeNames.size();i++)
       if (ImGui::RadioButton(viewer->ThemeNames[i].c_str(),&current_selected_radio,i))
@@ -236,6 +257,11 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
               viewer->SetShapeMaterial(0, prevSelectedTheme);
           }
       }
+  }
+  if (ImGui::CollapsingHeader("fog Options", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+      ImGui::Checkbox("Show fog", &viewer->showFog);
+      ImGui::DragFloat("density", &viewer->fogDensity, 0.001f, 0.005f, 0.02f);
   }
   // Viewing options
   if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_DefaultOpen))
@@ -284,7 +310,55 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       ImGui::ColorEdit4("Background", drawInfos[1]->Clear_RGBA.data(),
       ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
 
-  
+  if (ImGui::CollapsingHeader("Objects Options", ImGuiTreeNodeFlags_DefaultOpen))
+   {
+      ImGui::Text("Material Options:");
+      if (ImGui::BeginCombo("", currentMaterial.c_str())) {
+              for (int i = 4; i < viewer->materials.size(); i++) {
+
+                  bool selected = strcmp(currentMaterial.c_str(), viewer->materials[i]->getName().c_str());
+                  if (ImGui::Selectable(viewer->materials[i]->getName().c_str(), selected)) {
+                      currentMaterial = viewer->materials[i]->getName();
+                      materialIndx = i;
+                  }
+                  if (selected) {
+                      ImGui::SetItemDefaultFocus();
+                  }
+              }
+              ImGui::EndCombo();
+          }
+          if (ImGui::Button("set Material", ImVec2((w - p) / 2.0f, 0)))
+          {
+              viewer->updateMaterialForSelectedShapes(materialIndx);
+          }
+          ImGui::SameLine(0, p);
+          if (ImGui::Button("add Material", ImVec2((w - p) / 2.0f, 0)))
+          {
+              viewer->open_dialog_load_Texture();
+          }
+
+      ImGui::Text("Blur Options:");
+      if (ImGui::Button("make blur", ImVec2((w - p)/2.0f, 0)))
+      {
+          viewer->makeBlur();
+      }
+      ImGui::SameLine(0, p);
+      if (ImGui::Button("remove blur", ImVec2((w - p)/2.0f, 0)))
+      {
+          viewer->removeBlur();
+      }
+      ImGui::Text("Transparent Options:");
+      if (ImGui::Button("make transperent", ImVec2((w - p), 0)))
+      {
+          viewer->makeTransparent();
+      }
+      if (ImGui::Button("remove transparent", ImVec2((w - p) , 0)))
+      {
+          viewer->removeTransparent();
+      }
+
+
+   }
   if (ImGui::CollapsingHeader("layers", ImGuiTreeNodeFlags_DefaultOpen))
   {
       ImGui::InputText("Name", layerName , 30);
@@ -330,36 +404,10 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
               [&]() { return iter->isVisible; },
               [&](bool value) { iter->isVisible = value; });
       }
-      if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
-      {
-          if (ImGui::BeginCombo("", currentMaterial.c_str())) {
-              for (int i = 4; i < viewer->materials.size(); i++) {
-
-                  bool selected = strcmp(currentMaterial.c_str(), viewer->materials[i]->getName().c_str());
-                  if (ImGui::Selectable(viewer->materials[i]->getName().c_str(), selected)) {
-                      currentMaterial = viewer->materials[i]->getName();
-                      materialIndx = i;
-                  }
-                  if (selected) {
-                      ImGui::SetItemDefaultFocus();
-                  }
-              }
-              ImGui::EndCombo();
-            }
-          if (ImGui::Button("set Material", ImVec2((w - p), 0)))
-          {
-              viewer->updateMaterialForSelectedShapes(materialIndx);
-          }
-          if (ImGui::Button("add Material", ImVec2((w - p), 0)))
-          {
-              viewer->open_dialog_load_Texture();
-          }
-
-      }
       ImGui::Text(errorMsg.c_str());
-    
-
   }
+  
+
   ImGui::End();
 }
 

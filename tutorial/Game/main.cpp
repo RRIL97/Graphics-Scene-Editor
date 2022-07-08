@@ -27,13 +27,17 @@ int main(int argc,char *argv[])
 	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for plane
 	//blending
 	rndr->AddDraw(2, 0, 0, 0, rndr->inAction2 | rndr->scissorTest | rndr->blend );
-	//line 
+	//picking objects view port 
 	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shape
-
 	//rndr->AddDraw(3, 0, 4, 0, rndr->stencilTest| rndr->depthTest | rndr->stencil2 | rndr->scaleAbit | rndr->inAction2 |rndr->onPicking);
 	//rndr->AddDraw(2, 0, 4, 0, rndr->stencilTest | rndr->inAction2 | rndr->depthTest);
-	glEnable(GL_BLEND); 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);   glClearColor(0.0, 0.0, 0.0, 0.0);
+
+	//tranparent objects view port 
+	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); 
+	rndr->CopyDraw(1,rndr->viewport, 4);
+	rndr->ClearDrawFlag(4, rndr->toClear);
+	rndr->SetDrawFlag(4,rndr->blend);
+
 	disp.SetRenderer(rndr);
     disp.launch_rendering(rndr);
 	 

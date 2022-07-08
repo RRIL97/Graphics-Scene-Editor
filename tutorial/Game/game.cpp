@@ -64,6 +64,8 @@ void Game::Init()
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/bezierShader");
 	AddShader("./shaders/blurShader");
+	AddShader("./shaders/pickingShader");
+
 
 	AddTexture("./textures/cubemaps/Daylight Box_", 3);
 	AddTexture("./textures/cubemaps/ocean/ocean_", 3);
@@ -87,7 +89,7 @@ void Game::Init()
 	pickedShape = 0;
 	ShapeTransformation(scaleAll, 100, 0);
 	SetShapeStatic(pickedShape);
-	//
+	//scissors
 	AddShape(Plane, -2, TRIANGLES, 2);
 	SetShapeShader(1, 4);
 	pickedShape = 1;
@@ -95,6 +97,7 @@ void Game::Init()
 	ShapeTransformation(zTranslate, -1.1, 1);
 	SetShapeStatic(pickedShape);
 	pickedShape = 2;
+
 	AddShape(Cube, -1, TRIANGLES);
 	SetShapeMaterial(2, 4);
 
@@ -112,6 +115,13 @@ void Game::Init()
 	bezierControlPoints.push_back(Eigen::Vector2f(1100.0, 350.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1500.0, 450.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1550.0, 650.0));
+	pickedShape = 0;
+
+	/*AddShape(Cube, -1, TRIANGLES, 4);
+	SetShapeShader(6, 4);
+	pickedShape = 6;
+	SetShapeMaterial(pickedShape, 4);*/
+	//ShapeTransformation(zTranslate, -1.1, 1);
 	pickedShape = 0;
 
 }
@@ -148,11 +158,17 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	{ 
 		BindMaterial(s, data_list[shapeIndx]->GetMaterial());
 	} 
-	if (shaderIndx == 0)
+	if (shaderIndx == 0 )
 		s->SetUniform4f("lightColor", r / 255.0f, g / 255.0f, b / 255.0f, 0.0f);
+	else if(shaderIndx == 7)
+		s->SetUniform4f("lightColor", 0.5f, 0.6f, 0.7f, 0.5f);
 	else
 		s->SetUniform4f("lightColor", 4/100.0f, 6 / 100.0f, 99 / 100.0f, 0.5f);
-	 
+	if (shaderIndx == 3) {
+		s->SetUniform1f("fogDensity",fogDensity);
+		s->SetUniform1i("showFog", showFog ? 1 : 0);
+
+	}
 	if (shaderIndx == 5) {
 		s->SetUniform1f("p1_x", bezierControlPoints[0].x());
 		s->SetUniform1f("p1_y", bezierControlPoints[0].y());
@@ -164,6 +180,13 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("p4_y", bezierControlPoints[3].y());
 		s->SetUniform1f("POINT_RADIUS", g_pointRadius); 
 	} 
+	if (shaderIndx == 6) {
+		Eigen::Vector3d pos = data_list[shapeIndx]->MakeTransd().col(3).head(3);
+		sigmaBlur = abs(GetCameraPosition().cast<float>()[2] - pos.cast<float>()[2]);
+		sigmaBlur = sigmaBlur > 4.0f ?  1.0f + sigmaBlur / 5.0f : 1.0f;
+		s->SetUniform1f("sigma", sigmaBlur);
+	
+	}
 
 	//Move only selected objects according to the bezier curve.  
 	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {

@@ -155,7 +155,7 @@ IGL_INLINE void Renderer::draw( GLFWwindow* window)
     int indx = 0;
     for (auto& info : drawInfos)
     {
-        if (!(info->flags & (inAction | inAction2)) || ((info->flags & inAction2) && !(info->flags & stencilTest) && isPressed && !isPicked) || ((info->flags & inAction2) && (info->flags & stencilTest)  && isPicked ))
+        if (!(info->flags & (inAction | inAction2)) || ((info->flags & inAction2) && !(info->flags & scissorTest)) || ((info->flags & inAction2) && !(info->flags & stencilTest) && isPressed && !isPicked) || ((info->flags & inAction2) && (info->flags & stencilTest)  && isPicked ))
             draw_by_info(indx);
         indx++;
     }
@@ -490,6 +490,8 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     scn = scene;
     menu = _menu;
     MoveCamera(0, zTranslate, 10);
+    currCamera = cameras[0];
+    scene->setCamere(currCamera);
     Eigen::Vector4i viewport;
     glGetIntegerv(GL_VIEWPORT, viewport.data());
     buffers.push_back(new igl::opengl::DrawBuffer());

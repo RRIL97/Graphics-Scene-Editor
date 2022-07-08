@@ -193,6 +193,7 @@ private:
     // Stores all the viewing options
 //    std::vector<igl::opengl::ViewerCore> core_list;
     std::vector<igl::opengl::Camera*> cameras;
+    igl::opengl::Camera* currCamera;
     igl::opengl::glfw::Viewer* scn;
     std::vector<Eigen::Vector4i> viewports;
     std::vector<DrawInfo *> drawInfos;

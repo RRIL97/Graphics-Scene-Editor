@@ -442,62 +442,65 @@ IGL_INLINE bool
         for (int i = 0; i < data_list.size(); i++)
         {
             auto shape = data_list[i];
-            if (shape->Is2Render(viewportIndx)&& layers[shape->layer]->isVisible)
-            {
-
-                Eigen::Matrix4f Model = shape->MakeTransScale();
-
-                if (!shape->IsStatic())
+            if ((viewportIndx != 4 && !shape->Is2Render(4)) || viewportIndx == 4) {
+                if (shape->Is2Render(viewportIndx) && layers[shape->layer]->isVisible)
                 {
 
-                    Model = Normal * GetPriviousTrans(View.cast<double>(),i).cast<float>() * Model;
-                }
-                else if (parents[i] == -2) {
-                    Model = View.inverse() * Model;
-                }
-                if (!(flgs & 65536))
-                {
-                    Update(Proj, View, Model, shape->GetShader(),i);
-                    // Draw fill
-                    if (shape->show_faces & property_id)
-                        shape->Draw(shaders[shape->GetShader()], true);
-                    if (shape->show_lines & property_id) {
-                        glLineWidth(shape->line_width);
-                        shape->Draw(shaders[shape->GetShader()],false);
+                    Eigen::Matrix4f Model = shape->MakeTransScale();
+
+                    if (!shape->IsStatic())
+                    {
+
+                        Model = Normal * GetPriviousTrans(View.cast<double>(), i).cast<float>() * Model;
                     }
-                    // overlay draws
-                    if(shape->show_overlay & property_id){
-                        if (shape->show_overlay_depth & property_id)
+                    else if (parents[i] == -2) {
+                        Model = View.inverse() * Model;
+                    }
+
+                    if (!(flgs & 65536))
+                    {
+                        Update(Proj, View, Model, shape->GetShader(), i);
+                        // Draw fill
+                        if (shape->show_faces & property_id)
+                            shape->Draw(shaders[shape->GetShader()], true);
+                        if (shape->show_lines & property_id) {
+                            glLineWidth(shape->line_width);
+                            shape->Draw(shaders[shape->GetShader()], false);
+                        }
+                        // overlay draws
+                        if (shape->show_overlay & property_id) {
+                            if (shape->show_overlay_depth & property_id)
+                                glEnable(GL_DEPTH_TEST);
+                            else
+                                glDisable(GL_DEPTH_TEST);
+                            if (shape->lines.rows() > 0)
+                            {
+                                Update_overlay(Proj, View, Model, i, false);
+                                glEnable(GL_LINE_SMOOTH);
+                                shape->Draw_overlay(overlay_shader, false);
+                            }
+                            if (shape->points.rows() > 0)
+                            {
+                                Update_overlay(Proj, View, Model, i, true);
+                                shape->Draw_overlay_pints(overlay_point_shader, false);
+                            }
                             glEnable(GL_DEPTH_TEST);
-                        else
-                            glDisable(GL_DEPTH_TEST);
-                        if (shape->lines.rows() > 0)
-                        {
-                            Update_overlay(Proj, View, Model,i,false);
-                            glEnable(GL_LINE_SMOOTH);
-                            shape->Draw_overlay(overlay_shader,false);
                         }
-                        if (shape->points.rows() > 0)
-                        {
-                            Update_overlay(Proj, View, Model,i,true);
-                            shape->Draw_overlay_pints(overlay_point_shader,false);
-                        }
-                    glEnable(GL_DEPTH_TEST);
-                    }
-                }
-                else
-                { //picking
-                    if (flgs & 16384)
-                    {   //stencil
-                        Eigen::Affine3f scale_mat = Eigen::Affine3f::Identity();
-                        scale_mat.scale(Eigen::Vector3f(1.1f, 1.1f, 1.1f));
-                        Update(Proj, View , Model * scale_mat.matrix(), 0,i);
                     }
                     else
-                    {
-                        Update(Proj, View ,  Model, 0,i);
+                    { //picking
+                        if (flgs & 16384)
+                        {   //stencil
+                            Eigen::Affine3f scale_mat = Eigen::Affine3f::Identity();
+                            scale_mat.scale(Eigen::Vector3f(1.1f, 1.1f, 1.1f));
+                            Update(Proj, View, Model * scale_mat.matrix(), 0, i);
+                        }
+                        else
+                        {
+                            Update(Proj, View, Model, 0, i);
+                        }
+                        shape->Draw(shaders[0], true);
                     }
-                    shape->Draw(shaders[0], true);
                 }
             }
         }
@@ -941,13 +944,37 @@ IGL_INLINE bool
     }
 
     void Viewer::updateMaterialForSelectedShapes(int materialIndx) {
-        printf("update was called");
         for (int pShape : pShapes) {
             SetShapeMaterial(pShape, materialIndx);
         }
     }
+    void Viewer::makeBlur() {
+        for (int pShape : pShapes) {
+            SetShapeShader(pShape,6);
+        }
+    }
+    void Viewer::removeBlur() {
+        for (int pShape : pShapes) {
+            SetShapeShader(pShape, 1);
+        }
+    }
 
+    void Viewer::makeTransparent() {
+        for (int pShape : pShapes) {
+            data_list[pShape]->AddViewport(4);
+            SetShapeShader(pShape, 7);
+          //  data_list[pShape]->RemoveViewport(0);
 
+        }
+    }
+    void Viewer::removeTransparent() {
+        for (int pShape : pShapes) {
+         //   data_list[pShape]->AddViewport(0);
+            SetShapeShader(pShape, 1);
+            data_list[pShape]->RemoveViewport(4);
+
+        }
+    }
 } // end namespace
 } // end namespace
 }
