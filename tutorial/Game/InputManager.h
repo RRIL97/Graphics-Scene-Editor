@@ -70,7 +70,15 @@
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Game* scn = (Game*)rndr->GetScene();
-		rndr->MoveCamera(0, scn->zTranslate, (float)-0.4f * yoffset);
+		if (rndr->IsPicked()) {
+			for (int pShape : scn->pShapes) {
+				scn->selected_data_index = pShape;
+				scn->ShapeTransformation(scn->zTranslate, (float)-0.4f * yoffset, 1);
+			}
+		}
+		else {
+			rndr->MoveCamera(0, scn->zTranslate, (float)-0.4f * yoffset);
+		}
 	}
 	
 	void glfw_cursor_position_callback(GLFWwindow* window, double xpos, double ypos)

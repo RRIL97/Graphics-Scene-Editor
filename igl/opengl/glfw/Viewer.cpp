@@ -787,8 +787,9 @@ IGL_INLINE bool
     {
         if (selected_data_index == 0 || data()->IsStatic())
             this->TranslateInSystem(preMat.block<3,3>(0,0), Eigen::Vector3d(0, 0, dy));
-        else if( selected_data_index > 0)
+        else if (selected_data_index > 0) {
             data()->TranslateInSystem(preMat.block<3, 3>(0, 0), Eigen::Vector3d(0, 0, dy));
+        }
         WhenScroll(dy);
     }
 
@@ -963,13 +964,11 @@ IGL_INLINE bool
         for (int pShape : pShapes) {
             data_list[pShape]->AddViewport(4);
             SetShapeShader(pShape, 7);
-          //  data_list[pShape]->RemoveViewport(0);
 
         }
     }
     void Viewer::removeTransparent() {
         for (int pShape : pShapes) {
-         //   data_list[pShape]->AddViewport(0);
             SetShapeShader(pShape, 1);
             data_list[pShape]->RemoveViewport(4);
 

@@ -428,7 +428,6 @@ void Renderer::MouseProccessing(int button, int mode, int viewportIndx)
 {
     if (isPicked || button == 0)
     {
-
 		if(button == 2)
 			scn->MouseProccessing(button, zrel, zrel, CalcMoveCoeff(mode & 7, viewports[viewportIndx].w()), cameras[0]->MakeTransd(), viewportIndx);
 		else

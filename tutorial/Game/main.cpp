@@ -29,7 +29,7 @@ int main(int argc,char *argv[])
 	rndr->AddDraw(2, 0, 0, 0, rndr->inAction2 | rndr->scissorTest | rndr->blend );
 	//picking objects view port 
 	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shape
-	//rndr->AddDraw(3, 0, 4, 0, rndr->stencilTest| rndr->depthTest | rndr->stencil2 | rndr->scaleAbit | rndr->inAction2 |rndr->onPicking);
+	//rndr->AddDraw(3, 0, 4, 0, rndr->stencilTest| rndr->depthTest*/-*/-9*/-*-/-*//**/-/-9-9989*/ | rndr->stencil2 | rndr->scaleAbit | rndr->inAction2 |rndr->onPicking);
 	//rndr->AddDraw(2, 0, 4, 0, rndr->stencilTest | rndr->inAction2 | rndr->depthTest);
 
 	//tranparent objects view port 
