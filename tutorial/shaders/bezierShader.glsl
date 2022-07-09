@@ -1,7 +1,7 @@
-﻿#version 130
+#version 130
 
 #define POINT_COLOR vec4(0.75, 0.0, 0.0, 1.0)
-#define CURVE_COLOR vec4(0.0, 0.75, 0.0,1.0) 
+#define CURVE_COLOR vec4(0.0, 0.75, 0.0,1.0)
 
 uniform float POINT_RADIUS;
 
@@ -20,21 +20,21 @@ void main()
     vec2 p2 = vec2(p2_x,p2_y);
     vec2 p3 = vec2(p3_x,p3_y);
     vec2 p4 = vec2(p4_x,p4_y);
-    
+   
     if (length(gl_FragCoord.xy - p1) < POINT_RADIUS ||
         length(gl_FragCoord.xy - p2) < POINT_RADIUS ||
-        length(gl_FragCoord.xy - p3) < POINT_RADIUS || 
+        length(gl_FragCoord.xy - p3) < POINT_RADIUS ||
         length(gl_FragCoord.xy - p4) < POINT_RADIUS)
     {
         gl_FragColor = POINT_COLOR;
     }
     else
-    {   
+    {  
     vec2 curvePts[50];
     float t = 50.0f;
     int counter = 0;
     for(float i = 0.; i < 1.0; i += 1./t)
-    { 
+    {
         vec2 q0 = mix(p1, p2, i);
         vec2 q1 = mix(p2, p3, i);
         vec2 q2 = mix(p3, p4, i);
@@ -47,7 +47,7 @@ void main()
         counter = counter + 1;
      }
 
-     int colored = 0; 
+     int colored = 0;
      for(int i = 0 ; i < 50 ; i++){
          if(length(gl_FragCoord.xy - curvePts[i]) < POINT_RADIUS)
          {
@@ -57,6 +57,6 @@ void main()
          }
      }
       if(colored == 0)
-          gl_FragColor = vec4(0.0); 
+          gl_FragColor = vec4(0.0);
     }
 }
