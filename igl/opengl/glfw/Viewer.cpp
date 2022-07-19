@@ -966,7 +966,6 @@ IGL_INLINE bool
     }
 
     void Viewer::makeTransparent() {
-        printf("in make transparent!\n");
         for (int pShape : pShapes) {
             data_list[pShape]->AddViewport(4);
             SetShapeShader(pShape, 7);
