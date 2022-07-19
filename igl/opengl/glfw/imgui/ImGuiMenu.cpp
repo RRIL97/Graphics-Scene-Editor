@@ -338,6 +338,13 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       }
 
   }
+  if (ImGui::CollapsingHeader("screen Options", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+      ImGui::Checkbox("split x",
+          [&]() { return viewer->isSplitX; },
+          [&](bool value) { viewer->isSplitX = value;
+      viewer->splitX(); });
+  }
 
   // Helper for setting viewport specific mesh options
   auto make_checkbox = [&](const char *label, unsigned int &option)
@@ -388,12 +395,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           viewer->removeBlur();
       }
       ImGui::Text("Transparent Options:");
-      if (ImGui::Button("make", ImVec2((w - p) / 2.0f, 0)))
+      if (ImGui::Button("set", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->makeTransparent();
       }
       ImGui::SameLine(0, p);
-      if (ImGui::Button("remove", ImVec2((w - p) / 2.0f, 0)))
+      if (ImGui::Button("unset", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->removeTransparent();
       }

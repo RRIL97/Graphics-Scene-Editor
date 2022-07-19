@@ -443,7 +443,8 @@ IGL_INLINE bool
         {
             auto shape = data_list[i];
             if ((viewportIndx != 4 && shape->Is2Render(4)) 
-              /* || (viewportIndx != 3 && shape->Is2Render(3))*/) {
+              /*  (viewportIndx != 3 && shape->Is2Render(3))*/) {
+                printf("here\n");
                 continue;
             }
 
@@ -965,6 +966,7 @@ IGL_INLINE bool
     }
 
     void Viewer::makeTransparent() {
+        printf("in make transparent!\n");
         for (int pShape : pShapes) {
             data_list[pShape]->AddViewport(4);
             SetShapeShader(pShape, 7);

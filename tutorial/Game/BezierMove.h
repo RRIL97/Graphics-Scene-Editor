@@ -45,6 +45,8 @@ private:
 	Eigen::Matrix4f _proj;
 	Eigen::Matrix4f _view;
 	Eigen::Matrix4f _model;
+	float HEIGHT = 1000;
+	float WIDTH = 1200;
 
 	Game* _game;
 

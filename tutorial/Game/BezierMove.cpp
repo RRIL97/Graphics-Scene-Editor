@@ -23,7 +23,7 @@ void BezierMove::CalculateBezierMoves() {
 	float                         t = 0;
 
 	for (int i = 0; i < 4;i++)
-		curvePoints.row(i) = GetPositionUnprojected(_bezierControlPoints[i].x() - 800, 800 - _bezierControlPoints[i].y(), _proj, _view, _model);
+		curvePoints.row(i) = GetPositionUnprojected(_bezierControlPoints[i].x() - WIDTH, HEIGHT - _bezierControlPoints[i].y(), _proj, _view, _model);
 	M << -1, 3, -3, 1,
 		3, -6, 3, 0,
 		-3, 3, 0, 0,
@@ -55,7 +55,7 @@ Eigen::Vector3f BezierMove::GetPositionUnprojected(float posX, float posY, const
 
 
 	Eigen::Matrix4f modelview = View * Model;
-	Eigen::Vector4f viewport = { 0.0, 0.0, 800, 800 };
+	Eigen::Vector4f viewport = { 0.0, 0.0, WIDTH, HEIGHT };
 
 	float winX = posX;
 	float winY = viewport[3] - posY;

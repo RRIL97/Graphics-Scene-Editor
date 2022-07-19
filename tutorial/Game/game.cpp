@@ -111,25 +111,30 @@ void Game::Init()
 	SetShapeShader(5, 6);
 	SetShapeMaterial(5, 4);
 
-	bezierControlPoints.push_back(Eigen::Vector2f(880.0, 200.0));
-	bezierControlPoints.push_back(Eigen::Vector2f(1100.0, 350.0));
-	bezierControlPoints.push_back(Eigen::Vector2f(1500.0, 450.0));
-	bezierControlPoints.push_back(Eigen::Vector2f(1550.0, 650.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1280.0, 200.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1500.0, 350.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1900.0, 450.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1950.0, 650.0));
 	pickedShape = 0;
+	//scissors
+	AddShape(Plane, -1, TRIANGLES, 5);
+	splitPlaneIndx = 6;
+	data_list[splitPlaneIndx]->RemoveViewport(5);
+	SetShapeStatic(splitPlaneIndx);
+	//SetShapeShader(splitPlaneIndx, 4);
 
 	/*AddShape(Cube, -1, TRIANGLES, 4);
 	SetShapeShader(6, 4);
 	pickedShape = 6;
 	SetShapeMaterial(pickedShape, 4);*/
 	//ShapeTransformation(zTranslate, -1.1, 1);
-	pickedShape = 0;
 
 }
 
 void Game::setPressControlPoint(float x, float y) {
 	Eigen::Vector2f press(x,  y); 
 	for (int i = 0;i < bezierControlPoints.size(); i++) { 
-		if ((press - Eigen::Vector2f(bezierControlPoints[i].x(), 800 - bezierControlPoints[i].y())).norm() < g_distanceClickControlThreshold) {
+		if ((press - Eigen::Vector2f(bezierControlPoints[i].x(), 1000 - bezierControlPoints[i].y())).norm() < g_distanceClickControlThreshold) {
 			std::cout << " Chosen Control Point :  " << i << std::endl;
 			g_chosenControlPoint = i;
 		}
@@ -137,7 +142,7 @@ void Game::setPressControlPoint(float x, float y) {
 }
 
 void Game::updateCurve(float x,  float y) {
-	bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x  , 800 - y);
+	bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x  , 1000 - y);
 }
   
 

@@ -518,10 +518,12 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
         std::list<int>::iterator yit = yViewport.begin();
         for (++yit; yit != yViewport.end(); ++yit)
         {
+            printf("prev x  %d curr x %d\n", *std::prev(xit), *xit);
+            printf("prev y  %d curr y %d\n", *std::prev(yit), *yit);
+
             viewports.emplace_back(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit));
 
             if ((1 << indx) & pickingBits) {
-                printf("adding draw info for viewport %d", indx);
                 DrawInfo* new_draw_info = new DrawInfo(indx, 0, 0, 0,
                                                   1 | inAction | depthTest | stencilTest | passStencil | blackClear |
                                                   clearStencil | clearDepth | onPicking ,
@@ -553,22 +555,26 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
 }
 IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY_HEIGHT)
 {
-    AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10, 2);//adding camera for view port 1
+    AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10, 2);//adding camera for viewport 1
     addCameraToDesignMode("animation");
-    AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for plane
+    AddViewport(0, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT); //add viewport for plane
     //blending
     AddDraw(2, 0, 0, 0, inAction2 | scissorTest | blend);
     //picking objects view port 
-    AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shape
+    AddViewport(0, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT); //add viewport for picking shape
     //AddDraw(3, 0, 4, 0, stencilTest| depthTest| stencil2 | scaleAbit | inAction2 |onPicking);
     //AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
 
     //tranparent objects view port 
-    AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT);
+    AddViewport(0, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT);
     CopyDraw(1, viewport, 4);
     ClearDrawFlag(4, toClear);
     SetDrawFlag(4, blend);
 
+    // add viewport for rendring the split 
+    AddViewport(DISPLAY_WIDTH / 2, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT);
+     CopyDraw(2, viewport, 5);
+   // ClearDrawFlag(4, toClear);
 }
 
 void Renderer::changeCamera(int cameraIndx)
