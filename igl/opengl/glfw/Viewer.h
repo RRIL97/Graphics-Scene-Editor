@@ -65,7 +65,7 @@ namespace glfw
     virtual void Init(const std::string config);
 	virtual void Animate() {}
 	virtual void WhenTranslate() {}
-    void setCamere(igl::opengl::Camera* Camera) {
+    void setCamera(igl::opengl::Camera* Camera) {
         currCamera = Camera;
 
     }

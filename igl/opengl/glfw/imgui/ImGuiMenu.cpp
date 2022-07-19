@@ -10,6 +10,7 @@
 //#include "ImGuiHelpers.h"
 #include <igl/project.h>
 #include "ImGuiHelpers.h"
+#include "igl/opengl/glfw/renderer.h"
 
 #include "ImGuiMenu.h"
 #include "../imgui.h"
@@ -298,6 +299,45 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
 
       ImGui::PopItemWidth();
   }
+  if (ImGui::CollapsingHeader("Cameras Options", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+      ImGui::InputText("name", cameraName, 30);
+     // ImGui::SameLine(0, p);
+      if (ImGui::Button("add Camera", ImVec2((w - p) / 2.0f, 0))){
+          if (std::string(cameraName).empty())
+              errorMsg = "please enter camera name";
+
+          else {
+              rndr->addCameraToDesignMode(cameraName);
+              errorMsg = "Successfully added camera";
+
+          }
+      }
+      if (ImGui::BeginCombo("", camera[0]->name.c_str())) {
+          for (int i = 0; i < camera.size(); i++) {
+              if (i == 1) { //the camera for viewport1 
+                  continue; 
+              }
+              bool selected = prevSelectedCamera == camera[i]->name;
+              if (ImGui::Selectable(camera[i]->name.c_str(), selected)) {
+                  prevSelectedCamera = camera[i]->name;
+                  prevSelectedCameraIndx = i;
+              }
+              if (selected) {
+                  ImGui::SetItemDefaultFocus();
+              }
+          }
+          ImGui::EndCombo();
+      }
+      //ImGui::SameLine(0, p);
+      if (ImGui::Button("set Camera", ImVec2((w - p)/2.0f, 0)))
+      {
+          rndr->changeCamera(prevSelectedCameraIndx);
+          prevSelectedCameraIndx = 0;
+          errorMsg = "Successfully changed camera";
+      }
+
+  }
 
   // Helper for setting viewport specific mesh options
   auto make_checkbox = [&](const char *label, unsigned int &option)
@@ -338,21 +378,22 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           }
 
       ImGui::Text("Blur Options:");
-      if (ImGui::Button("make blur", ImVec2((w - p)/2.0f, 0)))
+      if (ImGui::Button("make", ImVec2((w - p)/2.0f, 0)))
       {
           viewer->makeBlur();
       }
       ImGui::SameLine(0, p);
-      if (ImGui::Button("remove blur", ImVec2((w - p)/2.0f, 0)))
+      if (ImGui::Button("remove", ImVec2((w - p)/2.0f, 0)))
       {
           viewer->removeBlur();
       }
       ImGui::Text("Transparent Options:");
-      if (ImGui::Button("make transperent", ImVec2((w - p), 0)))
+      if (ImGui::Button("make", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->makeTransparent();
       }
-      if (ImGui::Button("remove transparent", ImVec2((w - p) , 0)))
+      ImGui::SameLine(0, p);
+      if (ImGui::Button("remove", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->removeTransparent();
       }

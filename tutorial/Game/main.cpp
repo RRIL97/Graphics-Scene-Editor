@@ -23,20 +23,7 @@ int main(int argc,char *argv[])
     Init(disp,menu); //adding callback functions
 	scn->Init();    //adding shaders, textures, shapes to scene
     rndr->Init(scn,x,y,1,menu); // adding scene and viewports to the renderer
-	rndr->AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10, 2);//adding camera
-	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for plane
-	//blending
-	rndr->AddDraw(2, 0, 0, 0, rndr->inAction2 | rndr->scissorTest | rndr->blend );
-	//picking objects view port 
-	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shape
-	//rndr->AddDraw(3, 0, 4, 0, rndr->stencilTest| rndr->depthTest*/-*/-9*/-*-/-*//**/-/-9-9989*/ | rndr->stencil2 | rndr->scaleAbit | rndr->inAction2 |rndr->onPicking);
-	//rndr->AddDraw(2, 0, 4, 0, rndr->stencilTest | rndr->inAction2 | rndr->depthTest);
-
-	//tranparent objects view port 
-	rndr->AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); 
-	rndr->CopyDraw(1,rndr->viewport, 4);
-	rndr->ClearDrawFlag(4, rndr->toClear);
-	rndr->SetDrawFlag(4,rndr->blend);
+	rndr->initProject(DISPLAY_WIDTH, DISPLAY_HEIGHT); // add camera and viewport for project
 
 	disp.SetRenderer(rndr);
     disp.launch_rendering(rndr);

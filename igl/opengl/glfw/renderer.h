@@ -115,7 +115,8 @@ public:
     void UpdatePress(float xpos, float ypos);
 
     void AddCamera(const Eigen::Vector3d &pos, float fov, float relationWH, float zNear, float zFar,
-                   int infoIndx = -1);
+                   int infoIndx = -1, std::string name = "");
+    void addCameraToDesignMode(std::string name);
 
     void AddViewport(int left, int bottom, int width, int height);
 
@@ -133,6 +134,8 @@ public:
 
     void MoveCamera(int cameraIndx, int type, float amt);
 
+    void changeCamera(int cameraIndx);
+    void switchToNextCamera();
     bool Picking(int x, int y);
 
     void OutLine();
@@ -187,6 +190,7 @@ public:
     inline bool IsTryToPickMany() const { return tryToPickMany; }
     void Init(igl::opengl::glfw::Viewer *scene, std::list<int> xViewport, std::list<int> yViewport, int pickingBits,igl::opengl::glfw::imgui::ImGuiMenu *_menu);
     void SwapDrawInfo(int indx1, int indx2);
+    IGL_INLINE void initProject(const int DISPLAY_WIDTH, const int DISPLAY_HEIGHT);
 
     int lastButtonPressed = -1;
 private:
@@ -194,6 +198,7 @@ private:
 //    std::vector<igl::opengl::ViewerCore> core_list;
     std::vector<igl::opengl::Camera*> cameras;
     igl::opengl::Camera* currCamera;
+    int currCameraIndx = 2;
     igl::opengl::glfw::Viewer* scn;
     std::vector<Eigen::Vector4i> viewports;
     std::vector<DrawInfo *> drawInfos;
@@ -216,6 +221,10 @@ private:
 	igl::opengl::glfw::imgui::ImGuiMenu* menu;
 	double z;
     bool tryToPickMany = false;
+    const float cameraAngle;
+    const float cameraRelationWH;
+    const float cameraNear;
+    const float cameraFar;
     void draw_by_info(int info_index = 1);
 
     void ActionDraw(int viewportIndx);

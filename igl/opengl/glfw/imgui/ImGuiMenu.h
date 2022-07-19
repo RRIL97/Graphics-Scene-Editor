@@ -10,6 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "igl/opengl/glfw/Viewer.h"
+
 //#include <igl/opengl/glfw/ViewerPlugin.h>
 
 //#include "igl/opengl/ViewerCore.h"
@@ -22,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-
+class Renderer;
 
 // Forward declarations
 struct ImGuiContext;
@@ -53,6 +54,10 @@ public:
     IGL_INLINE virtual void init(Display* disp);// override;
 
   IGL_INLINE virtual void reload_font(int font_size = 13);
+
+  IGL_INLINE virtual void setRendrer(Renderer* rendrer) {
+      rndr = rendrer;
+  }
 
   IGL_INLINE virtual void shutdown();// override;
 
@@ -96,9 +101,17 @@ public:
   std::function<void(void)> callback_draw_viewer_window;
   std::function<void(void)> callback_draw_viewer_menu;
   std::function<void(void)> callback_draw_custom_window;
+
+  Renderer* rndr;
   std::string errorMsg;
   char layerName[30] = "";
+  char cameraName[30] = "";
+
   int prevSelectedTheme = 0;
+  int prevSelectedCameraIndx = 0;
+
+  std::string prevSelectedCamera = "defualt";
+
   std::string currentMaterial = "box";
   int materialIndx = 4;
 

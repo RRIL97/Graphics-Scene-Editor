@@ -13,7 +13,7 @@ namespace igl {
         class Camera : public Movable {
         public:
             IGL_INLINE Camera();
-            IGL_INLINE Camera(float fov, float relationWH, float zNear, float zFar);
+            IGL_INLINE Camera(float fov, float relationWH, float zNear, float zFar,std::string name = "defualt");
 
             IGL_INLINE Eigen::Matrix4f GetViewProjection() const {
                 return _projection;
@@ -43,6 +43,7 @@ namespace igl {
             float _fov, _relationWH;
             float _far, _near, _length;
             bool _ortho;
+            std::string name;
 
         };
     }

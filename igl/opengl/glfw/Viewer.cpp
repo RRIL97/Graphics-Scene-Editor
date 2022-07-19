@@ -442,8 +442,12 @@ IGL_INLINE bool
         for (int i = 0; i < data_list.size(); i++)
         {
             auto shape = data_list[i];
-            if ((viewportIndx != 4 && !shape->Is2Render(4)) || viewportIndx == 4) {
-                if (shape->Is2Render(viewportIndx) && layers[shape->layer]->isVisible)
+            if ((viewportIndx != 4 && shape->Is2Render(4)) 
+              /* || (viewportIndx != 3 && shape->Is2Render(3))*/) {
+                continue;
+            }
+
+            if (shape->Is2Render(viewportIndx) && layers[shape->layer]->isVisible)
                 {
 
                     Eigen::Matrix4f Model = shape->MakeTransScale();
@@ -502,7 +506,7 @@ IGL_INLINE bool
                         shape->Draw(shaders[0], true);
                     }
                 }
-            }
+            
         }
     }
 

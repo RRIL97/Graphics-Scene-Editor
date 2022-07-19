@@ -12,7 +12,8 @@
 #endif
 
 
-Renderer::Renderer(float angle, float relationWH, float near, float far)
+Renderer::Renderer(float angle, float relationWH, float near, float far):
+    cameraAngle(angle),cameraRelationWH(relationWH),cameraNear(near),cameraFar(far)
 {
 
     callback_init = nullptr;
@@ -214,14 +215,24 @@ void Renderer::UpdatePress(float xpos, float ypos)
     yWhenPress = ypos;
 }
 
-void Renderer::AddCamera(const Eigen::Vector3d& pos, float fov, float relationWH, float zNear, float zFar, int infoIndx)
+void Renderer::AddCamera(const Eigen::Vector3d& pos, float fov, float relationWH, float zNear, float zFar, int infoIndx, std::string name)
 {
     if (infoIndx > 0 && infoIndx < drawInfos.size())
     {
         drawInfos[infoIndx]->SetCamera(cameras.size());
     }
-    cameras.push_back(new igl::opengl::Camera(fov, relationWH, zNear, zFar));
+    if (name.empty()) {
+        name = "defualt" + std::to_string(cameras.size());
+
+    }
+    cameras.push_back(new igl::opengl::Camera(fov, relationWH, zNear, zFar,name));
     cameras.back()->MyTranslate(pos, false);
+}
+
+void Renderer::addCameraToDesignMode(std::string name)
+{
+    cameras.push_back(new igl::opengl::Camera(cameraAngle, cameraRelationWH, cameraNear, cameraFar, name));
+    cameras.back()->MyTranslate(Eigen::Vector3d(0,0,10), false);
 }
 
 void Renderer::AddViewport(int left, int bottom, int width, int height)
@@ -488,9 +499,10 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
 {
     scn = scene;
     menu = _menu;
+    menu->setRendrer(this);
     MoveCamera(0, zTranslate, 10);
     currCamera = cameras[0];
-    scene->setCamere(currCamera);
+    scene->setCamera(currCamera);
     Eigen::Vector4i viewport;
     glGetIntegerv(GL_VIEWPORT, viewport.data());
     buffers.push_back(new igl::opengl::DrawBuffer());
@@ -509,6 +521,7 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
             viewports.emplace_back(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit));
 
             if ((1 << indx) & pickingBits) {
+                printf("adding draw info for viewport %d", indx);
                 DrawInfo* new_draw_info = new DrawInfo(indx, 0, 0, 0,
                                                   1 | inAction | depthTest | stencilTest | passStencil | blackClear |
                                                   clearStencil | clearDepth | onPicking ,
@@ -538,5 +551,42 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
         };
     }
 }
+IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY_HEIGHT)
+{
+    AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10, 2);//adding camera for view port 1
+    addCameraToDesignMode("animation");
+    AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for plane
+    //blending
+    AddDraw(2, 0, 0, 0, inAction2 | scissorTest | blend);
+    //picking objects view port 
+    AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT); //add viewport for picking shape
+    //AddDraw(3, 0, 4, 0, stencilTest| depthTest| stencil2 | scaleAbit | inAction2 |onPicking);
+    //AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
 
+    //tranparent objects view port 
+    AddViewport(0, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT);
+    CopyDraw(1, viewport, 4);
+    ClearDrawFlag(4, toClear);
+    SetDrawFlag(4, blend);
 
+}
+
+void Renderer::changeCamera(int cameraIndx)
+{
+    igl::opengl::Camera* curr = cameras[0];
+    cameras[0] = cameras[cameraIndx];
+    cameras[cameraIndx] = curr; 
+    scn->setCamera(cameras[0]);
+
+}
+
+void Renderer::switchToNextCamera()
+{
+    if (currCameraIndx == cameras.size()) {
+        currCameraIndx = 2; 
+
+    }
+    changeCamera(currCameraIndx);
+    currCameraIndx++;
+ 
+}

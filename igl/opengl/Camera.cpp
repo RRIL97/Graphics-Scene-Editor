@@ -11,7 +11,8 @@
 
 
 
-IGL_INLINE igl::opengl::Camera::Camera(float fov,float relationWH, float zNear, float zFar)
+IGL_INLINE igl::opengl::Camera::Camera(float fov,float relationWH, float zNear, float zFar, std::string name)
+    :name(name)
 {
     this->_length = 2.0f;
     if(fov > 0) //prerspective
