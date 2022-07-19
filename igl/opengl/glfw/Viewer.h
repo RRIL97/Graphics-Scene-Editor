@@ -199,6 +199,12 @@ public:
     std::vector<Shader*> shaders;
     int pickedViewPort;
     int nextLayerId = 1;
+     
+    bool stopAnimation = false;
+    int _bezierObjectCount = 0;
+    int  animationDelay = 0;
+    int  playAnimationMiliTime = 0;
+
     std::vector<layer*> layers;
     std::vector<std::string> ThemeNames;
     int themeIndex = 0;

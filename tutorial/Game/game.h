@@ -9,7 +9,6 @@ class Game : public igl::opengl::glfw::Viewer
 	int time; 
 public:
 	int  pickedShape;
-	int _bezierObjectCount = 0;
 
 	std::vector<Eigen::Vector3f> uanim; 
 

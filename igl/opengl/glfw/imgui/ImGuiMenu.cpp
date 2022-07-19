@@ -407,6 +407,23 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
 
 
    }
+
+  if (ImGui::CollapsingHeader("Animation Options", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+      ImGui::SliderInt("Animation Start Delay", &viewer->animationDelay, 0, 5);
+      if (ImGui::Button("Start Animation", ImVec2((w - p), 0)))
+      {
+          viewer->_bezierObjectCount = viewer->pShapes.size(); 
+          viewer->stopAnimation = false;
+          viewer->playAnimationMiliTime =  time(NULL);
+          
+      } 
+      if (ImGui::Button("Stop Animation", ImVec2((w - p), 0)))
+      {
+          viewer->stopAnimation = true;
+      }
+
+  }
   if (ImGui::CollapsingHeader("layers", ImGuiTreeNodeFlags_DefaultOpen))
   {
       ImGui::InputText("Name", layerName , 30);
