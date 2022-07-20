@@ -14,6 +14,7 @@ BezierMove::BezierMove(Game * game, int objectId , std::vector<Eigen::Vector2f> 
 
 
 void BezierMove::CalculateBezierMoves() {
+	_objectCalculatedMoves.clear();
 	Eigen::Matrix4f               M;
 	Eigen::Matrix <float, 4, 3 >  MG_Result;
 	Eigen::Matrix <float, 4, 3 >  curvePoints;
@@ -33,7 +34,7 @@ void BezierMove::CalculateBezierMoves() {
 
 	std::vector<Eigen::Vector3f> moves;
 
-	float stepSize = 0.05;
+	float stepSize = 0.02;
 	while (t <= 1) {
 
 		T[0] = powf(t, 3);

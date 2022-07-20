@@ -181,7 +181,6 @@
 			case GLFW_KEY_B:
 				//rndr->MoveCamera(0, scn->zTranslate, 0.5f);
 
-				scn->_bezierObjectCount = scn->pShapes.size();
 				break;
 			case GLFW_KEY_F:
 				rndr->MoveCamera(0, scn->zTranslate, -0.5f);

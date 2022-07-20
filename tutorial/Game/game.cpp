@@ -111,10 +111,11 @@ void Game::Init()
 	SetShapeShader(5, 6);
 	SetShapeMaterial(5, 4);
 
-	bezierControlPoints.push_back(Eigen::Vector2f(1280.0, 200.0));
-	bezierControlPoints.push_back(Eigen::Vector2f(1500.0, 350.0));
-	bezierControlPoints.push_back(Eigen::Vector2f(1900.0, 450.0));
-	bezierControlPoints.push_back(Eigen::Vector2f(1950.0, 650.0));
+
+	bezierControlPoints.push_back(Eigen::Vector2f(1080.0, 200.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1300.0, 350.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1300.0, 550.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1450.0, 850.0));
 	pickedShape = 0;
 	//split x
 	AddShape(Plane, -1, TRIANGLES, 5);
@@ -200,11 +201,11 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {
 		std::cout << shapeIndx << std::endl;
 		BezierMove* bezier = new BezierMove(this, shapeIndx, bezierControlPoints, Proj, View, Model);
-		g_bezierObjects.push_back(bezier);
-
+		g_bezierObjects.push_back(bezier); 
 		_bezierObjectCount--;
-	}
-	 
+		std::cout << "Adding " << std::endl;
+
+	} 
 	s->Unbind();
 }
 
@@ -216,11 +217,21 @@ void Game::WhenRotate()
 void Game::WhenTranslate()
 {
 }
+ 
 
 void Game::Animate() { 
 		for (auto currBezierObj : g_bezierObjects) {
-			if (!currBezierObj->getHasDoneMoving()) {
-				data_list[currBezierObj->GetObjectId()]->SetTranslation(currBezierObj->GetNextMove().cast<double>()); 
+			if (std::time(NULL) - playAnimationMiliTime >= animationDelay) {
+				if (!currBezierObj->getHasDoneMoving()) {
+					data_list[currBezierObj->GetObjectId()]->SetTranslation(currBezierObj->GetNextMove().cast<double>());
+				}
+				else {
+					if (!stopAnimation) {
+						currBezierObj->CalculateBezierMoves();
+					}
+				}
+			}
+			else { 
 			}
 		}
 	    

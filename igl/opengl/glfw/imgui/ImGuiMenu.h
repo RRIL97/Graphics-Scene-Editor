@@ -112,7 +112,7 @@ public:
 
   std::string prevSelectedCamera = "defualt";
 
-  std::string currentMaterial = "box";
+  std::string currentMaterial = "box"; 
   int materialIndx = 4;
 
 //  IGL_INLINE void draw_labels_window(igl::opengl::glfw::Viewer* viewer, const igl::opengl::ViewerCore* core);
