@@ -6,7 +6,7 @@ enum class editorState { DESIGN, ANIMATION };
 
 class Game : public igl::opengl::glfw::Viewer
 {
-	int time; 
+	int m_time; 
 public:
 	int  pickedShape;
 

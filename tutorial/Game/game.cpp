@@ -1,4 +1,5 @@
 #include "game.h" 
+#include <time.h>
 #include <iostream>
 #include "igl/unproject.h"
 #include "igl/project.h"
@@ -26,7 +27,7 @@ static void printMat(const Eigen::Matrix4d& mat)
 
 Game::Game()
 {
-	time = 0;
+	m_time = 0;
 }
 
 //Game::Game(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
@@ -162,7 +163,7 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	s->SetUniformMat4f("Proj", Proj);
 	s->SetUniformMat4f("View", View);
 	s->SetUniformMat4f("Model", Model);
-	s->SetUniform1i("time", time);
+	s->SetUniform1i("time", m_time);
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{ 
 		BindMaterial(s, data_list[shapeIndx]->GetMaterial());
@@ -221,7 +222,7 @@ void Game::WhenTranslate()
 
 void Game::Animate() { 
 		for (auto currBezierObj : g_bezierObjects) {
-			if (std::time(NULL) - playAnimationMiliTime >= animationDelay) {
+			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
 				if (!currBezierObj->getHasDoneMoving()) {
 					data_list[currBezierObj->GetObjectId()]->SetTranslation(currBezierObj->GetNextMove().cast<double>());
 				}

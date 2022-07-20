@@ -19,7 +19,9 @@
 
 //#include <imgui_fonts_droid_sans.h>
 //#include <GLFW/glfw3.h>
+#include <time.h>
 #include <iostream>
+
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace igl
@@ -414,6 +416,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
 
   if (ImGui::CollapsingHeader("Animation Options", ImGuiTreeNodeFlags_DefaultOpen))
   {
+      ImGui::PushItemWidth(80 * menu_scaling());
+
       ImGui::SliderInt("Animation Start Delay", &viewer->animationDelay, 0, 5);
       if (ImGui::Button("Start Animation", ImVec2((w - p), 0)))
       {
@@ -426,6 +430,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       {
           viewer->stopAnimation = true;
       }
+      ImGui::PopItemWidth();
 
   }
   if (ImGui::CollapsingHeader("layers", ImGuiTreeNodeFlags_DefaultOpen))
