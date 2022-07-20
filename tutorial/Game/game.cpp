@@ -116,18 +116,21 @@ void Game::Init()
 	bezierControlPoints.push_back(Eigen::Vector2f(1900.0, 450.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1950.0, 650.0));
 	pickedShape = 0;
-	//scissors
+	//split x
 	AddShape(Plane, -1, TRIANGLES, 5);
-	splitPlaneIndx = 6;
-	data_list[splitPlaneIndx]->RemoveViewport(5);
-	SetShapeStatic(splitPlaneIndx);
-	//SetShapeShader(splitPlaneIndx, 4);
-
-	/*AddShape(Cube, -1, TRIANGLES, 4);
-	SetShapeShader(6, 4);
-	pickedShape = 6;
-	SetShapeMaterial(pickedShape, 4);*/
-	//ShapeTransformation(zTranslate, -1.1, 1);
+	splitXPlaneIndx = 6;
+	SetShapeShader(splitXPlaneIndx, 2);
+	ShapeTransformation(xRotate, 3.14159265, 0);
+	ShapeTransformation(yRotate, 3.14159265, 0);
+	SetShapeStatic(splitXPlaneIndx);
+	//split y
+	 AddShape(Plane, -1, TRIANGLES, 6);
+	 splitYPlaneIndx = 7;
+	 SetShapeShader(splitYPlaneIndx, 2);
+	 ShapeTransformation(xRotate, 3.14159265, 0);
+	 ShapeTransformation(yRotate, 3.14159265, 0);
+	 SetShapeStatic(splitYPlaneIndx);
+	 pickedShape = 0;
 
 }
 
@@ -165,7 +168,7 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	} 
 	if (shaderIndx == 0 )
 		s->SetUniform4f("lightColor", r / 255.0f, g / 255.0f, b / 255.0f, 0.0f);
-	else if(shaderIndx == 7)
+	else if(shaderIndx == 7 )
 		s->SetUniform4f("lightColor", 0.5f, 0.6f, 0.7f, 0.5f);
 	else
 		s->SetUniform4f("lightColor", 4/100.0f, 6 / 100.0f, 99 / 100.0f, 0.5f);

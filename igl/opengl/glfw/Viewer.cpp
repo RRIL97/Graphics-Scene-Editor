@@ -906,7 +906,6 @@ IGL_INLINE bool
 
 
     void Viewer::addLayer(std::string name) {
-        printf("is triggered ");
         layers.push_back(new layer(name, nextLayerId));
         nextLayerId++;
     }

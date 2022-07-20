@@ -128,6 +128,8 @@ IGL_INLINE void Renderer::draw_by_info(int info_index){
     }
 
     scn->Draw(info->shaderIndx, Proj, View, info->viewportIndx, info->flags,info->property_id);
+    buffers[0]->Bind();
+
 }
 
 IGL_INLINE void Renderer::draw( GLFWwindow* window)
@@ -452,30 +454,31 @@ float Renderer::CalcMoveCoeff(int cameraIndx, int width)
     return cameras[cameraIndx]->CalcMoveCoeff(depth,width);
 }
 
-unsigned int Renderer::AddBuffer(int infoIndx)
+unsigned int Renderer::AddBuffer(int infoIndx,bool splitX)
 {
-    CopyDraw(infoIndx, buffer, buffers.size());
+   CopyDraw(infoIndx, buffer, buffers.size());
 
     DrawInfo* info = drawInfos.back();
-    info->SetFlags(stencilTest );
- 
-    info->SetFlags( clearDepth | clearStencil);
-    int width = viewports[info->viewportIndx].z(), height = viewports[info->viewportIndx].w();
+    info->bufferIndx = buffers.size();
+    info->SetFlags(stencilTest);
 
+    info->SetFlags(clearDepth | clearStencil);
+    int width = splitX ? viewports[info->viewportIndx].z() / 2 : viewports[info->viewportIndx].z();
+    int height = splitX ? viewports[info->viewportIndx].w() : viewports[info->viewportIndx].w() / 2;
+    printf("W %d  H %d", width, height);
     unsigned int texId;
     texId = scn->AddTexture(width, height, 0, COLOR);
     scn->AddTexture(width, height, 0, DEPTH);
     buffers.push_back(new igl::opengl::DrawBuffer(width, height, texId));
-
     return texId;
 }
 
-int Renderer::Create2Dmaterial(int infoIndx, int code)
+int Renderer::Create2Dmaterial(int infoIndx, bool splitX)
 {
     std::vector<unsigned int> texIds;
     std::vector<unsigned int> slots;
     
-    unsigned int texId = AddBuffer(infoIndx);
+    unsigned int texId = AddBuffer(infoIndx, splitX);
     texIds.push_back(texId);
     slots.push_back(texId);
     texIds.push_back(texId + 1);
@@ -487,11 +490,16 @@ int Renderer::Create2Dmaterial(int infoIndx, int code)
 }
 
 
-void Renderer::SetBuffers()
+void Renderer::SetBuffers(bool splitX)
 {
-    AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10,2);
-   int materialIndx = Create2Dmaterial(1,1);
-   scn->SetShapeMaterial(6, materialIndx);
+ //  AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10,2);
+   int materialIndx = Create2Dmaterial(1, splitX);
+   if(splitX)
+      scn->SetShapeMaterial(scn->splitXPlaneIndx, materialIndx);
+   else 
+      scn->SetShapeMaterial(scn->splitYPlaneIndx, materialIndx);
+
+   
    // SwapDrawInfo(2, 3);
 }
 
@@ -512,7 +520,7 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     yViewport.push_front(0);
     std::list<int>::iterator xit = xViewport.begin();
     int indx = 0;
-    
+
     for (++xit; xit != xViewport.end(); ++xit)
     {
         std::list<int>::iterator yit = yViewport.begin();
@@ -542,6 +550,7 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
         }
     }
 
+
     if (menu)
     {
         menu->callback_draw_viewer_menu = [&]()
@@ -562,7 +571,7 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
     AddDraw(2, 0, 0, 0, inAction2 | scissorTest | blend);
     //picking objects view port 
     AddViewport(0, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT); //add viewport for picking shape
-    //AddDraw(3, 0, 4, 0, stencilTest| depthTest| stencil2 | scaleAbit | inAction2 |onPicking);
+    // AddDraw(3, 0, 4, 0, stencilTest| depthTest| stencil2 | scaleAbit | inAction2 |onPicking);
     //AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
 
     //tranparent objects view port 
@@ -570,11 +579,14 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
     CopyDraw(1, viewport, 4);
     ClearDrawFlag(4, toClear);
     SetDrawFlag(4, blend);
-
-    // add viewport for rendring the split 
-    AddViewport(DISPLAY_WIDTH / 2, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT);
+    //split x
+     AddViewport(DISPLAY_WIDTH / 2, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT);
      CopyDraw(2, viewport, 5);
-   // ClearDrawFlag(4, toClear);
+     SetBuffers(true);
+     //split y
+     AddViewport(0, DISPLAY_HEIGHT / 2, DISPLAY_WIDTH, DISPLAY_HEIGHT / 2);
+     CopyDraw(2, viewport, 6);
+     SetBuffers(false);
 }
 
 void Renderer::changeCamera(int cameraIndx)

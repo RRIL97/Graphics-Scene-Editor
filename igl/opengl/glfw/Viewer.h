@@ -166,9 +166,15 @@ namespace glfw
     void removeTransparent();
     void splitX() {
         if(isSplitX)
-        data_list[splitPlaneIndx]->AddViewport(5);
+        data_list[splitXPlaneIndx]->AddViewport(5);
         else
-         data_list[splitPlaneIndx]->RemoveViewport(5);
+         data_list[splitXPlaneIndx]->RemoveViewport(5);
+    }
+    void splitY() {
+        if (isSplitY)
+            data_list[splitYPlaneIndx]->AddViewport(6);
+        else
+            data_list[splitYPlaneIndx]->RemoveViewport(6);
     }
 
 
@@ -187,7 +193,8 @@ public:
     std::vector<Material*> materials;
     std::list<int> pickedShapes;
     Eigen::Vector3d pickedNormal;
-    int splitPlaneIndx;
+    int splitXPlaneIndx;
+    int splitYPlaneIndx;
     int selected_data_index;
     int next_data_id;
     int next_shader_id; // for flags to mack sure all shaders are initlize with data
@@ -207,6 +214,8 @@ public:
     float sigmaBlur = 1.0f;
     igl::opengl::Camera* currCamera;
     bool isSplitX = false;
+    bool isSplitY = false;
+
     // List of registered plugins
 //    std::vector<ViewerPlugin*> plugins;
 
