@@ -150,6 +150,10 @@ public:
 
     inline float GetAngle(int cameraIndx) { return cameras[cameraIndx]->GetAngle(); }
 
+    igl::opengl::Camera* getCameraById(int cameraIndx) {
+        return cameras[cameraIndx];
+    }
+
     inline void SetDrawFlag(int infoIndx, unsigned int flag) { drawInfos[infoIndx]->SetFlags(flag); }
 
     inline void ClearDrawFlag(int infoIndx, unsigned int flag) { drawInfos[infoIndx]->ClearFlags(flag); }
@@ -192,11 +196,11 @@ public:
     void SwapDrawInfo(int indx1, int indx2);
     IGL_INLINE void initProject(const int DISPLAY_WIDTH, const int DISPLAY_HEIGHT);
 
-    int lastButtonPressed = -1;
+    int lastButtonPressed = -1; 
+    std::vector<igl::opengl::Camera*> cameras;
 private:
     // Stores all the viewing options
 //    std::vector<igl::opengl::ViewerCore> core_list;
-    std::vector<igl::opengl::Camera*> cameras;
     igl::opengl::Camera* currCamera;
     int currCameraIndx = 2;
     igl::opengl::glfw::Viewer* scn;

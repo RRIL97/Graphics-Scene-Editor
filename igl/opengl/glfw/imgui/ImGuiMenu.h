@@ -59,6 +59,10 @@ public:
       rndr = rendrer;
   }
 
+  Renderer* getRenderer() {
+      return rndr;
+  }
+
   IGL_INLINE virtual void shutdown();// override;
 
   IGL_INLINE virtual bool pre_draw();// override;

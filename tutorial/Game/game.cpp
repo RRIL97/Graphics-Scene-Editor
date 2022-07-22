@@ -4,7 +4,9 @@
 #include "igl/unproject.h"
 #include "igl/project.h"
 #include <GLFW/glfw3.h>
-#include "BezierMove.h"
+#include "ObjectMover.h"
+#include "CameraMover.h"; 
+
  
 std::vector <Eigen::Vector2f> bezierControlPoints; 
 
@@ -12,7 +14,8 @@ const float g_pointRadius    = 3.0f;
 const float g_distanceClickControlThreshold = 10.0f;
 int         g_chosenControlPoint = 0;
 
-std::vector<BezierMove*> g_bezierObjects;
+std::vector<ObjectMover*> g_bezierObjects;
+std::vector<CameraMover*> g_cameraMovers;
 
 static void printMat(const Eigen::Matrix4d& mat)
 {
@@ -133,7 +136,7 @@ void Game::Init()
 	 ShapeTransformation(yRotate, 3.14159265, 0);
 	 SetShapeStatic(splitYPlaneIndx);
 	 pickedShape = 0;
-
+	  
 }
 
 void Game::setPressControlPoint(float x, float y) {
@@ -201,7 +204,7 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	//Move only selected objects according to the bezier curve.  
 	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {
 		std::cout << shapeIndx << std::endl;
-		BezierMove* bezier = new BezierMove(this, shapeIndx, bezierControlPoints, Proj, View, Model);
+		ObjectMover* bezier = new ObjectMover(this, shapeIndx, bezierControlPoints, Proj, View, Model);
 		g_bezierObjects.push_back(bezier); 
 		_bezierObjectCount--;
 		std::cout << "Adding " << std::endl;
@@ -220,6 +223,7 @@ void Game::WhenTranslate()
 }
  
 
+
 void Game::Animate() { 
 		for (auto currBezierObj : g_bezierObjects) {
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
@@ -233,6 +237,34 @@ void Game::Animate() {
 				}
 			}
 			else { 
+			}
+		}
+
+		if (moveCameraBezier) {
+			std::cout << " yes " << std::endl;
+			auto cameraPath = camerasPaths.at(cameraIdMoveBezier);
+			std::vector<Eigen::Vector3f> cameraPathFloat;
+			for (int i = 0; i < cameraPath.size(); i++)
+				cameraPathFloat.push_back(cameraPath[i].cast<float>());
+
+			CameraMover* cameraMover = new CameraMover(this, cameraIdMoveBezier, cameraPathFloat);
+
+			g_cameraMovers.push_back(cameraMover);
+			moveCameraBezier = false;
+			std::cout << " yes1 " << std::endl;
+		}
+		for (int i = 0; i < g_cameraMovers.size(); i++) {
+			auto currentMover = g_cameraMovers[i];
+			 
+			if (!currentMover->getHasDoneMoving()) { 
+				currCamera->SetTranslation(currentMover->GetNextMove().cast<double>()); 
+			}
+			else {
+				//we are done remove it
+				auto entry = g_cameraMovers[i];
+				g_cameraMovers.erase(g_cameraMovers.begin() + i);
+
+				delete entry;
 			}
 		}
 	    

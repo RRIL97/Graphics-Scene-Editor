@@ -21,7 +21,6 @@
 #include "igl/opengl/Camera.h"
 #include "igl/opengl/glfw/Material.h"
 
-
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -34,8 +33,7 @@
 #define IGL_MOD_CONTROL         0x0002
 #define IGL_MOD_ALT             0x0004
 #define IGL_MOD_SUPER           0x0008
-
-
+ 
 struct layer {
     std::string name;
     int layerNum;
@@ -211,7 +209,12 @@ public:
     int _bezierObjectCount = 0;
     int  animationDelay = 0;
     int  playAnimationMiliTime = 0;
+    bool setCameraPathBezier = true;
+    bool moveCameraBezier = false;
+    int  cameraIdMoveBezier = -1;
 
+    std::vector<std::vector<Eigen::Vector3d>> camerasPaths;
+ 
     std::vector<layer*> layers;
     std::vector<std::string> ThemeNames;
     int themeIndex = 0;
