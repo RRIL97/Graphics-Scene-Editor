@@ -135,6 +135,7 @@ void Game::Init()
 	 ShapeTransformation(xRotate, 3.14159265, 0);
 	 ShapeTransformation(yRotate, 3.14159265, 0);
 	 SetShapeStatic(splitYPlaneIndx);
+
 	 pickedShape = 0;
 	  
 }

@@ -158,9 +158,12 @@ IGL_INLINE void Renderer::draw( GLFWwindow* window)
     int indx = 0;
     for (auto& info : drawInfos)
     {
-        if (!(info->flags & (inAction | inAction2)) || ((info->flags & inAction2) && !(info->flags & scissorTest)) || ((info->flags & inAction2) && !(info->flags & stencilTest) && isPressed && !isPicked) || ((info->flags & inAction2) && (info->flags & stencilTest)  && isPicked ))
+        if (!(info->flags & (inAction | inAction2))  || ((info->flags & inAction2) && !(info->flags & stencilTest) && isPressed && !isPicked) || ((info->flags & inAction2) && (info->flags & stencilTest)  && isPicked ))
             draw_by_info(indx);
         indx++;
+    }
+    if (isPicked) {
+        draw_by_info(2);
     }
 
     if (menu)
@@ -587,8 +590,9 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
      CopyDraw(2, viewport, 6);
      SetBuffers(false);
 
-    // AddDraw(3, 0, 4, 0, stencilTest| depthTest| stencil2 | scaleAbit | inAction2 |onPicking);
-     //AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
+     AddDraw(3, 0, 4, 0, stencilTest | depthTest | stencil2 | scaleAbit | inAction2 | onPicking);
+     AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
+
 }
 
 void Renderer::changeCamera(int cameraIndx)

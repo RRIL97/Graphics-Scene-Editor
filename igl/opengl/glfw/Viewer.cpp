@@ -441,9 +441,7 @@ IGL_INLINE bool
         for (int i = 0; i < data_list.size(); i++)
         {
             auto shape = data_list[i];
-            if ((viewportIndx != 4 && shape->Is2Render(4)) 
-              /*  (viewportIndx != 3 && shape->Is2Render(3))*/) {
-                printf("here\n");
+            if (viewportIndx != 4 && shape->Is2Render(4)) {
                 continue;
             }
 
