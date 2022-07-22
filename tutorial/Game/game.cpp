@@ -58,8 +58,8 @@ unsigned int Game::CreateTex(int width,int height)
 
 void Game::Init()
 {		
-	unsigned int texIDs[6] = {  0, 1, 2, 3, 4 , 5};
-	unsigned int slots[6] = {  0, 1, 2, 3, 4 , 5};
+	unsigned int texIDs[9] = {  0, 1, 2, 3, 4 , 5, 6, 7, 8};
+	unsigned int slots[9] = {  0, 1, 2, 3, 4 , 5, 6, 7, 8 };
 
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/basicShader");
@@ -76,7 +76,11 @@ void Game::Init()
 	AddTexture("./textures/cubemaps/land/land_", 3);
 	AddTexture("./textures/cubemaps/mountain/mountain_", 3);
 	AddTexture("./textures/box0.bmp", 2);
-	CreateTex(800, 800); 
+	CreateTex(800, 800);
+	CreateTex(100, 100);
+	CreateTex(150, 150);
+	CreateTex(300, 300);
+
 
 
 	AddMaterial(texIDs, slots, 1);
@@ -85,7 +89,9 @@ void Game::Init()
 	AddMaterial(texIDs + 3, slots + 3, 1);
 	AddMaterial(texIDs + 4, slots + 4, 1, " box");
 	AddMaterial(texIDs + 5, slots + 5, 1, "some");
-
+	AddMaterial(texIDs + 6, slots + 6, 1, "cameraBeizer1",false);
+	AddMaterial(texIDs + 7, slots + 7, 1, "cameraBeizer2", false);
+	AddMaterial(texIDs + 8, slots + 8, 1, "cameraBeizer3", false);
 	//cube map
 	AddShape(Cube, -1, TRIANGLES);
 	SetShapeShader(0, 3);
@@ -135,7 +141,14 @@ void Game::Init()
 	 ShapeTransformation(xRotate, 3.14159265, 0);
 	 ShapeTransformation(yRotate, 3.14159265, 0);
 	 SetShapeStatic(splitYPlaneIndx);
-
+    
+	 //camera bezier path 
+	 cameraPathStartIndx = 8;
+	 for (int i = 0; i < 3; i++) {
+		 AddShape(Sphere, -1, TRIANGLES);
+		 SetShapeMaterial(cameraPathStartIndx + i, 6 +i);
+		 data()->layer = 0;
+	 }
 	 pickedShape = 0;
 	  
 }

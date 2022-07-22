@@ -11,8 +11,9 @@ class Material
 	std::vector<unsigned int> slotIDs;
 	std::vector<unsigned int> shaderIndices;
 	std::string name;
+	bool m_canChoose;
 public:
-	Material(unsigned int textureIDs[],unsigned int slots[],unsigned int size,std::string name = "defualt");
+	Material(unsigned int textureIDs[],unsigned int slots[],unsigned int size,std::string name = "defualt", bool canChoose = true);
 	 unsigned int GetTexture(unsigned int indx);
 	 unsigned int GetSlot(unsigned int indx);
 	 inline unsigned int GetNumOfTexs() { return numOfTexs; }
@@ -20,6 +21,9 @@ public:
 	 void rotateTexs();
 	 std::string getName() {
 		 return name;
+	 }
+	 bool canChoose() {
+		 return m_canChoose;
 	 }
 
 	~Material();

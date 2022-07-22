@@ -2,7 +2,7 @@
 
 
 
-Material::Material(unsigned int textureIDs[], unsigned int slots[], unsigned int size,std::string name): name(name)
+Material::Material(unsigned int textureIDs[], unsigned int slots[], unsigned int size,std::string name,bool canChoose): name(name), m_canChoose(canChoose)
 {
 	numOfTexs = size;
 	for (int i = 0; i < size; i++)

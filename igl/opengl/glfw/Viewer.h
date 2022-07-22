@@ -196,14 +196,14 @@ public:
     int selected_data_index;
     int next_data_id;
     int next_shader_id; // for flags to mack sure all shaders are initlize with data
-    int next_texture_id = 1;
+    int next_texture_id = 0;
 	bool isActive;
     unsigned int staticScene;
     Shader* overlay_shader;
     Shader* overlay_point_shader;
     std::vector<Shader*> shaders;
     int pickedViewPort;
-    int nextLayerId = 1;
+    int nextLayerId = 2;
      
     bool stopAnimation = false;
     int _bezierObjectCount = 0;
@@ -224,6 +224,8 @@ public:
     igl::opengl::Camera* currCamera;
     bool isSplitX = false;
     bool isSplitY = false;
+    int cameraPathStartIndx = 0;
+
 
     // List of registered plugins
 //    std::vector<ViewerPlugin*> plugins;
@@ -242,7 +244,7 @@ public:
 
       void ClearPickedShapes(int viewportIndx);
 
-      int AddMaterial(unsigned int *texIndices, unsigned int *slots, unsigned int size,std::string name = "default");
+      int AddMaterial(unsigned int *texIndices, unsigned int *slots, unsigned int size,std::string name = "default", bool canChoose = true);
       Eigen::Matrix4d GetPriviousTrans(const Eigen::Matrix4d &View, unsigned int index);
 
       float

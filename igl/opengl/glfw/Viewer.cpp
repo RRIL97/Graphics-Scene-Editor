@@ -76,7 +76,8 @@ namespace glfw
     staticScene = 0;
     overlay_point_shader = nullptr;
     overlay_shader = nullptr;
-    layers.push_back(new layer("default",0));
+    layers.push_back(new layer("BeizerBalls", 0,false));
+    layers.push_back(new layer("default",1));
 
     // Temporary variables initialization
    // down = false;
@@ -317,6 +318,7 @@ IGL_INLINE bool
     if (fname.length() == 0)
       return;
     
+    std::cout << fname.c_str() << std::endl;
     this->load_mesh_from_file(fname.c_str());
   }
 
@@ -327,6 +329,7 @@ IGL_INLINE bool
       std::string fname = igl::file_dialog_open();
       if (fname.length() == 0)
           return;
+      std::cout << next_texture_id << std::endl;
       texIDs[0] = slots[0] = next_texture_id;
       AddTexture(fname, 2);
       std::string base_filename = fname.substr(fname.find_last_of("/\\") + 1);
@@ -795,9 +798,9 @@ IGL_INLINE bool
         WhenScroll(dy);
     }
 
-    int Viewer::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size, std::string name)
+    int Viewer::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size, std::string name,bool canChoose)
     {
-        materials.push_back(new Material(texIndices, slots, size,name));
+        materials.push_back(new Material(texIndices, slots, size,name,canChoose));
         return (materials.size() - 1);
     }
 
@@ -865,6 +868,7 @@ IGL_INLINE bool
     int Viewer::AddTexture(int width, int height, unsigned char* data, int mode)
     {
         textures.push_back(new Texture(width, height));
+        next_texture_id++;
 
         if (mode)
         {

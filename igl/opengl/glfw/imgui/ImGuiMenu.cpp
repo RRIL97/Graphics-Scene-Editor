@@ -158,7 +158,7 @@ IGL_INLINE bool ImGuiMenu::key_up(GLFWwindow* window,int key, int modifiers)
 
 
 
-IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, std::vector<igl::opengl::Camera*> &camera,Eigen::Vector4i& viewWindow,std::vector<DrawInfo *> drawInfos)
+IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, std::vector<igl::opengl::Camera*>& camera, Eigen::Vector4i& viewWindow, std::vector<DrawInfo*> drawInfos)
 {
     int current_selected_radio;
     bool* p_open = NULL;
@@ -197,211 +197,177 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     );
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-  // Mesh
-  if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-
-    if (ImGui::Button("Load##Mesh", ImVec2((w-p)/2.f, 0)))
+    // Mesh
+    if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        int savedIndx = viewer->selected_data_index;
-       // viewer->selected_data_index = viewer->parents.size();
-       // viewer->AddShape(viewer->xCylinder,-1,viewer->TRIANGLES);
-        viewer->open_dialog_load_mesh();
-      if (viewer->data_list.size() > viewer->parents.size())
-      {
-          
-          viewer->parents.push_back(-1);
-          viewer->SetShapeViewport(viewer->selected_data_index, 0);
-          viewer->SetShapeShader(viewer->selected_data_index, 2);
-          viewer->SetShapeMaterial(viewer->selected_data_index,0);
-          //viewer->data_list.back()->set_visible(false, 1);
-          //viewer->data_list.back()->set_visible(true, 2);
-          viewer->data_list.back()->UnHide();
-          viewer->data_list.back()->show_faces = 3;
-          viewer->data()->mode = viewer->TRIANGLES;
-          viewer->selected_data_index = savedIndx;
-      }
+
+        if (ImGui::Button("Load##Mesh", ImVec2((w - p) / 2.f, 0)))
+        {
+            int savedIndx = viewer->selected_data_index;
+            // viewer->selected_data_index = viewer->parents.size();
+            // viewer->AddShape(viewer->xCylinder,-1,viewer->TRIANGLES);
+            viewer->open_dialog_load_mesh();
+            if (viewer->data_list.size() > viewer->parents.size())
+            {
+                std::cout << viewer->data_list[viewer->selected_data_index]->viewports << std::endl;
+                viewer->parents.push_back(-1);
+                viewer->data_list[viewer->selected_data_index]->viewports = 1;
+                viewer->SetShapeShader(viewer->selected_data_index, 1);
+                viewer->SetShapeMaterial(viewer->selected_data_index, 4);
+                viewer->data_list.back()->show_overlay = 0;
+                viewer->data_list.back()->show_lines = 0;
+                viewer->data_list.back()->UnHide();
+             //   viewer->data_list.back()->show_faces = 3;
+                viewer->data()->mode = viewer->TRIANGLES;
+                viewer->selected_data_index = savedIndx;
+            }
+        }
+        ImGui::SameLine(0, p);
+        if (ImGui::Button("Save##Mesh", ImVec2((w - p) / 2.f, 0)))
+        {
+            viewer->open_dialog_save_mesh();
+        }
     }
-    ImGui::SameLine(0, p);
-    if (ImGui::Button("Save##Mesh", ImVec2((w-p)/2.f, 0)))
+
+    if (ImGui::CollapsingHeader("Theme", ImGuiTreeNodeFlags_DefaultOpen))
     {
-      viewer->open_dialog_save_mesh();
+        for (int i = 0; i < viewer->ThemeNames.size(); i++)
+            if (ImGui::RadioButton(viewer->ThemeNames[i].c_str(), &current_selected_radio, i))
+            {
+                if (current_selected_radio != prevSelectedTheme) {
+                    prevSelectedTheme = current_selected_radio;
+                    viewer->SetShapeMaterial(0, prevSelectedTheme);
+                }
+            }
     }
-  }
-  // Choose theme
- /* if (ImGui::CollapsingHeader("Theme", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-      if (ImGui::BeginCombo("", viewer->ThemeNames[prevSelectedTheme].c_str())) {
-          for (int i = 0; i < viewer->ThemeNames.size(); i++) {
-              bool selected = prevSelectedTheme == i;
-              if (ImGui::Selectable(viewer->ThemeNames[i].c_str(), selected)) {
-                  prevSelectedTheme = i;
-              }
-              if (selected) {
-                  ImGui::SetItemDefaultFocus();
-              }
-          }
-          ImGui::EndCombo();
-      }
-
-      if (ImGui::Button("set Theme", ImVec2((w - p), 0)))
-      {
-          viewer->SetShapeMaterial(0, prevSelectedTheme);
-      }
-  }*/
-
-   if (ImGui::CollapsingHeader("Theme", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-      for(int i =0 ; i< viewer->ThemeNames.size();i++)
-      if (ImGui::RadioButton(viewer->ThemeNames[i].c_str(),&current_selected_radio,i))
-      {
-          if (current_selected_radio != prevSelectedTheme) {
-              prevSelectedTheme = current_selected_radio;
-              viewer->SetShapeMaterial(0, prevSelectedTheme);
-          }
-      }
-  }
-  if (ImGui::CollapsingHeader("fog Options", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-      ImGui::Checkbox("Show fog", &viewer->showFog);
-      ImGui::DragFloat("density", &viewer->fogDensity, 0.001f, 0.005f, 0.02f);
-  }
-  // Viewing options
-  if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-    if (ImGui::Button("Center object", ImVec2(-1, 0)))
+    if (ImGui::CollapsingHeader("fog Options", ImGuiTreeNodeFlags_DefaultOpen))
     {
-      std::cout << "not implemented yet" << std::endl;
-//      core[1].align_camera_center(viewer->data().V, viewer->data().F); TODO: add function like this to camera
+        ImGui::Checkbox("Show fog", &viewer->showFog);
+        ImGui::DragFloat("density", &viewer->fogDensity, 0.001f, 0.005f, 0.02f);
     }
-    //if (ImGui::Button("Snap canonical view", ImVec2(-1, 0)))
-    //{
-    //  core[1].snap_to_canonical_quaternion();
-    //}
+    // Viewing options
+    if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        if (ImGui::Button("Center object", ImVec2(-1, 0)))
+        {
+            std::cout << "not implemented yet" << std::endl;
+            //      core[1].align_camera_center(viewer->data().V, viewer->data().F); TODO: add function like this to camera
+        }
+        //if (ImGui::Button("Snap canonical view", ImVec2(-1, 0)))
+        //{
+        //  core[1].snap_to_canonical_quaternion();
+        //}
 
-    // Zoom
-    ImGui::PushItemWidth(80 * menu_scaling());
-    if (camera[0]->_ortho)
-      ImGui::DragFloat("Zoom", &(camera[0]->_length), 0.05f, 0.1f, 20.0f);
-    else
-      ImGui::DragFloat("Fov", &(camera[0]->_fov), 0.05f, 30.0f, 90.0f);
+        // Zoom
+        ImGui::PushItemWidth(80 * menu_scaling());
+        if (camera[0]->_ortho)
+            ImGui::DragFloat("Zoom", &(camera[0]->_length), 0.05f, 0.1f, 20.0f);
+        else
+            ImGui::DragFloat("Fov", &(camera[0]->_fov), 0.05f, 30.0f, 90.0f);
 
-      // Select rotation type
-    static Eigen::Quaternionf trackball_angle = Eigen::Quaternionf::Identity();
-    static bool orthographic = true;
+        // Select rotation type
+        static Eigen::Quaternionf trackball_angle = Eigen::Quaternionf::Identity();
+        static bool orthographic = true;
 
-    // Orthographic view
-    ImGui::Checkbox("Orthographic view", &(camera[0]->_ortho));
-    if (camera[0]->_ortho) {
-        camera[0]->SetProjection(0,camera[0]->_relationWH);
-      }
+        // Orthographic view
+        ImGui::Checkbox("Orthographic view", &(camera[0]->_ortho));
+        if (camera[0]->_ortho) {
+            camera[0]->SetProjection(0, camera[0]->_relationWH);
+        }
+        else {
+            camera[0]->SetProjection(camera[0]->_fov > 0 ? camera[0]->_fov : 45, camera[0]->_relationWH);
+        }
+
+        ImGui::PopItemWidth();
+    }
+    if (ImGui::CollapsingHeader("Cameras Options", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::InputText("name", cameraName, 30);
+        // ImGui::SameLine(0, p);
+        if (ImGui::Button("add Camera", ImVec2((w - p) / 2.0f, 0))) {
+            if (std::string(cameraName).empty())
+                errorMsg = "please enter camera name";
+
+            else {
+                rndr->addCameraToDesignMode(cameraName);
+                errorMsg = "Successfully added camera";
+
+            }
+        }
+        if (ImGui::BeginCombo("", camera[0]->name.c_str())) {
+            for (int i = 0; i < camera.size(); i++) {
+                if (i == 1) { //the camera for viewport1 
+                    continue;
+                }
+                bool selected = prevSelectedCamera == camera[i]->name;
+                if (ImGui::Selectable(camera[i]->name.c_str(), selected)) {
+                    prevSelectedCamera = camera[i]->name;
+                    prevSelectedCameraIndx = i;
+                }
+                if (selected) {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+        //ImGui::SameLine(0, p);
+        if (ImGui::Button("set Camera", ImVec2((w - p) / 2.0f, 0)))
+        {
+            rndr->changeCamera(prevSelectedCameraIndx);
+            prevSelectedCameraIndx = 0;
+            errorMsg = "Successfully changed camera";
+        }
+
+        if (viewer->setCameraPathBezier) {
+            if (ImGui::Button("choose Path", ImVec2((w - p) / 2.0f, 0)))
+            {
+                auto& cameraPath = viewer->camerasPaths.find(camera[0]->name)->second;
+
+                if (cameraPath.size() == 4) {
+                    for (int i = 0; i < 3; i++)
+                        viewer->data_list[viewer->cameraPathStartIndx + i]->SetTranslation(cameraPath[i]);
+                }
+                viewer->layers[0]->isVisible = true;
+                viewer->setCameraPathBezier = false;
+
+          }       
+        if (!viewer->moveCameraBezier) {
+            if (ImGui::Button("move bezier", ImVec2((w - p) / 2.0f, 0))) {
+                if (viewer->setCameraPathBezier) {
+                    viewer->cameraIdMoveBezier = prevSelectedCameraIndx;
+                    viewer->moveCameraBezier = true;
+                }
+            }
+        }
+        else {
+            if (ImGui::Button("stop bezier", ImVec2((w - p) / 2.0f, 0))) {
+                viewer->moveCameraBezier = false;
+            }
+        }
+    }
     else {
-        camera[0]->SetProjection(camera[0]->_fov > 0 ? camera[0]->_fov : 45,camera[0]->_relationWH);
-      }
+        if (ImGui::Button("set the Path", ImVec2((w - p) / 2.0f, 0)))
+        {
+            viewer->selected_data_index = viewer->data_list.size() - 1;
+            viewer->setCameraPathBezier = true;
+            std::vector<Eigen::Vector3d> cameraPath;
+            cameraPath.push_back(camera[0]->GetTranslation());
+            for (int i = 0; i < 3; i++)
+            {
+                cameraPath.push_back(viewer->data_list[viewer->cameraPathStartIndx + i]->GetTranslation());
+            }
+            auto it = viewer->camerasPaths.find(camera[0]->name);
+            if (it != viewer->camerasPaths.end()) {
+                it->second = cameraPath;
+            }
+            else
+                viewer->camerasPaths.emplace(camera[0]->name, cameraPath);
+            viewer->layers[0]->isVisible = false;
 
-      ImGui::PopItemWidth();
-  }
-  if (ImGui::CollapsingHeader("Cameras Options", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-      ImGui::InputText("name", cameraName, 30);
-     // ImGui::SameLine(0, p);
-      if (ImGui::Button("add Camera", ImVec2((w - p) / 2.0f, 0))){
-          if (std::string(cameraName).empty())
-              errorMsg = "please enter camera name";
+        }
+    }
+}
 
-          else {
-              rndr->addCameraToDesignMode(cameraName);
-              errorMsg = "Successfully added camera";
-
-          }
-      }
-      if (ImGui::BeginCombo("", camera[0]->name.c_str())) {
-          for (int i = 0; i < camera.size(); i++) {
-              if (i == 1) { //the camera for viewport1 
-                  continue; 
-              }
-              bool selected = prevSelectedCamera == camera[i]->name;
-              if (ImGui::Selectable(camera[i]->name.c_str(), selected)) {
-                  prevSelectedCamera = camera[i]->name;
-                  prevSelectedCameraIndx = i;
-              }
-              if (selected) {
-                  ImGui::SetItemDefaultFocus();
-              }
-          }
-          ImGui::EndCombo();
-      }
-      //ImGui::SameLine(0, p);
-      if (ImGui::Button("set Camera", ImVec2((w - p)/2.0f, 0)))
-      {
-          rndr->changeCamera(prevSelectedCameraIndx);
-          prevSelectedCameraIndx = 0;
-          errorMsg = "Successfully changed camera";
-      }
-
-      if (viewer->setCameraPathBezier) {
-          if (ImGui::Button("choose Path", ImVec2((w - p) / 2.0f, 0)))
-          {  
-              pathStartIndx = viewer->data_list.size();
-           
-              //Used to set the cameras paths
-               
-                  for (int i = 0; i < 3; i++) {
-                      viewer->AddShape(viewer->Sphere, -1, viewer->TRIANGLES);
-                      viewer->SetShapeMaterial(pathStartIndx + i, 4);
-
-                      //if path exists then we should put objects at those locations
-                  
-                      auto& cameraPath = viewer->camerasPaths.find(camera[0]->name)->second;
-
-                      if (cameraPath.size() == 4) {
-                          for (int i = 0; i < 3;i++)
-                              viewer->data_list[pathStartIndx + i]->SetTranslation(cameraPath[i]);
-                      }
-                  }
-       
-              viewer->setCameraPathBezier = false;
-          }
-          if (!viewer->moveCameraBezier) {
-              if (ImGui::Button("move bezier", ImVec2((w - p) / 2.0f, 0))) {
-                  if (viewer->setCameraPathBezier) {
-                      viewer->cameraIdMoveBezier = prevSelectedCameraIndx;
-                      viewer->moveCameraBezier = true; 
-                  }
-              }
-          }
-          else {
-              if (ImGui::Button("stop bezier", ImVec2((w - p) / 2.0f, 0))) {
-                  viewer->moveCameraBezier = false;
-              }
-          }
-      }
-      else {
-          if (ImGui::Button("set the Path", ImVec2((w - p) / 2.0f, 0)))
-          {
-              viewer->selected_data_index = viewer->data_list.size() - 1;
-              int objectCount = 2; 
-              while (viewer->erase_mesh(pathStartIndx + objectCount) && objectCount > 0) {
-                  viewer->selected_data_index = viewer->data_list.size() - 1;
-                  objectCount--;
-              }
-              viewer->setCameraPathBezier = true; 
-              std::vector<Eigen::Vector3d> cameraPath;
-              cameraPath.push_back(camera[0]->GetTranslation());
-              for (int i = 0;i < 3;i++)
-              {           
-                  cameraPath.push_back(viewer->data_list[pathStartIndx + i]->GetTranslation());
-              }
-              auto it = viewer->camerasPaths.find(camera[0]->name);
-              if (it != viewer->camerasPaths.end()) {
-                  it->second = cameraPath;
-              }
-              else
-                  viewer->camerasPaths.emplace(camera[0]->name, cameraPath);
-          }
-      }
-
-  }
   if (ImGui::CollapsingHeader("screen Options", ImGuiTreeNodeFlags_DefaultOpen))
   {
       ImGui::Checkbox("split x",
@@ -429,8 +395,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
    {
       ImGui::Text("Material Options:");
       if (ImGui::BeginCombo("Material", currentMaterial.c_str())) {
-              for (int i = 4; i < viewer->materials.size(); i++) {
-
+          for (int i = 7; i < viewer->materials.size(); i++) {
+              if (viewer->materials[i]->canChoose()) {
                   bool selected = strcmp(currentMaterial.c_str(), viewer->materials[i]->getName().c_str());
                   if (ImGui::Selectable(viewer->materials[i]->getName().c_str(), selected)) {
                       currentMaterial = viewer->materials[i]->getName();
@@ -440,6 +406,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
                       ImGui::SetItemDefaultFocus();
                   }
               }
+          }
               ImGui::EndCombo();
           }
           if (ImGui::Button("set Material", ImVec2((w - p) / 2.0f, 0)))
@@ -453,22 +420,22 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           }
 
       ImGui::Text("Blur Options:");
-      if (ImGui::Button("make", ImVec2((w - p)/2.0f, 0)))
+      if (ImGui::Button("make##Blur", ImVec2((w - p)/2.0f, 0)))
       {
           viewer->makeBlur();
       }
       ImGui::SameLine(0, p);
-      if (ImGui::Button("remove", ImVec2((w - p)/2.0f, 0)))
+      if (ImGui::Button("remove##Blur", ImVec2((w - p)/2.0f, 0)))
       {
           viewer->removeBlur();
       }
       ImGui::Text("Transparent Options:");
-      if (ImGui::Button("set", ImVec2((w - p) / 2.0f, 0)))
+      if (ImGui::Button("make##Transparent", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->makeTransparent();
       }
       ImGui::SameLine(0, p);
-      if (ImGui::Button("unset", ImVec2((w - p) / 2.0f, 0)))
+      if (ImGui::Button("remove##Transparent", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->removeTransparent();
       }
@@ -535,10 +502,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
               }
       }
       for (auto iter : viewer->layers) {
-          std::string text = "show layer";
-          ImGui::Checkbox(iter->name.c_str(),
-              [&]() { return iter->isVisible; },
-              [&](bool value) { iter->isVisible = value; });
+          if (iter->layerNum != 0) {
+              std::string text = "show layer";
+              ImGui::Checkbox(iter->name.c_str(),
+                  [&]() { return iter->isVisible; },
+                  [&](bool value) { iter->isVisible = value; });
+          }
       }
       ImGui::Text(errorMsg.c_str());
   }

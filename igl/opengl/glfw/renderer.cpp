@@ -486,8 +486,7 @@ int Renderer::Create2Dmaterial(int infoIndx, bool splitX)
     slots.push_back(texId);
     texIds.push_back(texId + 1);
     slots.push_back(texId + 1);
-    
-    materialIndx2D = scn->AddMaterial((unsigned int*)&texIds[0], (unsigned int*)&slots[0], 2);
+    materialIndx2D = scn->AddMaterial((unsigned int*)&texIds[0], (unsigned int*)&slots[0], 2,"splitTextue",false);
 
     return materialIndx2D;
 }
@@ -592,7 +591,7 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
 
      AddDraw(3, 0, 4, 0, stencilTest | depthTest | stencil2 | scaleAbit | inAction2 | onPicking);
      AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
-
+    // SwapDrawInfo(2, drawInfos.size() - 1);
 }
 
 void Renderer::changeCamera(int cameraIndx)
