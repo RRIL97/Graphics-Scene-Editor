@@ -346,7 +346,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
            
               //Used to set the cameras paths
                
-                  for (int i = 0; i < 4; i++) {
+                  for (int i = 0; i < 3; i++) {
                       viewer->AddShape(viewer->Sphere, -1, viewer->TRIANGLES);
                       viewer->SetShapeMaterial(8 + i, 4);
 
@@ -354,8 +354,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
                   
                       auto& cameraPath = viewer->camerasPaths[prevSelectedCameraIndx];
 
-                      if (cameraPath.size() == 4) {
-                          for (int i = 0; i < 4;i++)
+                      if (cameraPath.size() == 3) {
+                          for (int i = 0; i < 3;i++)
                               viewer->data_list[8 + i]->SetTranslation(cameraPath[i]);
                       }
                   }
@@ -380,19 +380,20 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           if (ImGui::Button("set the Path", ImVec2((w - p) / 2.0f, 0)))
           {
               viewer->selected_data_index = viewer->data_list.size() - 1;
-              int objectCount = 3; 
+              int objectCount = 2; 
               while (viewer->erase_mesh(8 + objectCount) && objectCount > 0) {
                   viewer->selected_data_index = viewer->data_list.size() - 1;
                   objectCount--;
               }
-              viewer->setCameraPathBezier = true; 
-              for (int i = 0;i < 4;i++)
+              viewer->setCameraPathBezier = true;  
+              viewer->camerasPaths[prevSelectedCameraIndx].push_back(rndr->cameras[prevSelectedCameraIndx]->GetTranslation());
+              for (int i = 0;i < 3;i++)
               {
                   if (viewer->camerasPaths[prevSelectedCameraIndx].size() < 4) {
                       viewer->camerasPaths[prevSelectedCameraIndx].push_back(viewer->data_list[8 + i]->GetTranslation());
                   }
                   else {
-                      viewer->camerasPaths[prevSelectedCameraIndx][i] = viewer->data_list[8 + i]->GetTranslation(); 
+                      viewer->camerasPaths[prevSelectedCameraIndx][i+1] = viewer->data_list[8 + i]->GetTranslation(); 
                   }
               }
           }
