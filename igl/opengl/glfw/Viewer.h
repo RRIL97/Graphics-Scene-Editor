@@ -213,7 +213,7 @@ public:
     bool moveCameraBezier = false;
     int  cameraIdMoveBezier = -1;
 
-    std::vector<std::vector<Eigen::Vector3d>> camerasPaths;
+    std::unordered_map<std::string,std::vector<Eigen::Vector3d>> camerasPaths;
  
     std::vector<layer*> layers;
     std::vector<std::string> ThemeNames;

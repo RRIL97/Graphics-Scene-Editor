@@ -241,17 +241,15 @@ void Game::Animate() {
 		}
 
 		if (moveCameraBezier) {
-			std::cout << " yes " << std::endl;
-			auto cameraPath = camerasPaths.at(cameraIdMoveBezier);
+			std::vector<Eigen::Vector3d> cameraPath = camerasPaths.find(currCamera->name)->second;
 			std::vector<Eigen::Vector3f> cameraPathFloat;
 			for (int i = 0; i < cameraPath.size(); i++)
 				cameraPathFloat.push_back(cameraPath[i].cast<float>());
 
-			CameraMover* cameraMover = new CameraMover(this, cameraIdMoveBezier, cameraPathFloat);
+			CameraMover* cameraMover = new CameraMover(this, cameraPathFloat);
 
 			g_cameraMovers.push_back(cameraMover);
 			moveCameraBezier = false;
-			std::cout << " yes1 " << std::endl;
 		}
 		for (int i = 0; i < g_cameraMovers.size(); i++) {
 			auto currentMover = g_cameraMovers[i];

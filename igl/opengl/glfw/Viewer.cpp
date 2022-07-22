@@ -78,9 +78,6 @@ namespace glfw
     overlay_shader = nullptr;
     layers.push_back(new layer("default",0));
 
-    camerasPaths.resize(1000);
-
-
     // Temporary variables initialization
    // down = false;
   //  hack_never_moved = true;

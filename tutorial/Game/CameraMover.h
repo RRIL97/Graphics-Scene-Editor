@@ -11,7 +11,7 @@
 
 class CameraMover {
 public:
-	CameraMover(Game* game, int cameraID, std::vector<Eigen::Vector3f> bezierPoints);
+	CameraMover(Game* game, std::vector<Eigen::Vector3f> bezierPoints);
 
 	void CalculateBezierMoves();
 	  

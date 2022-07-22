@@ -342,21 +342,21 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       if (viewer->setCameraPathBezier) {
           if (ImGui::Button("choose Path", ImVec2((w - p) / 2.0f, 0)))
           {  
-
+              pathStartIndx = viewer->data_list.size();
            
               //Used to set the cameras paths
                
                   for (int i = 0; i < 3; i++) {
                       viewer->AddShape(viewer->Sphere, -1, viewer->TRIANGLES);
-                      viewer->SetShapeMaterial(8 + i, 4);
+                      viewer->SetShapeMaterial(pathStartIndx + i, 4);
 
                       //if path exists then we should put objects at those locations
                   
-                      auto& cameraPath = viewer->camerasPaths[prevSelectedCameraIndx];
+                      auto& cameraPath = viewer->camerasPaths.find(camera[0]->name)->second;
 
-                      if (cameraPath.size() == 3) {
+                      if (cameraPath.size() == 4) {
                           for (int i = 0; i < 3;i++)
-                              viewer->data_list[8 + i]->SetTranslation(cameraPath[i]);
+                              viewer->data_list[pathStartIndx + i]->SetTranslation(cameraPath[i]);
                       }
                   }
        
@@ -381,21 +381,23 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           {
               viewer->selected_data_index = viewer->data_list.size() - 1;
               int objectCount = 2; 
-              while (viewer->erase_mesh(8 + objectCount) && objectCount > 0) {
+              while (viewer->erase_mesh(pathStartIndx + objectCount) && objectCount > 0) {
                   viewer->selected_data_index = viewer->data_list.size() - 1;
                   objectCount--;
               }
-              viewer->setCameraPathBezier = true;  
-              viewer->camerasPaths[prevSelectedCameraIndx].push_back(rndr->cameras[prevSelectedCameraIndx]->GetTranslation());
+              viewer->setCameraPathBezier = true; 
+              std::vector<Eigen::Vector3d> cameraPath;
+              cameraPath.push_back(camera[0]->GetTranslation());
               for (int i = 0;i < 3;i++)
-              {
-                  if (viewer->camerasPaths[prevSelectedCameraIndx].size() < 4) {
-                      viewer->camerasPaths[prevSelectedCameraIndx].push_back(viewer->data_list[8 + i]->GetTranslation());
-                  }
-                  else {
-                      viewer->camerasPaths[prevSelectedCameraIndx][i+1] = viewer->data_list[8 + i]->GetTranslation(); 
-                  }
+              {           
+                  cameraPath.push_back(viewer->data_list[pathStartIndx + i]->GetTranslation());
               }
+              auto it = viewer->camerasPaths.find(camera[0]->name);
+              if (it != viewer->camerasPaths.end()) {
+                  it->second = cameraPath;
+              }
+              else
+                  viewer->camerasPaths.emplace(camera[0]->name, cameraPath);
           }
       }
 

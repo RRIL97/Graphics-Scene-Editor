@@ -1,8 +1,9 @@
 #include "CameraMover.h"
 
-CameraMover::CameraMover(Game* game, int cameraID, std::vector<Eigen::Vector3f> bezierPoints) {
+CameraMover::CameraMover(Game* game, std::vector<Eigen::Vector3f> bezierPoints) {
 	this->_game = game;
 	this->_bezierControlPoints = bezierPoints;
+	CalculateBezierMoves();
 }
 
 void CameraMover::CalculateBezierMoves() {

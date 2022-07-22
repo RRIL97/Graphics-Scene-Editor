@@ -113,6 +113,7 @@ public:
 
   int prevSelectedTheme = 0;
   int prevSelectedCameraIndx = 0;
+  int pathStartIndx = 0;
 
   std::string prevSelectedCamera = "defualt";
 

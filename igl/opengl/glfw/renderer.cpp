@@ -571,8 +571,7 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
     AddDraw(2, 0, 0, 0, inAction2 | scissorTest | blend);
     //picking objects view port 
     AddViewport(0, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT); //add viewport for picking shape
-    // AddDraw(3, 0, 4, 0, stencilTest| depthTest| stencil2 | scaleAbit | inAction2 |onPicking);
-    //AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
+;
 
     //tranparent objects view port 
     AddViewport(0, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT);
@@ -587,6 +586,9 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
      AddViewport(0, DISPLAY_HEIGHT / 2, DISPLAY_WIDTH, DISPLAY_HEIGHT / 2);
      CopyDraw(2, viewport, 6);
      SetBuffers(false);
+
+    // AddDraw(3, 0, 4, 0, stencilTest| depthTest| stencil2 | scaleAbit | inAction2 |onPicking);
+     //AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
 }
 
 void Renderer::changeCamera(int cameraIndx)
