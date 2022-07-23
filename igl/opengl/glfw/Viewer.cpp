@@ -829,7 +829,7 @@ IGL_INLINE bool
             Eigen::Vector4d pos = MVP * Model * Eigen::Vector4d(0,0,0,1);
             float xpix = (1 + pos.x() / pos.z()) * viewport.z() / 2;
             float ypix = (1 + pos.y() / pos.z()) * viewport.w() / 2;
-            if (data_list[i]->Is2Render(viewportIndx) && xpix < right && xpix > left && ypix < bottom && ypix > up)
+            if (data_list[i]->Is2Render(viewportIndx) && xpix < right && xpix > left && ypix < bottom && ypix > up && i != 11)
             {
                 pShapes.push_back(i);
                 data_list[i]->AddViewport(newViewportIndx);

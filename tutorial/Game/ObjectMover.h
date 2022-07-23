@@ -15,9 +15,6 @@ public:
 
 	void CalculateBezierMoves();
 
-	Eigen::Vector3f GetPositionUnprojected(float posX, float posY, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model);
-
-
 	bool getHasDoneMoving() {
 		return _objectCalculatedMoves.size() <= 0;
 	}
@@ -36,6 +33,10 @@ public:
 		_objectCalculatedMoves.erase(_objectCalculatedMoves.begin());
 
 		return nextMove;
+	}
+
+	std::vector<Eigen::Vector3f> GetAllMoves() {
+		return _objectCalculatedMoves;
 	}
 
 	int GetObjectId() {

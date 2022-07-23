@@ -23,7 +23,9 @@ public:
 	unsigned int Game::CreateTex(int width, int height);
 	void setPressControlPoint(float x, float y);
 	void updateCurve(float x, float y);
-	 
+
+
+ 	 
 
 	~Game(void);
 	void setState(editorState newState) {

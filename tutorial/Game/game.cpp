@@ -149,6 +149,12 @@ void Game::Init()
 		 SetShapeMaterial(cameraPathStartIndx + i, 6 +i);
 		 data()->layer = 0;
 	 }
+
+
+	 //Will hold the actual bezier curve drawing
+	 AddShape(Axis, -1, TRIANGLES, 0); 
+ 	 data_list[11]->clear();	 
+
 	 pickedShape = 0;
 	  
 }
@@ -224,6 +230,25 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		std::cout << "Adding " << std::endl;
 
 	} 
+	//
+	if (shapeIndx == 11) {
+			if (startDrawBezierCurve) {  
+				for (auto currBezierObj : g_bezierObjects) {
+					auto allMoves = currBezierObj->GetAllMoves(); 
+
+					for (int i = allMoves.size() - 1; i > 1; i--) {
+
+						Eigen::RowVector3d vec_t = allMoves[i - 1].cast<double>();
+						Eigen::RowVector3d vec_p, helf_vec = Eigen::RowVector3d(1 / 2, 1 / 2, 1 / 2);
+						vec_p = allMoves[i].cast<double>();
+
+						data_list[11]->add_edges(vec_t, vec_p, helf_vec);
+					}
+				}
+				startDrawBezierCurve = false;
+		       
+			}
+	}
 	s->Unbind();
 }
 
@@ -241,16 +266,24 @@ void Game::WhenTranslate()
 void Game::Animate() { 
 		for (auto currBezierObj : g_bezierObjects) {
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
-				if (!currBezierObj->getHasDoneMoving()) {
-					data_list[currBezierObj->GetObjectId()]->SetTranslation(currBezierObj->GetNextMove().cast<double>());
+				if (!currBezierObj->getHasDoneMoving()) { 
+					
+					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
+					data_list[currBezierObj->GetObjectId()]->SetTranslation(nextMove);  
+ 
 				}
 				else {
 					if (!stopAnimation) {
-						currBezierObj->CalculateBezierMoves();
+						currBezierObj->CalculateBezierMoves(); 
+					    data_list[11]->clear();
+						startDrawBezierCurve = true;
+					}
+					else { 
 					}
 				}
 			}
-			else { 
+			else {
+		 
 			}
 		}
 

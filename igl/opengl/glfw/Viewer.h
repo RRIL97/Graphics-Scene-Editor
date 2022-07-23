@@ -204,7 +204,9 @@ public:
     std::vector<Shader*> shaders;
     int pickedViewPort;
     int nextLayerId = 2;
-     
+
+    bool startDrawBezierCurve = true;
+
     bool stopAnimation = false;
     int _bezierObjectCount = 0;
     int  animationDelay = 0;

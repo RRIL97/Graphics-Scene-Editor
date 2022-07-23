@@ -450,6 +450,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
       ImGui::SliderInt("Animation Start Delay", &viewer->animationDelay, 0, 5);
       if (ImGui::Button("Start Animation", ImVec2((w - p), 0)))
       {
+          viewer->startDrawBezierCurve = true;
           viewer->_bezierObjectCount = viewer->pShapes.size(); 
           viewer->stopAnimation = false;
           viewer->playAnimationMiliTime =  time(NULL);
