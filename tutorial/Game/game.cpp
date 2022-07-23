@@ -227,23 +227,20 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		ObjectMover* bezier = new ObjectMover(this, shapeIndx, bezierControlPoints);
 		g_bezierObjects.push_back(bezier); 
 		_bezierObjectCount--;
-		std::cout << "Adding " << std::endl;
-
-	} 
-	//
+		std::cout << "Adding " << std::endl; 
+	}  
 	if (shapeIndx == 11) {
 			if (startDrawBezierCurve) {  
 				for (auto currBezierObj : g_bezierObjects) {
+					/*
 					auto allMoves = currBezierObj->GetAllMoves(); 
 
 					for (int i = allMoves.size() - 1; i > 1; i--) {
-
-						Eigen::RowVector3d vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation() + allMoves[i - 1].cast<double>();
-						Eigen::RowVector3d vecNext, sizeVec = Eigen::RowVector3d(1 / 2, 1 / 2, 1 / 2);
+						Eigen::Vector3d vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation() + allMoves[i - 1].cast<double>();
+						Eigen::Vector3d vecNext, sizeVec = Eigen::Vector3d(1 / 2, 1 / 2, 1 / 2);
 						vecNext = data_list[currBezierObj->GetObjectId()]->GetTranslation() + allMoves[i].cast<double>() ;
-						 
 						data_list[11]->add_edges(vecCurr, vecNext, sizeVec);
-					}
+					}*/
 				}
 				startDrawBezierCurve = false;
 		       
@@ -268,16 +265,18 @@ void Game::Animate() {
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
 				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
-					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,false);   
+					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true);   
 				
 				}
 				else {
 					if (!stopAnimation) {
-					//	currBezierObj->CalculateBezierMoves(); 
+						currBezierObj->CalculateBezierMoves(); 
 					    data_list[11]->clear();
 						startDrawBezierCurve = true;
 					}
 					else { 
+						data_list[11]->clear();
+
 					}
 				}
 			}

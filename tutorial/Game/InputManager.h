@@ -29,8 +29,8 @@
 			else
 			{
 				if (rndr->Picking((int)x2, (int)y2))
-				{
-					rndr->UpdatePosition(x2, y2);
+				{ 
+						 					rndr->UpdatePosition(x2, y2);
 					rndr->Pick();
 					scn->pickedViewPort = 3;
 

@@ -25,7 +25,7 @@ void ObjectMover::CalculateBezierMoves() {
 
 	float                         t = 0; 
 	while (t <= 1) {
-		auto moveDirection = getVelocity(t, _bezierControlPoints[0], _bezierControlPoints[1], _bezierControlPoints[2], _bezierControlPoints[3]) / 30000;
+		auto moveDirection = getVelocity(t, _bezierControlPoints[0], _bezierControlPoints[1], _bezierControlPoints[2], _bezierControlPoints[3]) / 15000;
 		_objectCalculatedMoves.push_back(moveDirection);
 		t += 0.005;
 	} 
