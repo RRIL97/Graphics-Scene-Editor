@@ -38,17 +38,8 @@ public:
 	int GetObjectId() {
 		return _objectId;
 	}
-<<<<<<< HEAD
-private:  
-=======
 private:
-	Eigen::Matrix4f _proj;
-	Eigen::Matrix4f _view;
-	Eigen::Matrix4f _model;
-	float HEIGHT = 800;
-	float WIDTH = 800;
 
->>>>>>> 12770f5dd8b0ae0dcd54743c33076728e95e4e25
 	Game* _game;
 
 	std::vector<Eigen::Vector2f> _bezierControlPoints;
