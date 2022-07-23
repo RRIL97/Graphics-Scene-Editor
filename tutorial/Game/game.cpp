@@ -266,8 +266,7 @@ void Game::WhenTranslate()
 void Game::Animate() { 
 		for (auto currBezierObj : g_bezierObjects) {
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
-				if (!currBezierObj->getHasDoneMoving()) { 
-					
+				if (!currBezierObj->getHasDoneMoving()) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
 					data_list[currBezierObj->GetObjectId()]->SetTranslation(nextMove);  
  

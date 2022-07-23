@@ -454,6 +454,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
           viewer->_bezierObjectCount = viewer->pShapes.size(); 
           viewer->stopAnimation = false;
           viewer->playAnimationMiliTime =  time(NULL);
+          viewer->data_list[11]->clear();
           
       } 
       if (ImGui::Button("Stop Animation", ImVec2((w - p), 0)))
