@@ -261,7 +261,9 @@ void Game::WhenTranslate()
 
 
 void Game::Animate() { 
-		for (auto currBezierObj : g_bezierObjects) {
+	for (int i = 0;i < g_bezierObjects.size(); i ++) {
+
+			auto currBezierObj = g_bezierObjects[i];
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
 				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
@@ -275,8 +277,8 @@ void Game::Animate() {
 						startDrawBezierCurve = true;
 					}
 					else { 
-						data_list[11]->clear();
-
+						data_list[11]->clear(); 
+						g_bezierObjects.clear();
 					}
 				}
 			}
