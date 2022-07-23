@@ -1,7 +1,9 @@
 #include "renderer.h"
 #include <GLFW/glfw3.h>
 
+
 #include <igl/unproject_onto_mesh.h>
+
 #include <utility>
 #include "igl/look_at.h"
 
@@ -593,6 +595,22 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
      AddDraw(3, 0, 4, 0, stencilTest | depthTest | stencil2 | scaleAbit | inAction2 | onPicking);
      AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
     // SwapDrawInfo(2, drawInfos.size() - 1);
+}
+
+void Renderer::ZoomInToArea()
+{
+    int viewportCurrIndx = 0;
+    double xMin = std::min(xWhenPress, xold);
+    double yMin = std::min(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
+    double xMax = std::max(xWhenPress, xold);
+    double yMax = std::max(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
+    Eigen::Vector3f pointCenter((xMin + xMax) / 2, (yMin + yMax) / 2,0.0f);
+    Eigen::Matrix4f Proj = cameras[0]->GetViewProjection().cast<float>();
+    Eigen::Matrix4f PV = Proj * cameras[0]->MakeTransd().inverse().cast<float>();
+    Eigen::Vector3f res = scn->unproject(pointCenter, PV, viewports[0].cast<float>());
+  
+    std::cout << res.transpose() << std::endl;
+   
 }
 
 void Renderer::changeCamera(int cameraIndx)
