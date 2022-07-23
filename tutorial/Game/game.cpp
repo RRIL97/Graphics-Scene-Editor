@@ -122,10 +122,17 @@ void Game::Init()
 	SetShapeMaterial(5, 4);
 
 
+<<<<<<< HEAD
 	bezierControlPoints.push_back(Eigen::Vector2f(1080.0, 200.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1300.0, 250.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1300.0, 350.0));
 	bezierControlPoints.push_back(Eigen::Vector2f(1450.0, 450.0));
+=======
+	bezierControlPoints.push_back(Eigen::Vector2f(880.0, 200.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1100.0, 350.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1250.0, 550.0));
+	bezierControlPoints.push_back(Eigen::Vector2f(1450.0, 750.0));
+>>>>>>> 12770f5dd8b0ae0dcd54743c33076728e95e4e25
 	pickedShape = 0;
 	//split x
 	AddShape(Plane, -1, TRIANGLES, 5);
@@ -162,7 +169,7 @@ void Game::Init()
 void Game::setPressControlPoint(float x, float y) {
 	Eigen::Vector2f press(x,  y); 
 	for (int i = 0;i < bezierControlPoints.size(); i++) { 
-		if ((press - Eigen::Vector2f(bezierControlPoints[i].x(), 1000 - bezierControlPoints[i].y())).norm() < g_distanceClickControlThreshold) {
+		if ((press - Eigen::Vector2f(bezierControlPoints[i].x(), 800 - bezierControlPoints[i].y())).norm() < g_distanceClickControlThreshold) {
 			std::cout << " Chosen Control Point :  " << i << std::endl;
 			g_chosenControlPoint = i;
 		}
@@ -170,7 +177,7 @@ void Game::setPressControlPoint(float x, float y) {
 }
 
 void Game::updateCurve(float x,  float y) {
-	bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x  , 1000 - y);
+	bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x  , 800 - y);
 }
   
 
@@ -265,8 +272,13 @@ void Game::Animate() {
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
 				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
+<<<<<<< HEAD
 					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true);   
 				
+=======
+					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,1);  
+ 
+>>>>>>> 12770f5dd8b0ae0dcd54743c33076728e95e4e25
 				}
 				else {
 					if (!stopAnimation) {

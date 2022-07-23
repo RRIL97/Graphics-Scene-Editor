@@ -158,11 +158,12 @@ IGL_INLINE void Renderer::draw( GLFWwindow* window)
     int indx = 0;
     for (auto& info : drawInfos)
     {
+    
         if (!(info->flags & (inAction | inAction2))  || ((info->flags & inAction2) && !(info->flags & stencilTest) && isPressed && !isPicked) || ((info->flags & inAction2) && (info->flags & stencilTest)  && isPicked ))
             draw_by_info(indx);
         indx++;
     }
-    if (isPicked) {
+    if (isPicked ) {
         draw_by_info(2);
     }
 
@@ -466,7 +467,7 @@ unsigned int Renderer::AddBuffer(int infoIndx,bool splitX)
     info->SetFlags(stencilTest);
 
     info->SetFlags(clearDepth | clearStencil);
-    int width = splitX ? viewports[info->viewportIndx].z() / 2 : viewports[info->viewportIndx].z();
+    int width =  viewports[info->viewportIndx].z();
     int height = splitX ? viewports[info->viewportIndx].w() : viewports[info->viewportIndx].w() / 2;
     printf("W %d  H %d", width, height);
     unsigned int texId;
@@ -581,7 +582,7 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
     ClearDrawFlag(4, toClear);
     SetDrawFlag(4, blend);
     //split x
-     AddViewport(DISPLAY_WIDTH / 2, 0, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT);
+     AddViewport(DISPLAY_WIDTH, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT);
      CopyDraw(2, viewport, 5);
      SetBuffers(true);
      //split y

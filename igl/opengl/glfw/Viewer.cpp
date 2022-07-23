@@ -444,7 +444,8 @@ IGL_INLINE bool
         for (int i = 0; i < data_list.size(); i++)
         {
             auto shape = data_list[i];
-            if (viewportIndx != 4 && shape->Is2Render(4)) {
+            if (viewportIndx != 4 && shape->Is2Render(4)
+                || isSplitX && viewportIndx == 1) {
                 continue;
             }
 
