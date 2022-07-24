@@ -232,15 +232,21 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	if (shapeIndx == 11) {
 			if (startDrawBezierCurve) {  
 				for (auto currBezierObj : g_bezierObjects) {
-					/*
+					
 					auto allMoves = currBezierObj->GetAllMoves(); 
 
 					for (int i = allMoves.size() - 1; i > 1; i--) {
-						Eigen::Vector3d vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation() + allMoves[i - 1].cast<double>();
-						Eigen::Vector3d vecNext, sizeVec = Eigen::Vector3d(1 / 2, 1 / 2, 1 / 2);
-						vecNext = data_list[currBezierObj->GetObjectId()]->GetTranslation() + allMoves[i].cast<double>() ;
-						data_list[11]->add_edges(vecCurr, vecNext, sizeVec);
-					}*/
+
+						auto convertedBeforeMove = Eigen::RowVector3d ((double)(allMoves[i - 1].x() * 50), (double)(allMoves[i - 1].y() * 50), (double)(allMoves[i - 1].z()) );
+						Eigen::RowVector3d  vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedBeforeMove;
+				 
+						Eigen::RowVector3d  vecNext, sizeVec = Eigen::RowVector3d(0.5 , 0.5 , 0.5 );
+						auto convertedAfterMove = Eigen::RowVector3d(((double)allMoves[i].x() * 50), ((double)allMoves[i].y() * 50), (double)allMoves[i].z());
+
+						vecNext = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedAfterMove;
+						std::cout << vecCurr.transpose() <<  " "  << vecNext.transpose() << std::endl;
+						data_list[11]->add_edges(vecCurr,vecNext, sizeVec);
+					}
 				}
 				startDrawBezierCurve = false;
 		       
