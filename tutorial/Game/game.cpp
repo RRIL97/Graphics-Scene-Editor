@@ -201,6 +201,9 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("fogDensity",fogDensity);
 		s->SetUniform1i("showFog", showFog ? 1 : 0);
 
+		s->SetUniform1f("performBlurMotion", blurMotion);
+		s->SetUniform1f("sigma", blurSigma);
+
 	}
 	if (shaderIndx == 5) {
 		s->SetUniform1f("p1_x", bezierControlPoints[0].x());
@@ -219,28 +222,31 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		sigmaBlur = sigmaBlur > 4.0f ?  1.0f + sigmaBlur / 5.0f : 1.0f;
 		s->SetUniform1f("sigma", sigmaBlur);
 	
-	}
+	} 
 
 	//Move only selected objects according to the bezier curve.  
 	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {
-		std::cout << shapeIndx << std::endl;
 		ObjectMover* bezier = new ObjectMover(this, shapeIndx, bezierControlPoints);
 		g_bezierObjects.push_back(bezier); 
 		_bezierObjectCount--;
-		std::cout << "Adding " << std::endl; 
 	}  
 	if (shapeIndx == 11) {
 			if (startDrawBezierCurve) {  
 				for (auto currBezierObj : g_bezierObjects) {
-					/*
+					
 					auto allMoves = currBezierObj->GetAllMoves(); 
 
 					for (int i = allMoves.size() - 1; i > 1; i--) {
-						Eigen::Vector3d vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation() + allMoves[i - 1].cast<double>();
-						Eigen::Vector3d vecNext, sizeVec = Eigen::Vector3d(1 / 2, 1 / 2, 1 / 2);
-						vecNext = data_list[currBezierObj->GetObjectId()]->GetTranslation() + allMoves[i].cast<double>() ;
-						data_list[11]->add_edges(vecCurr, vecNext, sizeVec);
-					}*/
+
+						auto convertedBeforeMove = Eigen::RowVector3d ((double)(allMoves[i - 1].x() * 50), (double)(allMoves[i - 1].y() * 50), (double)(allMoves[i - 1].z()) );
+						Eigen::RowVector3d  vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedBeforeMove;
+				 
+						Eigen::RowVector3d  vecNext, sizeVec = Eigen::RowVector3d(0.5 , 0.5 , 0.5 );
+						auto convertedAfterMove = Eigen::RowVector3d(((double)allMoves[i].x() * 50), ((double)allMoves[i].y() * 50), (double)allMoves[i].z());
+
+						vecNext = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedAfterMove;
+						data_list[11]->add_edges(vecCurr,vecNext, sizeVec);
+					}
 				}
 				startDrawBezierCurve = false;
 		       
@@ -261,6 +267,7 @@ void Game::WhenTranslate()
 
 
 void Game::Animate() { 
+ 
 	for (int i = 0;i < g_bezierObjects.size(); i ++) {
 
 			auto currBezierObj = g_bezierObjects[i];
@@ -268,7 +275,6 @@ void Game::Animate() {
 				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
 					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true);   
-				
 				}
 				else {
 					if (!stopAnimation) {
@@ -298,17 +304,23 @@ void Game::Animate() {
 			g_cameraMovers.push_back(cameraMover);
 			moveCameraBezier = false;
 		}
+		if (!blurMotion) {
+			blurMotion = true; 
+		}
 		for (int i = 0; i < g_cameraMovers.size(); i++) {
 			auto currentMover = g_cameraMovers[i];
 			 
 			if (!currentMover->getHasDoneMoving()) { 
 				currCamera->SetTranslation(currentMover->GetNextMove().cast<double>()); 
+				blurSigma += 0.01;
 			}
 			else {
 				//we are done remove it
 				auto entry = g_cameraMovers[i];
 				g_cameraMovers.erase(g_cameraMovers.begin() + i);
 
+				blurMotion = false;
+				blurSigma = 0.5;
 				delete entry;
 			}
 		}

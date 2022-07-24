@@ -207,13 +207,15 @@ public:
 
     bool startDrawBezierCurve = true;
 
-    bool stopAnimation = false;
-    int _bezierObjectCount = 0;
-    int  animationDelay = 0;
+    bool blurMotion = false;
+    float blurSigma = 0.5;
+    bool stopAnimation         = false;
+    int _bezierObjectCount     = 0;
+    int  animationDelay        = 0;
     int  playAnimationMiliTime = 0;
-    bool setCameraPathBezier = true;
-    bool moveCameraBezier = false;
-    int  cameraIdMoveBezier = -1;
+    bool setCameraPathBezier   = true;
+    bool moveCameraBezier      = false;
+    int  cameraIdMoveBezier    = -1;
 
     std::unordered_map<std::string,std::vector<Eigen::Vector3d>> camerasPaths;
  
