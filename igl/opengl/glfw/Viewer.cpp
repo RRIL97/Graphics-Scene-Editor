@@ -42,6 +42,7 @@
 #include <igl/unproject.h>
 #include <igl/serialize.h>
 #include "../gl.h"
+#include "igl/project.h"
 
 
 // Internal global variables used for glfw event handling
@@ -850,10 +851,10 @@ IGL_INLINE bool
             return 0;
     }
 
-    Eigen::Vector3f Viewer::unproject(Eigen::Vector3f win, const Eigen::Matrix4f& Proj, const Eigen::Vector4f& viewport)
+    Eigen::Vector3f Viewer::convertToWorldCoordinates(Eigen::Vector3f win, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& view, const Eigen::Vector4f& viewport)
     {
-        const Eigen::Matrix4f& Model = MakeTransd().cast<float>();
-        return igl::unproject(win, Model, Proj, viewport);
+        const Eigen::Matrix4f& ModelView = view *MakeTransd().cast<float>() ;
+        return igl::unproject(win, ModelView, Proj, viewport);
     }
 
     int Viewer::AddTexture(const std::string& textureFileName, int dim)

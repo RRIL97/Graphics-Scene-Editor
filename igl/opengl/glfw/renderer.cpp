@@ -327,7 +327,6 @@ void Renderer::PickMany(int viewportIndx)
 		depth = scn->AddPickedShapes(cameras[0]->GetViewProjection().cast<double>() * (cameras[0]->MakeTransd()).inverse(), viewports[viewportCurrIndx], viewportCurrIndx, xMin, xMax, yMin, yMax,viewportIndx);
         if (depth != 0)
         {
-            std::cout << "here" << std::endl;
             depth = (depth*2.0f - cameras[0]->GetFar()) / (cameras[0]->GetNear() - cameras[0]->GetFar());
             isMany = true;
             isPicked = true;
@@ -597,6 +596,7 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
     // SwapDrawInfo(2, drawInfos.size() - 1);
 }
 
+
 void Renderer::ZoomInToArea()
 {
     int viewportCurrIndx = 0;
@@ -604,13 +604,25 @@ void Renderer::ZoomInToArea()
     double yMin = std::min(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
     double xMax = std::max(xWhenPress, xold);
     double yMax = std::max(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
-    Eigen::Vector3f pointCenter((xMin + xMax) / 2, (yMin + yMax) / 2,0.0f);
-    Eigen::Matrix4f Proj = cameras[0]->GetViewProjection().cast<float>();
-    Eigen::Matrix4f PV = Proj * cameras[0]->MakeTransd().inverse().cast<float>();
-    Eigen::Vector3f res = scn->unproject(pointCenter, PV, viewports[0].cast<float>());
-  
-    std::cout << res.transpose() << std::endl;
+    float xCenter =(float)(xMin + xMax) / 2.0f;
+    float yCenter = (float) (yMin + yMax) / 2.0f;
+
+    GLint viewport[4];
    
+    glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+    float depth;
+    std::cout << " xCenter " << xCenter<< " yxCenter " << yCenter << std::endl;
+
+    glReadPixels(xCenter, viewport[3] - yCenter, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    Eigen::Vector3f pointCenter(xCenter,yCenter , depth);
+    Eigen::Matrix4f Proj = cameras[0]->GetViewProjection().cast<float>();
+    Eigen::Matrix4f view = cameras[0]->MakeTransd().inverse().cast<float>();
+    Eigen::Vector3f res = scn->convertToWorldCoordinates(pointCenter, Proj,view, viewports[0].cast<float>());
+    Eigen::Vector3d cameraPos = cameras[0]->MakeTransd().col(3).head(3);
+    Eigen::Vector3f direction = (res - cameraPos.cast<float>()).normalized();
+    cameras[0]->MyTranslate(direction.cast<double>(), 1);
+    std::cout << "camera location"<<cameras[0]->MakeTransd().col(3).head(3).transpose() << std::endl;
+
 }
 
 void Renderer::changeCamera(int cameraIndx)

@@ -197,6 +197,9 @@ public:
     void SwapDrawInfo(int indx1, int indx2);
     IGL_INLINE void initProject(const int DISPLAY_WIDTH, const int DISPLAY_HEIGHT);
     void ZoomInToArea();
+    float mapRange(float num, float minR, float maxR) {
+        return num * (maxR - minR) + minR;
+    }
 
     int lastButtonPressed = -1; 
     std::vector<igl::opengl::Camera*> cameras;
