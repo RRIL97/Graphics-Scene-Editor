@@ -201,6 +201,9 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("fogDensity",fogDensity);
 		s->SetUniform1i("showFog", showFog ? 1 : 0);
 
+		s->SetUniform1f("performBlurMotion", blurMotion);
+		s->SetUniform1f("sigma", blurSigma);
+
 	}
 	if (shaderIndx == 5) {
 		s->SetUniform1f("p1_x", bezierControlPoints[0].x());
@@ -219,7 +222,7 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		sigmaBlur = sigmaBlur > 4.0f ?  1.0f + sigmaBlur / 5.0f : 1.0f;
 		s->SetUniform1f("sigma", sigmaBlur);
 	
-	}
+	} 
 
 	//Move only selected objects according to the bezier curve.  
 	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {
@@ -267,6 +270,7 @@ void Game::WhenTranslate()
 
 
 void Game::Animate() { 
+ 
 	for (int i = 0;i < g_bezierObjects.size(); i ++) {
 
 			auto currBezierObj = g_bezierObjects[i];
@@ -305,17 +309,23 @@ void Game::Animate() {
 			g_cameraMovers.push_back(cameraMover);
 			moveCameraBezier = false;
 		}
+		if (!blurMotion) {
+			blurMotion = true; 
+		}
 		for (int i = 0; i < g_cameraMovers.size(); i++) {
 			auto currentMover = g_cameraMovers[i];
 			 
 			if (!currentMover->getHasDoneMoving()) { 
 				currCamera->SetTranslation(currentMover->GetNextMove().cast<double>()); 
+				blurSigma += 0.01;
 			}
 			else {
 				//we are done remove it
 				auto entry = g_cameraMovers[i];
 				g_cameraMovers.erase(g_cameraMovers.begin() + i);
 
+				blurMotion = false;
+				blurSigma = 0.5;
 				delete entry;
 			}
 		}
