@@ -28,15 +28,9 @@
 			}
 			else
 			{
-<<<<<<< Updated upstream
-				if (rndr->Picking((int)x2, (int)y2))
-				{ 
-						 					rndr->UpdatePosition(x2, y2);
-=======
 				if (!rndr->tryToZoom && rndr->Picking((int)x2, (int)y2))
 				{
 					rndr->UpdatePosition(x2, y2);
->>>>>>> Stashed changes
 					rndr->Pick();
 					scn->pickedViewPort = 3;
 
