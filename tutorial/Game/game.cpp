@@ -237,11 +237,11 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 
 					for (int i = allMoves.size() - 1; i > 1; i--) {
 
-						auto convertedBeforeMove = Eigen::RowVector3d ((double)(allMoves[i - 1].x() * 20), (double)(allMoves[i - 1].y() * 20), (double)(allMoves[i - 1].z()) );
+						auto convertedBeforeMove = Eigen::RowVector3d ((double)(allMoves[i - 1].x() * 50), (double)(allMoves[i - 1].y() * 50), (double)(allMoves[i - 1].z()) );
 						Eigen::RowVector3d  vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedBeforeMove;
 				 
 						Eigen::RowVector3d  vecNext, sizeVec = Eigen::RowVector3d(0.5 , 0.5 , 0.5 );
-						auto convertedAfterMove = Eigen::RowVector3d(((double)allMoves[i].x() * 20), ((double)allMoves[i].y() * 20), (double)allMoves[i].z());
+						auto convertedAfterMove = Eigen::RowVector3d(((double)allMoves[i].x() * 50), ((double)allMoves[i].y() * 50), (double)allMoves[i].z());
 
 						vecNext = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedAfterMove;
 						std::cout << vecCurr.transpose() <<  " "  << vecNext.transpose() << std::endl;
