@@ -1,6 +1,7 @@
 #pragma once
 #include <igl/igl_inline.h>
 #include <vector>
+
 #include <functional>
 //#include <igl/opengl/ViewerCore.h>
 #include "DrawInfo.h"
@@ -197,13 +198,14 @@ public:
     void SwapDrawInfo(int indx1, int indx2);
     IGL_INLINE void initProject(const int DISPLAY_WIDTH, const int DISPLAY_HEIGHT);
     void ZoomInToArea();
-    float mapRange(float num, float minR, float maxR) {
-        return num * (maxR - minR) + minR;
+    float mapRange(float num, float in_min, float in_max, float out_min, float out_max) {
+        return (num - in_min) * (out_max - out_min) / (in_max - in_min) +out_min;
     }
 
     int lastButtonPressed = -1; 
     std::vector<igl::opengl::Camera*> cameras;
     bool tryToZoom = false;
+    std::unordered_map<std::string, std::vector<Eigen::Vector3d>> cameraPrevZoomLocation;
 
 private:
     // Stores all the viewing options

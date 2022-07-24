@@ -604,24 +604,34 @@ void Renderer::ZoomInToArea()
     double yMin = std::min(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
     double xMax = std::max(xWhenPress, xold);
     double yMax = std::max(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
-    float xCenter =(float)(xMin + xMax) / 2.0f;
-    float yCenter = (float) (yMin + yMax) / 2.0f;
+    float xCenter = (float)(xMin + xMax) / 2.0f;
+    float yCenter = (float)(yMin + yMax) / 2.0f;
 
     GLint viewport[4];
-   
+
     glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
     float depth;
-    std::cout << " xCenter " << xCenter<< " yxCenter " << yCenter << std::endl;
-
     glReadPixels(xCenter, viewport[3] - yCenter, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-    Eigen::Vector3f pointCenter(xCenter,yCenter , depth);
+    Eigen::Vector3f pointCenter(xCenter, yCenter, depth);
     Eigen::Matrix4f Proj = cameras[0]->GetViewProjection().cast<float>();
     Eigen::Matrix4f view = cameras[0]->MakeTransd().inverse().cast<float>();
-    Eigen::Vector3f res = scn->convertToWorldCoordinates(pointCenter, Proj,view, viewports[0].cast<float>());
+    Eigen::Vector3f res = scn->convertToWorldCoordinates(pointCenter, Proj, view, viewports[0].cast<float>());
+
     Eigen::Vector3d cameraPos = cameras[0]->MakeTransd().col(3).head(3);
     Eigen::Vector3f direction = (res - cameraPos.cast<float>()).normalized();
-    cameras[0]->MyTranslate(direction.cast<double>(), 1);
-    std::cout << "camera location"<<cameras[0]->MakeTransd().col(3).head(3).transpose() << std::endl;
+    float scale = mapRange((xMax - xMin) * (yMax - yMin), 0, 800 * 800, 1, cameraPos[2]);
+    scale = cameraPos[2] - scale;
+    //save position to be able to return to defualt view 
+    auto iter = cameraPrevZoomLocation.find(cameras[0]->name);
+    if (iter == cameraPrevZoomLocation.end()) {
+        std::vector<Eigen::Vector3d> cameraPosArr;
+        cameraPosArr.push_back(cameraPos);
+        cameraPrevZoomLocation.emplace(cameras[0]->name, cameraPosArr);
+    }
+    else {
+        iter->second.push_back(cameraPos);
+    }
+    cameras[0]->MyTranslate(direction.cast<double>() * (scale < 1 ? 1 : scale), 1);
 
 }
 

@@ -318,7 +318,6 @@ IGL_INLINE bool
     if (fname.length() == 0)
       return;
     
-    std::cout << fname.c_str() << std::endl;
     this->load_mesh_from_file(fname.c_str());
   }
 
@@ -329,7 +328,6 @@ IGL_INLINE bool
       std::string fname = igl::file_dialog_open();
       if (fname.length() == 0)
           return;
-      std::cout << next_texture_id << std::endl;
       texIDs[0] = slots[0] = next_texture_id;
       AddTexture(fname, 2);
       std::string base_filename = fname.substr(fname.find_last_of("/\\") + 1);
@@ -670,7 +668,6 @@ IGL_INLINE bool
                 selected_data_index = pShape;
                 WhenTranslate(scnMat * cameraMat, -xrel / movCoeff, yrel / movCoeff);
                 Eigen::Vector3d pos = data_list[pShape]->MakeTransd().col(3).head(3);
-                std::cout << pos.transpose() << std::endl;
             }
         }
         else
@@ -755,7 +752,6 @@ IGL_INLINE bool
             std::cout << "picked shape id " << selected_data_index << std::endl;
             pShapes.push_back(selected_data_index);
             data_list[selected_data_index]->AddViewport(newViewportIndx);
-            std::cout << "viewports " << data_list[selected_data_index]->viewports << std::endl;
 
             return true;
      

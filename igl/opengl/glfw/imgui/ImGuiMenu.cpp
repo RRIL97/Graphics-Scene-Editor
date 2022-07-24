@@ -373,6 +373,17 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
       ImGui::Checkbox("Zoom area",
           [&]() { return rndr->tryToZoom; },
           [&](bool value) { rndr->tryToZoom = value; });
+      auto iter = rndr->cameraPrevZoomLocation.find(camera[0]->name);
+      //we did zoom to area 
+      if (iter != rndr->cameraPrevZoomLocation.end() && !iter->second.empty()) {
+          ImGui::SameLine();
+          if (ImGui::Button("unzoom", ImVec2((w - p)/2, 0)))
+          {
+              camera[0]->SetTranslation(iter->second.back());
+              iter->second.pop_back();
+          }
+
+      }
       ImGui::Checkbox("split x",
           [&]() { return viewer->isSplitX; },
           [&](bool value) { viewer->isSplitX = value;
@@ -396,10 +407,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
 
   if (ImGui::CollapsingHeader("Objects Options", ImGuiTreeNodeFlags_DefaultOpen))
    {
-      if (ImGui::Button("zoomToObject", ImVec2((w - p), 0)))
-      {
-        //  rndr->ZoomInToArea();
-      }
       ImGui::Text("Material Options:");
       if (ImGui::BeginCombo("Material", currentMaterial.c_str())) {
           for (int i = 7; i < viewer->materials.size(); i++) {

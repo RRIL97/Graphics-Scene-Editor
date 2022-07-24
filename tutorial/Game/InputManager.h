@@ -83,7 +83,6 @@
 			}
 		}
 		else {
-			std::cout << yoffset << std::endl;
 			rndr->MoveCamera(0, scn->zTranslate, (float)-0.4f * yoffset);
 		}
 	}
