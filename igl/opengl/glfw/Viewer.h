@@ -252,7 +252,8 @@ public:
       float
       AddPickedShapes(const Eigen::Matrix4d &PV, const Eigen::Vector4i &viewport, int viewportIndx, int left, int right,
                       int up, int bottom, int newViewportIndx);
-
+      Eigen::Vector3f
+          unproject(Eigen::Vector3f win,const Eigen::Matrix4f& Proj, const Eigen::Vector4f& viewport);
       void
       MouseProccessing(int button, int xrel, int yrel, float movCoeff, Eigen::Matrix4d cameraMat, int viewportIndx);
 

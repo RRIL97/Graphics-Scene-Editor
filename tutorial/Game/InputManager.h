@@ -28,9 +28,15 @@
 			}
 			else
 			{
+<<<<<<< Updated upstream
 				if (rndr->Picking((int)x2, (int)y2))
 				{ 
 						 					rndr->UpdatePosition(x2, y2);
+=======
+				if (!rndr->tryToZoom && rndr->Picking((int)x2, (int)y2))
+				{
+					rndr->UpdatePosition(x2, y2);
+>>>>>>> Stashed changes
 					rndr->Pick();
 					scn->pickedViewPort = 3;
 
@@ -52,7 +58,12 @@
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 			Game* scn = (Game*)rndr->GetScene();
 			if (scn->pickedViewPort != 1) {
-				if (rndr->IsTryToPickMany()) {
+				if (rndr->tryToZoom) {
+					rndr->ZoomInToArea();
+					rndr->Pressed();
+					rndr->setTryToPickMany(false);
+				}
+				else if (rndr->IsTryToPickMany()) {
 					rndr->PickMany(3);
 					rndr->Pressed();
 					rndr->setTryToPickMany(false);
@@ -74,9 +85,11 @@
 			for (int pShape : scn->pShapes) {
 				scn->selected_data_index = pShape;
 				scn->ShapeTransformation(scn->zTranslate, (float)-0.4f * yoffset, 1);
+
 			}
 		}
 		else {
+			std::cout << yoffset << std::endl;
 			rndr->MoveCamera(0, scn->zTranslate, (float)-0.4f * yoffset);
 		}
 	}
@@ -99,6 +112,8 @@
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{ 
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+
+	
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{

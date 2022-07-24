@@ -13,6 +13,7 @@
 #include "../ViewerData.h"
 
 
+
 struct GLFWwindow;
 
 
@@ -195,9 +196,12 @@ public:
     void Init(igl::opengl::glfw::Viewer *scene, std::list<int> xViewport, std::list<int> yViewport, int pickingBits,igl::opengl::glfw::imgui::ImGuiMenu *_menu);
     void SwapDrawInfo(int indx1, int indx2);
     IGL_INLINE void initProject(const int DISPLAY_WIDTH, const int DISPLAY_HEIGHT);
+    void ZoomInToArea();
 
     int lastButtonPressed = -1; 
     std::vector<igl::opengl::Camera*> cameras;
+    bool tryToZoom = false;
+
 private:
     // Stores all the viewing options
 //    std::vector<igl::opengl::ViewerCore> core_list;
@@ -230,10 +234,18 @@ private:
     const float cameraNear;
     const float cameraFar;
     void draw_by_info(int info_index = 1);
-
+    int windowOffsetLeft = 0;
+    int windowOffsetRight = 800;
+    int windowOffsetUp = 0;
+    int windowOffsetDown = 800;
     void ActionDraw(int viewportIndx);
 
     void Clear(float r, float g, float b, float a, unsigned int flags);
+    float calculateDistance(float pX1, float pY1, float pX2, float pY2) {
+        float x = pX2 - pX1;
+        float y = pY2 - pY1;
+        return (float)sqrt((x * x) + (y * y));
+    }
 
 };
 

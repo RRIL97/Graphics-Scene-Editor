@@ -273,8 +273,13 @@ void Game::Animate() {
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
 				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
+<<<<<<< Updated upstream
 					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true);   
 				
+=======
+					data_list[currBezierObj->GetObjectId()]->SetTranslation(nextMove);  
+ 
+>>>>>>> Stashed changes
 				}
 				else {
 					if (!stopAnimation) {

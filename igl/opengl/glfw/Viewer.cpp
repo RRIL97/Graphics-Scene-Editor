@@ -85,7 +85,6 @@ namespace glfw
     scroll_position = 0.0f;
     SetShader_overlay("shaders/overlay");
     SetShader_point_overlay("shaders/overlay_points");
-
     // Per face
     data()->set_face_based(false);
     ThemeNames.push_back("Daylight");
@@ -669,6 +668,8 @@ IGL_INLINE bool
             {
                 selected_data_index = pShape;
                 WhenTranslate(scnMat * cameraMat, -xrel / movCoeff, yrel / movCoeff);
+                Eigen::Vector3d pos = data_list[pShape]->MakeTransd().col(3).head(3);
+                std::cout << pos.transpose() << std::endl;
             }
         }
         else
@@ -847,6 +848,12 @@ IGL_INLINE bool
         }
         else
             return 0;
+    }
+
+    Eigen::Vector3f Viewer::unproject(Eigen::Vector3f win, const Eigen::Matrix4f& Proj, const Eigen::Vector4f& viewport)
+    {
+        const Eigen::Matrix4f& Model = MakeTransd().cast<float>();
+        return igl::unproject(win, Model, Proj, viewport);
     }
 
     int Viewer::AddTexture(const std::string& textureFileName, int dim)
