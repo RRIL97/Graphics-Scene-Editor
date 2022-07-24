@@ -23,8 +23,7 @@ public:
 	unsigned int Game::CreateTex(int width, int height);
 	void setPressControlPoint(float x, float y);
 	void updateCurve(float x, float y);
-
-
+	Eigen::Matrix4d getTranslateRes(Eigen::Vector3d amt, bool preRotation);
  	 
 
 	~Game(void);
@@ -37,5 +36,7 @@ public:
 
 private:
 	editorState state = editorState::DESIGN;
+	Eigen::Affine3d ToutCopy;
+	Eigen::Affine3d TinCopy;
 };
 

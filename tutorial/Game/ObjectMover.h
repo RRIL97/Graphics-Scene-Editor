@@ -13,6 +13,8 @@ class ObjectMover {
 public:
 	ObjectMover(Game* game, int objectId, std::vector<Eigen::Vector2f> bezierControlPoints);
 
+	void getBezierWorldCoordinates();
+
 	void CalculateBezierMoves();
 
 	bool getHasDoneMoving() {
@@ -43,6 +45,7 @@ private:
 	Game* _game;
 
 	std::vector<Eigen::Vector2f> _bezierControlPoints;
+	float dt = 0.005;
 	std::vector<Eigen::Vector3f> _objectCalculatedMoves;
 	int _objectId; 
 

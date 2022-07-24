@@ -847,9 +847,8 @@ IGL_INLINE bool
             return 0;
     }
 
-    Eigen::Vector3f Viewer::convertToWorldCoordinates(Eigen::Vector3f win, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& view, const Eigen::Vector4f& viewport)
+    Eigen::Vector3f Viewer::convertToWorldCoordinates(Eigen::Vector3f win, const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& ModelView, const Eigen::Vector4f& viewport)
     {
-        const Eigen::Matrix4f& ModelView = view *MakeTransd().cast<float>() ;
         return igl::unproject(win, ModelView, Proj, viewport);
     }
 

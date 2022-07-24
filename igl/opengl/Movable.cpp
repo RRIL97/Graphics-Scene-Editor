@@ -33,11 +33,18 @@ Eigen::Matrix4d Movable::MakeTransd()
 
 void Movable::MyTranslate(Eigen::Vector3d amt, bool preRotation)
 {
-	
 	if(preRotation)
 		Tout.pretranslate(amt);
 	else
 		Tin.pretranslate(amt);
+}
+Eigen::Affine3d Movable::getTout()
+{
+	return Tout;
+}
+Eigen::Affine3d Movable::getTin()
+{
+	return Tin;
 }
 void Movable::TranslateInSystem(Eigen::Matrix3d rot, Eigen::Vector3d amt)
 {

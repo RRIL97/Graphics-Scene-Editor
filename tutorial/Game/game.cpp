@@ -170,7 +170,21 @@ void Game::setPressControlPoint(float x, float y) {
 }
 
 void Game::updateCurve(float x,  float y) {
-	bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x  , 800 - y);
+    bezierControlPoints[g_chosenControlPoint] = Eigen::Vector2f(x, 800 - y);
+
+}
+
+Eigen::Matrix4d Game::getTranslateRes(Eigen::Vector3d amt, bool preRotation)
+{
+	if (preRotation)
+		ToutCopy.pretranslate(amt);
+	else
+		TinCopy.pretranslate(amt);
+
+	Eigen::Matrix4d mat = Eigen::Matrix4d::Identity();
+	mat.col(3) << TinCopy.translation(), 1;
+
+	return (ToutCopy.matrix() * mat);
 }
   
 
@@ -235,17 +249,13 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 				for (auto currBezierObj : g_bezierObjects) {
 					
 					auto allMoves = currBezierObj->GetAllMoves(); 
-
-					for (int i = allMoves.size() - 1; i > 1; i--) {
-
-						auto convertedBeforeMove = Eigen::RowVector3d ((double)(allMoves[i - 1].x() * 50), (double)(allMoves[i - 1].y() * 50), (double)(allMoves[i - 1].z()) );
-						Eigen::RowVector3d  vecCurr = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedBeforeMove;
-				 
-						Eigen::RowVector3d  vecNext, sizeVec = Eigen::RowVector3d(0.5 , 0.5 , 0.5 );
-						auto convertedAfterMove = Eigen::RowVector3d(((double)allMoves[i].x() * 50), ((double)allMoves[i].y() * 50), (double)allMoves[i].z());
-
-						vecNext = data_list[currBezierObj->GetObjectId()]->GetTranslation().transpose() + convertedAfterMove;
-						data_list[11]->add_edges(vecCurr,vecNext, sizeVec);
+					Eigen::RowVector3d  posBefore = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
+					ToutCopy = data_list[currBezierObj->GetObjectId()]->getTout();
+					TinCopy = data_list[currBezierObj->GetObjectId()]->getTin();
+					for (int i = 0; i < allMoves.size(); i++) {
+						Eigen::RowVector3d posAfter = getTranslateRes(allMoves[i].cast<double>(), true).col(3).head(3);
+						data_list[11]->add_edges(posBefore, posAfter, posAfter - posAfter);
+						posBefore = posAfter;
 					}
 				}
 				startDrawBezierCurve = false;
@@ -274,7 +284,10 @@ void Game::Animate() {
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
 				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
-					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true);   
+				//	Eigen::RowVector3d posBefore = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
+					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true); 
+					//Eigen::RowVector3d posAfter = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
+					//data_list[11]->add_edges(posBefore, posAfter, posAfter - posAfter);
 				}
 				else {
 					if (!stopAnimation) {
