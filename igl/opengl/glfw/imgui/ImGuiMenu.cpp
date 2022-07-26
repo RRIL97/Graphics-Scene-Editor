@@ -317,6 +317,21 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
             prevSelectedCameraIndx = 0;
             errorMsg = "Successfully changed camera";
         }
+        if (viewer->isSplitX) {
+            if (ImGui::Button("set for right", ImVec2((w - p) / 2.0f, 0)))
+            {
+                rndr->changeSplitXCamera(prevSelectedCameraIndx);
+                errorMsg = "Successfully changed camera";
+            }
+        }
+        if (viewer->isSplitY) {
+            ImGui::SameLine(0, p);
+            if (ImGui::Button("set for up", ImVec2((w - p) / 2.0f, 0)))
+            {
+                rndr->changeSplitYCamera(prevSelectedCameraIndx);
+                errorMsg = "Successfully changed camera";
+            }
+        }
 
         if (viewer->setCameraPathBezier) {
             if (ImGui::Button("choose Path", ImVec2((w - p) / 2.0f, 0)))

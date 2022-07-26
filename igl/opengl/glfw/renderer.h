@@ -201,7 +201,13 @@ public:
     float mapRange(float num, float in_min, float in_max, float out_min, float out_max) {
         return (num - in_min) * (out_max - out_min) / (in_max - in_min) +out_min;
     }
+    void changeSplitXCamera(int cameraIndx) {
+        drawInfos[splitXdrawInfoIndx]->cameraIndx = cameraIndx;
+    }
+    void changeSplitYCamera(int cameraIndx) {
+        drawInfos[splitYdrawInfoIndx]->cameraIndx = cameraIndx;
 
+    }
     int lastButtonPressed = -1; 
     std::vector<igl::opengl::Camera*> cameras;
     bool tryToZoom = false;
@@ -212,6 +218,10 @@ private:
 //    std::vector<igl::opengl::ViewerCore> core_list;
     igl::opengl::Camera* currCamera;
     int currCameraIndx = 2;
+    int spliXCameraIndx = 2;
+    int spliYCameraIndx = 2;
+    int splitXdrawInfoIndx = 0;  
+    int splitYdrawInfoIndx = 0;
     igl::opengl::glfw::Viewer* scn;
     std::vector<Eigen::Vector4i> viewports;
     std::vector<DrawInfo *> drawInfos;

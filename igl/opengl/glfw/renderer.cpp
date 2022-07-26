@@ -586,10 +586,12 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
      AddViewport(DISPLAY_WIDTH, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT);
      CopyDraw(2, viewport, 5);
      SetBuffers(true);
+     splitXdrawInfoIndx = drawInfos.size() - 1;
      //split y
      AddViewport(0, DISPLAY_HEIGHT / 2, DISPLAY_WIDTH, DISPLAY_HEIGHT / 2);
      CopyDraw(2, viewport, 6);
      SetBuffers(false);
+     splitYdrawInfoIndx = drawInfos.size() - 1;
 
      AddDraw(3, 0, 4, 0, stencilTest | depthTest | stencil2 | scaleAbit | inAction2 | onPicking);
      AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
@@ -637,6 +639,18 @@ void Renderer::ZoomInToArea()
 
 void Renderer::changeCamera(int cameraIndx)
 {
+    if (cameraIndx == drawInfos[splitXdrawInfoIndx]->cameraIndx) {
+        drawInfos[splitXdrawInfoIndx]->cameraIndx = 0;
+    }
+    else  if(drawInfos[splitXdrawInfoIndx]->cameraIndx == 0) {
+            drawInfos[splitXdrawInfoIndx]->cameraIndx = cameraIndx;
+        }
+    if (cameraIndx == drawInfos[splitYdrawInfoIndx]->cameraIndx) {
+        drawInfos[splitYdrawInfoIndx]->cameraIndx = 0;
+    }
+    else if (drawInfos[splitYdrawInfoIndx]->cameraIndx == 0) {
+        drawInfos[splitYdrawInfoIndx]->cameraIndx = cameraIndx;
+    }
     igl::opengl::Camera* curr = cameras[0];
     cameras[0] = cameras[cameraIndx];
     cameras[cameraIndx] = curr; 
@@ -648,7 +662,6 @@ void Renderer::switchToNextCamera()
 {
     if (currCameraIndx == cameras.size()) {
         currCameraIndx = 2; 
-
     }
     changeCamera(currCameraIndx);
     currCameraIndx++;
