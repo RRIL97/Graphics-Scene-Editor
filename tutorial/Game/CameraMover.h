@@ -18,7 +18,11 @@ public:
 	bool getHasDoneMoving() {
 		return _objectCalculatedMoves.size() <= 0;
 	}
-	 
+	std::vector<Eigen::Vector3f> GetAllMoves() {
+		return _objectCalculatedMoves;
+	}
+
+	
 	Eigen::Vector3f GetNextMove() {
 		auto nextMove = _objectCalculatedMoves.at(0);
 		_objectCalculatedMoves.erase(_objectCalculatedMoves.begin());

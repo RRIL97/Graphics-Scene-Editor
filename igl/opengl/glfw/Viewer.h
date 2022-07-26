@@ -206,7 +206,7 @@ public:
     int nextLayerId = 2;
 
     bool startDrawBezierCurve = true;
-
+    bool startDrawBezierCurveCamera = true;
     bool blurMotion = false;
     float blurSigma = 0.5;
     bool stopAnimation         = false;

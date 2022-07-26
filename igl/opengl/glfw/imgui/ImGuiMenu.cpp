@@ -325,12 +325,18 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
 
                 if (cameraPath.size() == 4) {
                     for (int i = 0; i < 3; i++)
-                        viewer->data_list[viewer->cameraPathStartIndx + i]->SetTranslation(cameraPath[i]);
+                        viewer->data_list[viewer->cameraPathStartIndx + i]->SetTranslation(Eigen::Vector3d(0,0,0));
                 }
+                viewer->data_list[11]->clear();
                 viewer->layers[0]->isVisible = true;
                 viewer->setCameraPathBezier = false;
 
-          }       
+          }
+           ImGui::SameLine(0, p);
+          if (ImGui::Button("remove drawing", ImVec2((w - p) / 2.0f, 0))) {
+              viewer->data_list[11]->clear();
+
+           }
         if (!viewer->moveCameraBezier) {
             if (ImGui::Button("move bezier", ImVec2((w - p) / 2.0f, 0))) {
                 if (viewer->setCameraPathBezier) {
@@ -338,6 +344,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
                     viewer->moveCameraBezier = true;
                 }
             }
+
         }
         else {
             if (ImGui::Button("stop bezier", ImVec2((w - p) / 2.0f, 0))) {

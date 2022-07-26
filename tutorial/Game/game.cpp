@@ -174,12 +174,14 @@ void Game::updateCurve(float x,  float y) {
 
 }
 
-Eigen::Matrix4d Game::getTranslateRes(Eigen::Vector3d amt, bool preRotation)
+Eigen::Matrix4d Game::getTranslateRes(Eigen::Vector3d amt, bool translation)
 {
-	if (preRotation)
+	if (translation)
 		ToutCopy.pretranslate(amt);
-	else
-		TinCopy.pretranslate(amt);
+	else {
+		Eigen::Vector3d oldPositionOfObject = (ToutCopy * TinCopy).matrix().block(0, 3, 3, 1);
+		ToutCopy.pretranslate(amt - oldPositionOfObject);
+	}
 
 	Eigen::Matrix4d mat = Eigen::Matrix4d::Identity();
 	mat.col(3) << TinCopy.translation(), 1;
@@ -245,22 +247,37 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		_bezierObjectCount--;
 	}  
 	if (shapeIndx == 11) {
-			if (startDrawBezierCurve) {  
-				for (auto currBezierObj : g_bezierObjects) {
-					
-					auto allMoves = currBezierObj->GetAllMoves(); 
-					Eigen::RowVector3d  posBefore = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
-					ToutCopy = data_list[currBezierObj->GetObjectId()]->getTout();
-					TinCopy = data_list[currBezierObj->GetObjectId()]->getTin();
-					for (int i = 0; i < allMoves.size(); i++) {
-						Eigen::RowVector3d posAfter = getTranslateRes(allMoves[i].cast<double>(), true).col(3).head(3);
-						data_list[11]->add_edges(posBefore, posAfter, posAfter - posAfter);
-						posBefore = posAfter;
-					}
+		if (startDrawBezierCurve) {
+			for (auto currBezierObj : g_bezierObjects) {
+
+				auto allMoves = currBezierObj->GetAllMoves();
+				Eigen::RowVector3d  posBefore = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
+				ToutCopy = data_list[currBezierObj->GetObjectId()]->getTout();
+				TinCopy = data_list[currBezierObj->GetObjectId()]->getTin();
+				for (int i = 0; i < allMoves.size(); i++) {
+					Eigen::RowVector3d posAfter = getTranslateRes(allMoves[i].cast<double>(), true).col(3).head(3);
+					data_list[11]->add_edges(posBefore, posAfter, posAfter - posAfter);
+					posBefore = posAfter;
 				}
-				startDrawBezierCurve = false;
-		       
 			}
+			startDrawBezierCurve = false;
+
+		}
+		if (startDrawBezierCurveCamera) {
+			for (int i = 0; i < g_cameraMovers.size(); i++) {
+				auto currentMover = g_cameraMovers[i];
+				auto allMoves = currentMover->GetAllMoves();
+				Eigen::RowVector3d  posBefore = currCamera->MakeTransd().col(3).head(3);
+				ToutCopy = currCamera->getTout();
+				TinCopy = currCamera->getTin();
+				for (int i = 0; i < allMoves.size(); i++) {
+					Eigen::RowVector3d posAfter = getTranslateRes(allMoves[i].cast<double>(), false).col(3).head(3);
+					data_list[11]->add_edges(posBefore, posAfter, posAfter - posAfter);
+					posBefore = posAfter;
+				}
+			}
+			startDrawBezierCurveCamera = false;
+		}
 	}
 	s->Unbind();
 }
@@ -273,27 +290,23 @@ void Game::WhenRotate()
 void Game::WhenTranslate()
 {
 }
- 
+
 
 
 void Game::Animate() { 
- 
+	startDrawBezierCurveCamera = true;
 	for (int i = 0;i < g_bezierObjects.size(); i ++) {
-
+		startDrawBezierCurveCamera = false;
 			auto currBezierObj = g_bezierObjects[i];
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
 				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
 					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
-				//	Eigen::RowVector3d posBefore = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
 					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true); 
-					//Eigen::RowVector3d posAfter = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
-					//data_list[11]->add_edges(posBefore, posAfter, posAfter - posAfter);
 				}
 				else {
 					if (!stopAnimation) {
 						currBezierObj->CalculateBezierMoves(); 
 					    data_list[11]->clear();
-						startDrawBezierCurve = true;
 					}
 					else { 
 						data_list[11]->clear(); 
@@ -307,6 +320,7 @@ void Game::Animate() {
 		}
 
 		if (moveCameraBezier) {
+			startDrawBezierCurve = true;
 			std::vector<Eigen::Vector3d> cameraPath = camerasPaths.find(currCamera->name)->second;
 			std::vector<Eigen::Vector3f> cameraPathFloat;
 			for (int i = 0; i < cameraPath.size(); i++)
@@ -331,13 +345,13 @@ void Game::Animate() {
 				//we are done remove it
 				auto entry = g_cameraMovers[i];
 				g_cameraMovers.erase(g_cameraMovers.begin() + i);
-
+				startDrawBezierCurveCamera = false;
 				blurMotion = false;
 				blurSigma = 0.5;
 				delete entry;
 			}
 		}
-	    
+
 }
 
 void Game::ScaleAllShapes(float amt,int viewportIndx)
