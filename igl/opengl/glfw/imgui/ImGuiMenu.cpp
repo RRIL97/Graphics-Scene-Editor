@@ -308,17 +308,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
     // Viewing options
     if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        if (ImGui::Button("Center object", ImVec2(-1, 0)))
-        {
-            std::cout << "not implemented yet" << std::endl;
-            //      core[1].align_camera_center(viewer->data().V, viewer->data().F); TODO: add function like this to camera
-        }
-        //if (ImGui::Button("Snap canonical view", ImVec2(-1, 0)))
-        //{
-        //  core[1].snap_to_canonical_quaternion();
-        //}
-
-        // Zoom
         ImGui::PushItemWidth(80 * menu_scaling());
         if (camera[0]->_ortho)
             ImGui::DragFloat("Zoom", &(camera[0]->_length), 0.05f, 0.1f, 20.0f);
