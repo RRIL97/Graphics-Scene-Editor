@@ -923,7 +923,7 @@ IGL_INLINE bool
                 int layerNum = (*iter)->layerNum;
                 for (auto data : data_list) { //set to default 
                     if (data->layer == layerNum)
-                        data->layer = 0;
+                        data->layer = 1;
                 }
                 layers.erase(iter);
                 return true;
