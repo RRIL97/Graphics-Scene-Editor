@@ -235,13 +235,16 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("p4_y", bezierControlPoints[3].y());
 		s->SetUniform1f("POINT_RADIUS", g_pointRadius); 
 	} 
-	if (shaderIndx == 6) {
+	if (shaderIndx == 6 || shaderIndx == 1) {
 		Eigen::Vector3d pos = data_list[shapeIndx]->MakeTransd().col(3).head(3);
 		sigmaBlur = abs(GetCameraPosition().cast<float>()[2] - pos.cast<float>()[2]);
 		sigmaBlur = sigmaBlur > 4.0f ?  1.0f + sigmaBlur / 5.0f : 1.0f;
 		s->SetUniform1f("sigma", sigmaBlur);
-	
 	} 
+	if (shaderIndx == 1) {
+		s->SetUniform1f("performBlurMotion", blurMotion);
+
+	}
 
 	if (shapeIndx == 11) {
 		if (startDrawBezierCurve) {
@@ -337,6 +340,8 @@ void Game::removeCurve()
 void Game::Animate() { 
 	startDrawBezierCurveCamera = true;
 	if (!stopAnimation) {
+		if (blurMotionWhenMoving)
+			blurMotion = true;
 		if (!pauseAnimation) {
 			for (auto iter : g_bezierObjects) 
 	     		iter.second->CalculateBezierMoves(); //reset bezier moves
@@ -356,20 +361,19 @@ void Game::Animate() {
 				else {
 					if (!stopAnimation) {
 						startDrawBezierCurve = true;
+						blurMotion = false;
 						currBezierObj->CalculateBezierMoves();
 						data_list[11]->clear();
 					}
 					else {
 						data_list[11]->clear();
+						blurMotion = false;
 					}
 				}
 			}
 		}
 
 		if (cameraMoverBycurve != nullptr) {
-			if (blurMotionWhenMoving) 
-				blurMotion = true;
-			
 			if (!cameraMoverBycurve->getHasDoneMoving() && !stopAnimation) {
 				auto nextMove = cameraMoverBycurve->GetNextMove().cast<double>();
 				currCamera->MyTranslate(nextMove, true);
@@ -392,11 +396,10 @@ void Game::Animate() {
 			}
 		}
 	}
-	else {
+	else if(!cameraBezierMoving) {
 		data_list[11]->clear();
 		blurMotion = false;
-		blurSigma = 0.4;
-
+		  blurSigma = 0.4;
 	}
 
 		if (moveCameraBezier) {
@@ -410,19 +413,22 @@ void Game::Animate() {
 
 			g_cameraMovers.push_back(cameraMover);
 			moveCameraBezier = false;
-			if (!blurMotion) {
-				blurMotion = true;
-			}
+			cameraBezierMoving = true;
+		}
+		if (cameraBezierMoving) {
+			blurMotion = true;
 		}
 		for (int i = 0; i < g_cameraMovers.size(); i++) {
 			auto currentMover = g_cameraMovers[i];
-			 
+			if (blurMotionWhenMoving)
+				blurMotion = true;
 			if (!currentMover->getHasDoneMoving()) { 
 				currCamera->SetTranslation(currentMover->GetNextMove().cast<double>()); 
 				blurSigma += 0.01;
 			}
 			else {
 				//we are done remove it
+				cameraBezierMoving = false;
 				auto entry = g_cameraMovers[i];
 				g_cameraMovers.erase(g_cameraMovers.begin() + i);
 				startDrawBezierCurveCamera = false;

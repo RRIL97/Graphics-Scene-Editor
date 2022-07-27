@@ -7,6 +7,8 @@ in vec3 position0;
 
 uniform vec4 lightColor;
 uniform sampler2D sampler1;
+uniform sampler2D sampler2;
+
 uniform vec4 lightDirection;
 
 

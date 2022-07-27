@@ -947,7 +947,8 @@ IGL_INLINE bool
         }
         for (int pShape : pShapes)
         {
-            data_list[pShape]->layer = layerNum;
+            if(data_list[pShape]->layer != 0)
+                data_list[pShape]->layer = layerNum;
 
         }
         return true;

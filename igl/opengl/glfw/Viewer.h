@@ -221,6 +221,8 @@ public:
     int  playAnimationMiliTime = 0;
     bool setCameraPathBezier   = true;
     bool moveCameraBezier      = false;
+    bool cameraBezierMoving = false;
+
     int  cameraIdMoveBezier    = -1;
 
     std::unordered_map<std::string,std::vector<Eigen::Vector3d>> camerasPaths;
