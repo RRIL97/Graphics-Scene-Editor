@@ -481,7 +481,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
    {
       ImGui::Text("Material Options:");
       if (ImGui::BeginCombo("Material", currentMaterial.c_str())) {
-          for (int i = 7; i < viewer->materials.size(); i++) {
+          for (int i = 4; i < viewer->materials.size(); i++) {
               if (viewer->materials[i]->canChoose()) {
                   bool selected = strcmp(currentMaterial.c_str(), viewer->materials[i]->getName().c_str());
                   if (ImGui::Selectable(viewer->materials[i]->getName().c_str(), selected)) {
