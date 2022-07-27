@@ -747,10 +747,9 @@ IGL_INLINE bool
         selected_data_index = 0;
         float id = data[0];
 
-        if (id > 1 && id<=data_list.size())
+        if (id > 1 && id<=data_list.size() && layers[data_list[id -1]->layer]->isVisible)
         {
             selected_data_index = id - 1;
-            std::cout << "picked shape id " << selected_data_index << std::endl;
             pShapes.push_back(selected_data_index);
             data_list[selected_data_index]->AddViewport(newViewportIndx);
 
@@ -829,7 +828,7 @@ IGL_INLINE bool
             Eigen::Vector4d pos = MVP * Model * Eigen::Vector4d(0,0,0,1);
             float xpix = (1 + pos.x() / pos.z()) * viewport.z() / 2;
             float ypix = (1 + pos.y() / pos.z()) * viewport.w() / 2;
-            if (data_list[i]->Is2Render(viewportIndx) && xpix < right && xpix > left && ypix < bottom && ypix > up && i != 11)
+            if (data_list[i]->Is2Render(viewportIndx) && layers[data_list[i]->layer]->isVisible &&xpix < right && xpix > left && ypix < bottom && ypix > up && i != 11)
             {
                 pShapes.push_back(i);
                 data_list[i]->AddViewport(newViewportIndx);

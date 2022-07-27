@@ -318,6 +318,7 @@ void Game::removeCameraCurve()
 {
 	if (cameraMoverBycurve != nullptr) {
 		delete cameraMoverBycurve;
+		cameraMoverBycurve = nullptr;
 	}
 }
 

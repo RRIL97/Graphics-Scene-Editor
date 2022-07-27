@@ -405,12 +405,11 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
                 viewer->data_list[11]->clear();
                 viewer->layers[0]->isVisible = true;
                 viewer->setCameraPathBezier = false;
-
           }
          
         if (!viewer->moveCameraBezier) {
             if (ImGui::Button("move bezier", ImVec2((w - p) / 2.0f, 0))) {
-                if (viewer->setCameraPathBezier) {
+                if (viewer->setCameraPathBezier && viewer->pathChoosen) {
                     viewer->cameraIdMoveBezier = prevSelectedCameraIndx;
                     viewer->moveCameraBezier = true;
                 }
@@ -441,7 +440,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
             else
                 viewer->camerasPaths.emplace(camera[0]->name, cameraPath);
             viewer->layers[0]->isVisible = false;
-
+            viewer->pathChoosen = true;
         }
     }
 }

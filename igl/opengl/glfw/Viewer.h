@@ -220,6 +220,7 @@ public:
     int  animationDelay        = 0;
     int  playAnimationMiliTime = 0;
     bool setCameraPathBezier   = true;
+    bool pathChoosen = false;
     bool moveCameraBezier      = false;
     bool cameraBezierMoving = false;
 
