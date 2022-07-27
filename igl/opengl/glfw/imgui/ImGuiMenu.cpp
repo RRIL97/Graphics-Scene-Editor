@@ -268,12 +268,13 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
             viewer->open_dialog_load_mesh();
             if (viewer->data_list.size() > viewer->parents.size())
             {
-                std::cout << viewer->data_list[viewer->selected_data_index]->viewports << std::endl;
+                std::cout <<"viewports "<< viewer->data_list[viewer->selected_data_index]->viewports << std::endl;
                 viewer->parents.push_back(-1);
                 viewer->data_list[viewer->selected_data_index]->viewports = 1;
                 viewer->SetShapeShader(viewer->selected_data_index, 1);
                 viewer->SetShapeMaterial(viewer->selected_data_index, 4);
                 viewer->data_list.back()->show_overlay = 0;
+                viewer->data_list.back()->layer = 1;
                 viewer->data_list.back()->show_lines = 0;
                 viewer->data_list.back()->UnHide();
              //   viewer->data_list.back()->show_faces = 3;

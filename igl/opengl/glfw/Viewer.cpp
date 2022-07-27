@@ -144,7 +144,7 @@ IGL_INLINE bool
   {
       bool normal_read = false;
     // Create new data slot and set to selected
-    if(!(data()->F.rows() == 0  && data()->V.rows() == 0))
+   if(selected_data_index == 11 ||!(data()->F.rows() == 0  && data()->V.rows() == 0))
     {
       append_mesh();
     }

@@ -155,7 +155,6 @@ void Game::Init()
 	 //Will hold the actual bezier curve drawing
 	 AddShape(Axis, -1, TRIANGLES, 0); 
  	 data_list[11]->clear();	 
-
 	 pickedShape = 0;
 	  
 }
