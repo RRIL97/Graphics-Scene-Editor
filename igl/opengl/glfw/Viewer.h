@@ -238,7 +238,7 @@ public:
     bool isSplitX = false;
     bool isSplitY = false;
     int cameraPathStartIndx = 0;
-
+    float bloomFactor = 0.8;
 
     // List of registered plugins
 //    std::vector<ViewerPlugin*> plugins;
@@ -255,6 +255,8 @@ public:
 
 
 
+    void setBloom();
+    void resetBloom();
       void ClearPickedShapes(int viewportIndx);
 
       int AddMaterial(unsigned int *texIndices, unsigned int *slots, unsigned int size,std::string name = "default", bool canChoose = true);

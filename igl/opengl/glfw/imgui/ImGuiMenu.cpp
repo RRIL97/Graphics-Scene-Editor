@@ -526,6 +526,20 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
           viewer->removeTransparent();
       }
 
+      ImGui::Text("Bloom Options:");
+
+      ImGui::PushItemWidth(80 * menu_scaling());
+
+      if (ImGui::Button("make##Bloom", ImVec2((w - p) / 2.0f, 0)))
+      {
+          viewer->setBloom();
+      }
+      if (ImGui::Button("remove##Bloom", ImVec2((w - p) / 2.0f, 0)))
+      {
+          viewer->resetBloom();
+      }
+      ImGui::SliderFloat("Bloom Factor", &viewer->bloomFactor, 0.8, 1.5);
+
 
    }
 

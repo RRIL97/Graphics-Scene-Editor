@@ -69,8 +69,8 @@ void Game::Init()
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/bezierShader");
 	AddShader("./shaders/blurShader");
-	AddShader("./shaders/pickingShader");
-
+	AddShader("./shaders/pickingShader"); 
+	AddShader("./shaders/bloomShader");
 
 	AddTexture("./textures/cubemaps/Daylight Box_", 3);
 	AddTexture("./textures/cubemaps/ocean/ocean_", 3);
@@ -245,6 +245,10 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 
 	}
 
+
+	if (shaderIndx == 8) {
+		s->SetUniform1f("brightness", bloomFactor);
+	}
 	if (shapeIndx == 11) {
 		if (startDrawBezierCurve) {
 			for (auto iter  : g_bezierObjects) {

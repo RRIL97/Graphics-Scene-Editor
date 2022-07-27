@@ -959,6 +959,19 @@ IGL_INLINE bool
             SetShapeMaterial(pShape, materialIndx);
         }
     }
+
+    void Viewer::setBloom() {
+        for (int pShape : pShapes) {
+            SetShapeShader(pShape, 8);
+        }
+    }
+
+    void Viewer::resetBloom() {
+        for (int pShape : pShapes) {
+            SetShapeShader(pShape, 1);
+        }
+    }
+
     void Viewer::makeBlur() {
         for (int pShape : pShapes) {
             SetShapeShader(pShape,6);
