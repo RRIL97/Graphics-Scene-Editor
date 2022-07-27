@@ -584,6 +584,7 @@ IGL_INLINE bool
       data()->type = type;
       data()->mode = mode;
       data()->shaderID = 1;
+      data()->layer = 1;
       data()->viewports = 1 << viewport;
       //data()->is_visible = 0x1;
       data()->show_lines = 0;
