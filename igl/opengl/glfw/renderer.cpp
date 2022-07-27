@@ -641,15 +641,22 @@ void Renderer::changeCamera(int cameraIndx)
 {
     if (cameraIndx == drawInfos[splitXdrawInfoIndx]->cameraIndx) {
         drawInfos[splitXdrawInfoIndx]->cameraIndx = 0;
+        splitXCameraIndx = 0;
     }
     else  if(drawInfos[splitXdrawInfoIndx]->cameraIndx == 0) {
             drawInfos[splitXdrawInfoIndx]->cameraIndx = cameraIndx;
+            splitXCameraIndx = cameraIndx;
+
         }
     if (cameraIndx == drawInfos[splitYdrawInfoIndx]->cameraIndx) {
         drawInfos[splitYdrawInfoIndx]->cameraIndx = 0;
+        splitYCameraIndx = 0;
+
     }
     else if (drawInfos[splitYdrawInfoIndx]->cameraIndx == 0) {
         drawInfos[splitYdrawInfoIndx]->cameraIndx = cameraIndx;
+        splitYCameraIndx = cameraIndx;
+
     }
     igl::opengl::Camera* curr = cameras[0];
     cameras[0] = cameras[cameraIndx];
@@ -666,4 +673,43 @@ void Renderer::switchToNextCamera()
     changeCamera(currCameraIndx);
     currCameraIndx++;
  
+}
+
+void Renderer::switchControlForScreen()
+{
+    if (currentScreenControl == 0) {
+        if (scn->isSplitX && splitXCameraIndx != 0)
+            currentScreenControl = splitXCameraIndx;
+        else if(scn->isSplitY && splitYCameraIndx != 0)
+            currentScreenControl = splitYCameraIndx;
+
+    }
+    else if(currentScreenControl == splitXCameraIndx){
+        if (scn->isSplitY && splitYCameraIndx != splitXCameraIndx)
+            currentScreenControl = splitYCameraIndx;
+        else
+            currentScreenControl = 0;
+
+    }
+    else {
+        currentScreenControl = 0;
+    }
+}
+
+void Renderer::removeControl(bool splitX)
+{
+    if (splitX &&!scn->isSplitX) {
+        if (currentScreenControl == splitXCameraIndx) {
+            if (scn->isSplitY) {
+                currentScreenControl = splitYCameraIndx;
+            }
+            else {
+                currentScreenControl = 0;
+            }
+        }
+    }
+    else if (!splitX && !scn->isSplitY && currentScreenControl == splitYCameraIndx) {
+        if(!scn->isSplitX || splitYCameraIndx != splitXCameraIndx)
+             currentScreenControl = 0;
+    }
 }

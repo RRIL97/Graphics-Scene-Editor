@@ -138,6 +138,8 @@ public:
 
     void changeCamera(int cameraIndx);
     void switchToNextCamera();
+    void switchControlForScreen();
+    void removeControl(bool splitX);
     bool Picking(int x, int y);
 
     void OutLine();
@@ -203,23 +205,26 @@ public:
     }
     void changeSplitXCamera(int cameraIndx) {
         drawInfos[splitXdrawInfoIndx]->cameraIndx = cameraIndx;
+        splitXCameraIndx = cameraIndx;
     }
     void changeSplitYCamera(int cameraIndx) {
         drawInfos[splitYdrawInfoIndx]->cameraIndx = cameraIndx;
+        splitYCameraIndx = cameraIndx;
 
     }
     int lastButtonPressed = -1; 
     std::vector<igl::opengl::Camera*> cameras;
     bool tryToZoom = false;
     std::unordered_map<std::string, std::vector<Eigen::Vector3d>> cameraPrevZoomLocation;
+    int currentScreenControl = 0;
 
 private:
     // Stores all the viewing options
 //    std::vector<igl::opengl::ViewerdCore> core_list;
     igl::opengl::Camera* currCamera;
     int currCameraIndx = 2;
-    int spliXCameraIndx = 2;
-    int spliYCameraIndx = 2;
+    int splitXCameraIndx = -1;
+    int splitYCameraIndx = -1;
     int splitXdrawInfoIndx = 0;  
     int splitYdrawInfoIndx = 0;
     igl::opengl::glfw::Viewer* scn;

@@ -464,12 +464,18 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
       }
       ImGui::Checkbox("split x",
           [&]() { return viewer->isSplitX; },
-          [&](bool value) { viewer->isSplitX = value;
-      viewer->splitX(); });
+          [&](bool value) {
+              viewer->isSplitX = value;
+              viewer->splitX();
+              if(!value)
+                rndr->removeControl(true);});
       ImGui::Checkbox("split Y",
           [&]() { return viewer->isSplitY; },
-          [&](bool value) { viewer->isSplitY = value;
-          viewer->splitY(); });
+          [&](bool value) {
+              viewer->isSplitY = value;
+              viewer->splitY();
+              if (!value)
+                rndr->removeControl(false);});
   }
 
   // Helper for setting viewport specific mesh options

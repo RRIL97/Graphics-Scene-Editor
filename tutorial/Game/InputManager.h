@@ -63,8 +63,12 @@
 					rndr->setTryToPickMany(false);
 
 				}
-				else
+				else {
+					if(rndr->IsPressed())
+						rndr->Pressed();
 					rndr->UnPick(3);
+
+				}
 
 			}
 		}
@@ -83,7 +87,7 @@
 			}
 		}
 		else {
-			rndr->MoveCamera(0, scn->zTranslate, (float)-0.4f * yoffset);
+			rndr->MoveCamera(rndr->currentScreenControl, scn->zTranslate, (float)-0.4f * yoffset);
 		}
 	}
 	
@@ -156,45 +160,49 @@
 				break;
 
 			case GLFW_KEY_UP:
-				rndr->MoveCamera(0, scn->xRotate, 0.05f);
+
+				rndr->MoveCamera(rndr->currentScreenControl, scn->xRotate, 0.05f);
 				
 				break;
 			case GLFW_KEY_DOWN:
 				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 				//cout<< "down: "<<endl;
-				rndr->MoveCamera(0, scn->xRotate, -0.05f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->xRotate, -0.05f);
 				break;
 			case GLFW_KEY_LEFT:
-				rndr->MoveCamera(0, scn->yRotate, 0.05f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->yRotate, 0.05f);
 				break;
 			case GLFW_KEY_RIGHT:
 				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 				//cout<< "down: "<<endl;
-				rndr->MoveCamera(0, scn->yRotate, -0.05f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->yRotate, -0.05f);
 				break;
 			case GLFW_KEY_U:
-				rndr->MoveCamera(0, scn->yTranslate, 0.25f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->yTranslate, 0.25f);
 				break;
 			case GLFW_KEY_D:
-				rndr->MoveCamera(0, scn->yTranslate, -0.25f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->yTranslate, -0.25f);
 				break;
 			case GLFW_KEY_L:
-				rndr->MoveCamera(0, scn->xTranslate, -0.25f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->xTranslate, -0.25f);
 				break;
 			
 			case GLFW_KEY_R:
-				rndr->MoveCamera(0, scn->xTranslate, 0.25f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->xTranslate, 0.25f);
 				break;
 			
 			case GLFW_KEY_B:
-				//rndr->MoveCamera(0, scn->zTranslate, 0.5f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->zTranslate, 0.5f);
 
 				break;
 			case GLFW_KEY_F:
-				rndr->MoveCamera(0, scn->zTranslate, -0.5f);
+				rndr->MoveCamera(rndr->currentScreenControl, scn->zTranslate, -0.5f);
 				break;
 			case GLFW_KEY_S:
 				rndr->switchToNextCamera();
+				break;
+			case GLFW_KEY_C:
+				rndr->switchControlForScreen();
 				break;
 			case GLFW_KEY_1:
 				std::cout << "picked 1\n";
