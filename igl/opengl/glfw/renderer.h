@@ -215,7 +215,7 @@ public:
 
 private:
     // Stores all the viewing options
-//    std::vector<igl::opengl::ViewerCore> core_list;
+//    std::vector<igl::opengl::ViewerdCore> core_list;
     igl::opengl::Camera* currCamera;
     int currCameraIndx = 2;
     int spliXCameraIndx = 2;

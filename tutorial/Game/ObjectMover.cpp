@@ -33,7 +33,6 @@ void ObjectMover::getBezierWorldCoordinates() {
 }
 
 void ObjectMover::CalculateBezierMoves() {
-	std::cout << "here" << std::endl;
 	_objectCalculatedMoves.clear();
 	float                         t = 0; 
 	while (t <= 1) {

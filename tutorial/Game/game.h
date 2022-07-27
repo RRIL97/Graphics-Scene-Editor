@@ -24,7 +24,11 @@ public:
 	void setPressControlPoint(float x, float y);
 	void updateCurve(float x, float y);
 	Eigen::Matrix4d getTranslateRes(Eigen::Vector3d amt, bool preRotation);
- 	 
+	virtual void setCurve();
+	virtual void setCameraCurve();
+	virtual void removeCameraCurve();
+
+	virtual void removeCurve();
 
 	~Game(void);
 	void setState(editorState newState) {

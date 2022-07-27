@@ -13,6 +13,7 @@
 #include "igl/opengl/glfw/renderer.h"
 
 #include "ImGuiMenu.h"
+
 #include "../imgui.h"
 #include "igl/opengl/glfw/imgui/imgui_impl_glfw.h"
 #include "igl/opengl/glfw/imgui/imgui_impl_opengl3.h"
@@ -197,6 +198,64 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
     );
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
+
+    if (ImGui::CollapsingHeader("Animation Options", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::PushItemWidth(80 * menu_scaling());
+        ImGui::Checkbox("blur motion", &viewer->blurMotionWhenMoving);
+        if (ImGui::Button("set curve", ImVec2((w - p) / 2.0f, 0)))
+        {
+            viewer->setCurve();
+        }
+        ImGui::SameLine(0, p);
+        if (ImGui::Button("remove curve", ImVec2((w - p) / 2.0f, 0)))
+        {
+            viewer->removeCurve();
+        }
+        if (ImGui::Button("set curve camera", ImVec2((w - p) / 2.0f, 0)))
+        {
+            viewer->setCameraCurve();
+        }
+        ImGui::SameLine(0, p);
+        if (ImGui::Button("remove curve camera", ImVec2((w - p) / 2.0f, 0)))
+        {
+            viewer->removeCameraCurve();
+        }
+        ImGui::SliderInt("Animation Start Delay", &viewer->animationDelay, 0, 5);
+        std::string startButtonMsg;
+        if (pauseAnimation) {
+            startButtonMsg = "Continue Animation";
+        }
+        else {
+            startButtonMsg = "Start Animation";
+
+        }
+        if (ImGui::Button(startButtonMsg.c_str(), ImVec2((w - p), 0)))
+        {
+            viewer->startDrawBezierCurve = true;
+            viewer->stopAnimation = false;
+            viewer->playAnimationMiliTime = time(NULL);
+            viewer->data_list[11]->clear();
+        }
+        if (!viewer->stopAnimation) {
+            if (ImGui::Button("pause", ImVec2((w - p) / 2.0f, 0)))
+            {
+                viewer->stopAnimation = true;
+                viewer->pauseAnimation = true;
+                pauseAnimation = true;
+            }
+            ImGui::SameLine(0, p);
+            if (ImGui::Button("Stop", ImVec2((w - p) / 2.0f, 0)))
+            {
+                viewer->stopAnimation = true;
+                viewer->pauseAnimation = false;
+                pauseAnimation = false;
+
+            }
+        }
+        ImGui::PopItemWidth();
+
+    }
     // Mesh
     if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
     {
@@ -347,11 +406,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
                 viewer->setCameraPathBezier = false;
 
           }
-           ImGui::SameLine(0, p);
-          if (ImGui::Button("remove drawing", ImVec2((w - p) / 2.0f, 0))) {
-              viewer->data_list[11]->clear();
-
-           }
+         
         if (!viewer->moveCameraBezier) {
             if (ImGui::Button("move bezier", ImVec2((w - p) / 2.0f, 0))) {
                 if (viewer->setCameraPathBezier) {
@@ -479,27 +534,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
 
    }
 
-  if (ImGui::CollapsingHeader("Animation Options", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-      ImGui::PushItemWidth(80 * menu_scaling());
 
-      ImGui::SliderInt("Animation Start Delay", &viewer->animationDelay, 0, 5);
-      if (ImGui::Button("Start Animation", ImVec2((w - p), 0)))
-      {
-          viewer->startDrawBezierCurve = true;
-          viewer->_bezierObjectCount = viewer->pShapes.size(); 
-          viewer->stopAnimation = false;
-          viewer->playAnimationMiliTime =  time(NULL);
-          viewer->data_list[11]->clear();
-          
-      } 
-      if (ImGui::Button("Stop Animation", ImVec2((w - p), 0)))
-      {
-          viewer->stopAnimation = true;
-      }
-      ImGui::PopItemWidth();
-
-  }
   if (ImGui::CollapsingHeader("layers", ImGuiTreeNodeFlags_DefaultOpen))
   {
       ImGui::InputText("Name", layerName , 30);

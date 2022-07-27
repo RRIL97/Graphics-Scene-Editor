@@ -162,6 +162,10 @@ namespace glfw
     void removeBlur();
     void makeTransparent();
     void removeTransparent();
+    virtual void setCurve() {};
+    virtual void removeCurve() {};
+    virtual void setCameraCurve() {};
+    virtual void removeCameraCurve() {};
     void splitX() {
         if(isSplitX)
         data_list[splitXPlaneIndx]->AddViewport(5);
@@ -207,9 +211,11 @@ public:
 
     bool startDrawBezierCurve = true;
     bool startDrawBezierCurveCamera = true;
+    bool blurMotionWhenMoving = false;
     bool blurMotion = false;
-    float blurSigma = 0.5;
-    bool stopAnimation         = false;
+    float blurSigma = 0.4;
+    bool stopAnimation         = true;
+    bool pauseAnimation =  false;
     int _bezierObjectCount     = 0;
     int  animationDelay        = 0;
     int  playAnimationMiliTime = 0;

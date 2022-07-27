@@ -14,7 +14,8 @@ const float g_pointRadius    = 3.0f;
 const float g_distanceClickControlThreshold = 10.0f;
 int         g_chosenControlPoint = 0;
 
-std::vector<ObjectMover*> g_bezierObjects;
+std::unordered_map<int,ObjectMover*> g_bezierObjects;
+ObjectMover* cameraMoverBycurve = nullptr;
 std::vector<CameraMover*> g_cameraMovers;
 
 static void printMat(const Eigen::Matrix4d& mat)
@@ -188,6 +189,8 @@ Eigen::Matrix4d Game::getTranslateRes(Eigen::Vector3d amt, bool translation)
 
 	return (ToutCopy.matrix() * mat);
 }
+
+
   
 
 void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
@@ -240,16 +243,10 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	
 	} 
 
-	//Move only selected objects according to the bezier curve.  
-	if (_bezierObjectCount > 0 && std::find(pShapes.begin(), pShapes.end(), shapeIndx) != pShapes.end()) {
-		ObjectMover* bezier = new ObjectMover(this, shapeIndx, bezierControlPoints);
-		g_bezierObjects.push_back(bezier); 
-		_bezierObjectCount--;
-	}  
 	if (shapeIndx == 11) {
 		if (startDrawBezierCurve) {
-			for (auto currBezierObj : g_bezierObjects) {
-
+			for (auto iter  : g_bezierObjects) {
+				auto currBezierObj = iter.second;
 				auto allMoves = currBezierObj->GetAllMoves();
 				Eigen::RowVector3d  posBefore = data_list[currBezierObj->GetObjectId()]->MakeTransd().col(3).head(3);
 				ToutCopy = data_list[currBezierObj->GetObjectId()]->getTout();
@@ -291,33 +288,116 @@ void Game::WhenTranslate()
 {
 }
 
+void Game::setCurve()
+{
+	for (int pShape : pShapes) {
+		ObjectMover* bezier = new ObjectMover(this, pShape, bezierControlPoints);
+		auto iter = g_bezierObjects.find(pShape);
+		if (iter != g_bezierObjects.end()) {
+			ObjectMover* currToDelete = iter->second;
+			iter->second = bezier;
+			delete currToDelete;
+		}
+		else
+		  g_bezierObjects.emplace(pShape,bezier);
+	}
+}
+
+void Game::setCameraCurve()
+{
+	ObjectMover* bezier = new ObjectMover(this, -1, bezierControlPoints);
+	if (cameraMoverBycurve != nullptr) {
+		delete cameraMoverBycurve;
+	}
+	cameraMoverBycurve = bezier;
+}
+
+void Game::removeCameraCurve()
+{
+	if (cameraMoverBycurve != nullptr) {
+		delete cameraMoverBycurve;
+	}
+}
+
+void Game::removeCurve()
+{
+	for (int pShape : pShapes) {
+		auto iter = g_bezierObjects.find(pShape);
+		if (iter != g_bezierObjects.end()) {
+			ObjectMover* currToDelete = iter->second;
+			g_bezierObjects.erase(pShape);
+			delete currToDelete;
+		}
+	}
+}
+
+
 
 
 void Game::Animate() { 
 	startDrawBezierCurveCamera = true;
-	for (int i = 0;i < g_bezierObjects.size(); i ++) {
-		startDrawBezierCurveCamera = false;
-			auto currBezierObj = g_bezierObjects[i];
+	if (!stopAnimation) {
+		if (!pauseAnimation) {
+			for (auto iter : g_bezierObjects) 
+	     		iter.second->CalculateBezierMoves(); //reset bezier moves
+			data_list[11]->clear();
+			startDrawBezierCurve = true;
+			pauseAnimation = true;
+
+		}
+		for (auto iter : g_bezierObjects) {
+			startDrawBezierCurveCamera = false;
+			auto currBezierObj = iter.second;
 			if (time(NULL) - playAnimationMiliTime >= animationDelay) {
-				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {  
-					auto nextMove = currBezierObj->GetNextMove().cast<double>(); 
-					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove,true); 
+				if (!currBezierObj->getHasDoneMoving() && !stopAnimation) {
+					auto nextMove = currBezierObj->GetNextMove().cast<double>();
+					data_list[currBezierObj->GetObjectId()]->MyTranslate(nextMove, true);
 				}
 				else {
 					if (!stopAnimation) {
-						currBezierObj->CalculateBezierMoves(); 
-					    data_list[11]->clear();
+						startDrawBezierCurve = true;
+						currBezierObj->CalculateBezierMoves();
+						data_list[11]->clear();
 					}
-					else { 
-						data_list[11]->clear(); 
-						g_bezierObjects.clear();
+					else {
+						data_list[11]->clear();
 					}
 				}
 			}
+		}
+
+		if (cameraMoverBycurve != nullptr) {
+			if (blurMotionWhenMoving) 
+				blurMotion = true;
+			
+			if (!cameraMoverBycurve->getHasDoneMoving() && !stopAnimation) {
+				auto nextMove = cameraMoverBycurve->GetNextMove().cast<double>();
+				currCamera->MyTranslate(nextMove, true);
+				blurSigma += 0.01;
+			}
 			else {
-		 
+				if (!stopAnimation) {
+					startDrawBezierCurve = true;
+					blurMotion = false;
+					cameraMoverBycurve->CalculateBezierMoves();
+					data_list[11]->clear();
+					blurSigma = 0.4;
+				}
+				else {
+					blurMotion = false;
+					data_list[11]->clear();
+					blurSigma = 0.4;
+
+				}
 			}
 		}
+	}
+	else {
+		data_list[11]->clear();
+		blurMotion = false;
+		blurSigma = 0.4;
+
+	}
 
 		if (moveCameraBezier) {
 			startDrawBezierCurve = true;
@@ -330,9 +410,9 @@ void Game::Animate() {
 
 			g_cameraMovers.push_back(cameraMover);
 			moveCameraBezier = false;
-		}
-		if (!blurMotion) {
-			blurMotion = true; 
+			if (!blurMotion) {
+				blurMotion = true;
+			}
 		}
 		for (int i = 0; i < g_cameraMovers.size(); i++) {
 			auto currentMover = g_cameraMovers[i];
@@ -347,7 +427,7 @@ void Game::Animate() {
 				g_cameraMovers.erase(g_cameraMovers.begin() + i);
 				startDrawBezierCurveCamera = false;
 				blurMotion = false;
-				blurSigma = 0.5;
+				blurSigma = 0.4;
 				delete entry;
 			}
 		}

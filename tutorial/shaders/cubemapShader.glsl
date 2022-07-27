@@ -34,10 +34,8 @@ void main()
    float fogDistance = gl_FragCoord.z / gl_FragCoord.w;;
    float fogAmount =  fogEffect(fogDistance);
    vec4 fogColor = vec4(0.5,0.6,0.7,0);
-   Color = mix(tmpColor, fogColor, fogAmount);
+   tmpColor = mix(tmpColor, fogColor, fogAmount);
   }
-  else{
-  vec4  tmpColor = texture(sampler1, lookat);
   if(performBlurMotion){
   float blurSize = 5;
   int horizontalPass = 0; 
@@ -68,9 +66,10 @@ void main()
   }
 
   Color = avgValue;
-  } else {
+  } 
+  else {
    Color = tmpColor;
   }
 
-  }
+ 
 }  
