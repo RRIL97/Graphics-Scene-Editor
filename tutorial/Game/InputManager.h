@@ -165,16 +165,14 @@
 				
 				break;
 			case GLFW_KEY_DOWN:
-				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
-				//cout<< "down: "<<endl;
+				
 				rndr->MoveCamera(rndr->currentScreenControl, scn->xRotate, -0.05f);
 				break;
 			case GLFW_KEY_LEFT:
 				rndr->MoveCamera(rndr->currentScreenControl, scn->yRotate, 0.05f);
 				break;
 			case GLFW_KEY_RIGHT:
-				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
-				//cout<< "down: "<<endl;
+
 				rndr->MoveCamera(rndr->currentScreenControl, scn->yRotate, -0.05f);
 				break;
 			case GLFW_KEY_U:

@@ -259,6 +259,17 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 					posBefore = posAfter;
 				}
 			}
+			if (cameraMoverBycurve != nullptr) {
+				auto allMoves = cameraMoverBycurve->GetAllMoves();
+				Eigen::RowVector3d  posBefore = currCamera->MakeTransd().col(3).head(3);
+				ToutCopy = currCamera->getTout();
+				TinCopy = currCamera->getTin();
+				for (int i = 0; i < allMoves.size(); i++) {
+					Eigen::RowVector3d posAfter = getTranslateRes(allMoves[i].cast<double>(), true).col(3).head(3);
+					data_list[11]->add_edges(posBefore, posAfter, posAfter - posAfter);
+					posBefore = posAfter;
+				}
+			}
 			startDrawBezierCurve = false;
 
 		}
