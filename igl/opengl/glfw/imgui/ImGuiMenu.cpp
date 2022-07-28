@@ -411,7 +411,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
          
         if (!viewer->moveCameraBezier) {
             if (ImGui::Button("move bezier", ImVec2((w - p) / 2.0f, 0))) {
-                if (viewer->setCameraPathBezier && viewer->pathChoosen) {
+                if (viewer->setCameraPathBezier && viewer->camerasPaths.find(camera[0]->name)!= viewer->camerasPaths.end()) {
                     viewer->data_list[11]->clear();
                     viewer->cameraIdMoveBezier = prevSelectedCameraIndx;
                     viewer->moveCameraBezier = true;
