@@ -15,20 +15,21 @@ In total there are 4 control points that the user can control via his mouse.
 You can clear a bezier curve that was uniquely choosen before for a specific object.
 
 - choose a bezier curve for the camera -
-Choose bezier path for each camera, this is done by adding "3" spheres to the 3d world that the user can move with his mouse . This spheres are the "control" points of the bezier curve in 3d space.
-Each camera can have it's own fully unique path & is not dependent on any of the other cameras.
+The user can choose a unique bezier path for each camera. The path is declared via "3" spheres that reside in the 3d world that the user can move with his mouse .  (this spheres only exist when the user chooses the path)
+
+Each camera path is not dependent on any of the other cameras.
 
 - remove the bezier curve from the camera - 
 You can clear a bezier curve that was uniquely choosen before for a specific camera.
 
 - blur motion option -  (**Bonus**)
-This is a bonus option. It blures our motion whenever the camera is being moved via the bezier curve to give a "movement" effect.
+This is a bonus option. It blures our motion whenever the camera is being moved via the bezier curve to give a unique "movement" effect.
 
 - time slider -
 Define how much time after the start button is hit the animation will start running.
 
-- start animation button - After the "time slider" user defined time each object will perform it's bezier curve that was choosen by the user.
-The generated curve itself is shown in the 3d world with the help of layout edges. 
+- start animation button - After the "time slider" user defined time each object will perform it's bezier curve that was uniquely choosen before.
+The generated curve is shown in the 3d world with the help of layout edges.  (Both for camera & objects)
 
 - pause animation button - pause the animation , the animation can be later continued from the exact same place that it was paused at.
 
@@ -37,19 +38,21 @@ The generated curve itself is shown in the 3d world with the help of layout edge
 #### Mesh Options
 - load a new oject from file , the object will appear at (0,0,0)
 #### Theme Options
-- choose between 4 different themes - Daylight,Ocean,River and Mountains
-- add a fog to the scene and choose it's density - the fog density is also determinated by the camera zoom (the closer we get the less fog we will see)
+- choose between 4 different themes (cubemaps) - Daylight,Ocean,River and Mountains
+- **(Bonus)** Fog - 
+- Add fog to the scene and choose it's density - the fog density is also determinated by the camera zoom (the closer we get the less fog we will see)
 
 #### Viewing Options
 - Fov slider 
 - Orthographic view 
 #### Cameras Options
 ##### add/set camera
-- add a new camera - each camera has it own name 
-- set camera - choose the camera for the main scene  
-- set camera for right screen - choose the camera for the right screen (for split x option explained later)  
-- set camera for up screen- choose the camera for the up screen (for split y option explained later)  
-This allows the user to view the scene for different angles - even during animation !
+- add a new camera - each camera has it own name and can be choose by the user.
+- set camera - choose the camera for the main scene - you can change your camera to any of the cameras that exist and that were added by the user. 
+- set camera for right screen - The user can choose the camera that will be used in the right screen  (for split x option explained later)  
+- set camera for up screen -  The user can choose the camera that will be used in the up screen  (for split y option explained later)  
+- 
+This allows the user to view the scene from different angles - even during animation !
 ##### Camera movment
 - choose path - when pressed 3 balls will appear on screen.Those balls can be used to set the camera movement path.
 - set path - set the choosen path according to the position of the 3 balls .
