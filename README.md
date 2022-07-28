@@ -15,11 +15,10 @@ In total there are 4 control points that the user can control via his mouse.
 You can clear a bezier curve that was uniquely choosen before for a specific object.
 
 - choose a bezier curve for the camera -
-The user can choose a unique bezier path for each camera. The path is declared via "3" spheres that reside in the 3d world that the user can move with his mouse .  (this spheres only exist when the user chooses the path)
-Each camera path is not dependent on any of the other cameras.
+The user can choose a unique bezier path for the animation camera in the same way as for objects.
 
 - remove the bezier curve from the camera - 
-You can clear a bezier curve that was uniquely choosen before for a specific camera.
+You can clear a bezier curve that was uniquely choosen before for the camera.
 
 - blur motion option -  (**Bonus feature**)
 This is a bonus option. It blures our motion whenever the camera is being moved via the bezier curve to give a unique "movement" effect.
@@ -27,12 +26,11 @@ This is a bonus option. It blures our motion whenever the camera is being moved 
 - time slider -
 Define how much time after the start button is hit the animation will start running.
 
-- start animation button - After the "time slider" user defined time has passed each object will perform it's bezier curve that was uniquely choosen by the user.
-The generated curve is shown in the 3d world with the help of layout edges.  (Both for camera & objects)
+- start animation button - switch to animation camera, and after the "time slider" user defined time has passed each object will move according  to it's bezier curve that was previously choosen by the user. The generated curve is shown in the 3d world with the help of layout edges.  (Both for camera & objects)
 
-- pause animation button - pause the animation , the animation can be later continued from the exact same place that it was paused at.
+- pause animation button - pause the animation , the animation can be later continued from the exact same place that it was paused at.The animation camera is still used to view the scene. 
 
-- stop animation button - stop the animation , when pressing start the objects will start their movement from the beginning of their curve
+- stop animation button - stop the animation switch back to design mode camera, when pressing start the objects will start their movement from the beginning of their curve.
 
 #### Mesh Options
 - load a new oject from file , the object will appear at (0,0,0)
@@ -48,12 +46,13 @@ The generated curve is shown in the 3d world with the help of layout edges.  (Bo
 ##### add/set camera
 - add a new camera - each camera has it own name and can be choose by the user.
 - set camera - choose the camera for the main scene - you can change your camera to any of the cameras that exist and that were added by the user. 
-- set camera for right screen - The user can choose the camera that will be used in the right screen  (for split x option explained later)  
-- set camera for up screen -  The user can choose the camera that will be used in the up screen  (for split y option explained later)  
-- 
+- set camera for animation- choose the camera for the animation - you can change your camera to any of the cameras that exist and that were added by the user. 
+- set camera for right screen - The user can choose the camera that will be used in the right screen  (for split x option explained later).  
+- set camera for up screen -  The user can choose the camera that will be used in the up screen  (for split y option explained later).  
+
 This allows the user to view the scene from different angles - even during animation !
 ##### Camera movment
-- choose path - when pressed 3 balls will appear on screen. Those balls can be used to set the camera movement path.
+- choose path - Choose bezier path for each camera, this is done by adding "3" spheres to the 3d world that the user can move with his mouse . This spheres are the "control" points of the bezier curve in 3d space. Each camera can have it's own fully unique path & is not dependent on any of the other cameras.
 - set path - set the choosen path according to the position of the 3 balls .
 - move bezier - move the camera according to the choosen path - the path curve is drawn on screen. This movement has the blured motion (Bonus) feature
 #### Screen Options
