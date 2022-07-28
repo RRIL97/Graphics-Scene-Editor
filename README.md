@@ -1,6 +1,6 @@
 # 3D scene editor
 #### This is our final project that was done for the computer graphics class BGU. 
-The projects files are under the game directory.
+The projects files are under the tutorial/game directory.
 
 # Features
 
