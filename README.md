@@ -35,7 +35,7 @@ Define how much time after the start button is hit the animation will start runn
 - load a new oject from file , the object will appear at (0,0,0)
 #### Theme Options
 - choose between 4 different themes (cubemaps) - Daylight,Ocean,River and Mountains
-- **(Bonus)** Fog - 
+- **Fog (Bonus feature)** - 
 - Add fog to the scene and choose it's density - the fog density is also determinated by the camera zoom (the closer we get the less fog we will see)
 
 #### Viewing Options
