@@ -237,7 +237,33 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 	} 
 	if (shaderIndx == 6 || shaderIndx == 1 || shaderIndx == 9) {
 		Eigen::Vector3d pos = data_list[shapeIndx]->MakeTransd().col(3).head(3);
+		Eigen::Vector3d camerPos;
+		if (shapeIndx == splitXPlaneIndx)
+			camerPos = GetCameraXPosition();
+		else if (shapeIndx == splitYPlaneIndx) {
+			camerPos = GetCameraYPosition();
+		}
+		else {
+			camerPos = GetCameraPosition();       
+
+		}
 		sigmaBlur = abs(GetCameraPosition().cast<float>()[2] - pos.cast<float>()[2]);
+		sigmaBlur = sigmaBlur > 4.0f ? 1.0f + sigmaBlur / 5.0f : 1.0f;
+		s->SetUniform1f("sigma", sigmaBlur);
+		
+	} 
+	if (shaderIndx == 6 || shaderIndx == 1 || shaderIndx == 9) {
+		Eigen::Vector3d pos = data_list[shapeIndx]->MakeTransd().col(3).head(3);
+		Eigen::Vector3d camerPos;
+		if (shapeIndx == splitXPlaneIndx)
+			camerPos = GetCameraXPosition();
+		else if (shapeIndx == splitYPlaneIndx) {
+			camerPos = GetCameraYPosition();
+		}
+		else {
+			camerPos = GetCameraPosition();
+		}
+		sigmaBlur = abs(camerPos.cast<float>()[2] - pos.cast<float>()[2]);
 		sigmaBlur = sigmaBlur > 4.0f ? 1.0f + sigmaBlur / 5.0f : 1.0f;
 		s->SetUniform1f("sigma", sigmaBlur);
 		

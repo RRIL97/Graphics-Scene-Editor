@@ -67,7 +67,18 @@ namespace glfw
         currCamera = Camera;
 
     }
+    void setCameraSplitX(igl::opengl::Camera* Camera) {
+        splitXCamera = Camera;
+
+    }
+    void setCameraSplitY(igl::opengl::Camera* Camera) {
+        splitYCamera = Camera;
+
+    }
     virtual Eigen::Vector3d GetCameraPosition() { return currCamera->MakeTransd().col(3).head(3); }
+    virtual Eigen::Vector3d GetCameraXPosition() { return splitXCamera->MakeTransd().col(3).head(3); }
+    virtual Eigen::Vector3d GetCameraYPosition() { return splitYCamera->MakeTransd().col(3).head(3); }
+
 	virtual Eigen::Vector3d GetCameraForward() { return Eigen::Vector3d(0, 0, -1); }
 	virtual Eigen::Vector3d GetCameraUp() { return Eigen::Vector3d(0, 1, 0); }
 
@@ -253,6 +264,8 @@ public:
     bool showFog = false;
     float sigmaBlur = 1.0f;
     igl::opengl::Camera* currCamera;
+    igl::opengl::Camera* splitXCamera;
+    igl::opengl::Camera* splitYCamera;
     bool isSplitX = false;
     bool isSplitY = false;
     int cameraPathStartIndx = 0;

@@ -206,10 +206,12 @@ public:
     void changeSplitXCamera(int cameraIndx) {
         drawInfos[splitXdrawInfoIndx]->cameraIndx = cameraIndx;
         splitXCameraIndx = cameraIndx;
+        scn->setCameraSplitX(cameras[cameraIndx]);
     }
     void changeSplitYCamera(int cameraIndx) {
         drawInfos[splitYdrawInfoIndx]->cameraIndx = cameraIndx;
         splitYCameraIndx = cameraIndx;
+        scn->setCameraSplitY(cameras[cameraIndx]);
 
     }
     int lastButtonPressed = -1; 

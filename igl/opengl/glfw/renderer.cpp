@@ -518,6 +518,8 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     MoveCamera(0, zTranslate, 10);
     currCamera = cameras[0];
     scene->setCamera(currCamera);
+    scn->setCameraSplitX(currCamera);
+    scn->setCameraSplitY(currCamera);
     Eigen::Vector4i viewport;
     glGetIntegerv(GL_VIEWPORT, viewport.data());
     buffers.push_back(new igl::opengl::DrawBuffer());
@@ -677,7 +679,8 @@ void Renderer::changeCamera(int cameraIndx)
     cameras[0] = cameras[cameraIndx];
     cameras[cameraIndx] = curr; 
     scn->setCamera(cameras[0]);
-
+    scn->setCameraSplitX(cameras[splitXCameraIndx]);
+    scn->setCameraSplitY(cameras[splitYCameraIndx]);
 }
 
 void Renderer::switchToNextCamera()
