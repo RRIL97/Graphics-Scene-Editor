@@ -245,7 +245,7 @@ public:
     std::vector<std::string> ThemeNames;
     int themeIndex = 0;
     float fogDensity = 0.01f;
-    float bloomIntensityObjects = 1.0f;
+    float bloomIntensityObjects = 1.7f;
     bool bloomIsOnSceneX = false;
     bool bloomIsOnSceneY = false;
     bool blurIsOnSceneX = false;

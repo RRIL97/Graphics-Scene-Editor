@@ -25,6 +25,8 @@
 				//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 					scn->setPressControlPoint(x2, y2);
 				scn->pickedViewPort = 1;
+				if (rndr->IsPressed())
+					rndr->Pressed();
 			}
 			else
 			{

@@ -561,11 +561,11 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
 
    }
 
-
   if (ImGui::CollapsingHeader("layers", ImGuiTreeNodeFlags_DefaultOpen))
   {
       ImGui::InputText("Name", layerName , 30);
-      if (ImGui::Button("add layer", ImVec2((w - p) , 0)))
+      ImGui::SameLine(0, p);
+      if (ImGui::Button("add##layer", ImVec2((w - p) / 2.0f , 0)))
       {
           std::string name(layerName);
           if (!name.empty()) {
@@ -576,37 +576,31 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
               errorMsg = "please enter layer name";
           }
       }
-      if (ImGui::Button("remove layer", ImVec2((w - p), 0)))
-      {
-          std::string name(layerName);
-          if (!name.empty())
-              if (!viewer->removeLayer(name))
-                  errorMsg = "layer doesnt exists";
-              else
-                  errorMsg = "Successfully removed the layer";
-
-          else {
-                  errorMsg = "please enter layer name";
-          }
-      }
-      if (ImGui::Button("set layer", ImVec2((w - p), 0)))
-      {
-          std::string name(layerName);
-          if (!name.empty())
-              if (!viewer->setLayer(name))
-                  errorMsg = "layer doesnt exists";
-              else
-                  errorMsg = "Successfully set layer\n for picked objects";
-              else {
-                  errorMsg = "please enter layer name";
-              }
-      }
       for (auto iter : viewer->layers) {
           if (iter->layerNum != 0) {
               std::string text = "show layer";
               ImGui::Checkbox(iter->name.c_str(),
                   [&]() { return iter->isVisible; },
                   [&](bool value) { iter->isVisible = value; });
+
+              std::string set("set##");
+              set.append(iter->name.c_str());
+              if (ImGui::Button(set.c_str(), ImVec2((w - p) / 2.0f, 0)))
+              {               
+                  viewer->setLayer(iter->name);
+              }
+              ImGui::SameLine(0,p);
+              std::string remove("remove##");
+              remove.append(iter->name.c_str());
+              if (ImGui::Button(remove.c_str(), ImVec2((w - p) / 2.0f, 0)))
+              {
+                  if (viewer->removeLayer(iter->name)) {
+                      errorMsg = "Successfully removed the layer";
+                  }
+                  else {
+                      errorMsg = "can't remove the layer";
+                  }
+              }
           }
       }
       ImGui::Text(errorMsg.c_str());
