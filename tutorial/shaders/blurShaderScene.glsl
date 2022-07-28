@@ -16,13 +16,13 @@ float normpdf(float x)
 
 void main() { 
 if(sigma == 1.0f){
-  gl_FragColor= texture2D(sampler1, texCoords0)* vec4(color0,1.0);
+  gl_FragColor= texture2D(sampler1, texCoords0);
 
 }
 else{
 vec3 c = texture(sampler1, texCoords0).rgb;
  
-const int mSize = 50;
+const int mSize = 25;
 const int kSize = int((float(mSize) - 1.0) / 2.0);
 float kernel[mSize];
 
@@ -49,6 +49,6 @@ for (int j = 0; j < mSize; ++j)
       final_color += kernel[kSize + j] * kernel[kSize + i] * texture(sampler1, (texCoords0.xy + vec2(float(i), float(j))/textureSize(sampler1, 0).xy)).rgb ;
     }
   }
-      gl_FragColor= vec4(final_color*color0 / (Z*Z), 1.0);
+      gl_FragColor= vec4(final_color / (Z*Z), 1.0);
 }
 }

@@ -232,6 +232,11 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
         }
         if (ImGui::Button(startButtonMsg.c_str(), ImVec2((w - p), 0)))
         {
+            if (!pauseAnimation) {
+                rndr->defualtCameraIndx = 0;
+                rndr->changeCamera(rndr->animationCameraIndx);
+            }
+            std::cout << "defualte index " << rndr->defualtCameraIndx << std::endl;
             viewer->startDrawBezierCurve = true;
             viewer->stopAnimation = false;
             viewer->playAnimationMiliTime = time(NULL);
@@ -247,10 +252,10 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
             ImGui::SameLine(0, p);
             if (ImGui::Button("Stop", ImVec2((w - p) / 2.0f, 0)))
             {
+                rndr->changeCamera(rndr->defualtCameraIndx);
                 viewer->stopAnimation = true;
                 viewer->pauseAnimation = false;
                 pauseAnimation = false;
-
             }
         }
         ImGui::PopItemWidth();
@@ -367,6 +372,13 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
             prevSelectedCameraIndx = 0;
             errorMsg = "Successfully changed camera";
         }
+        ImGui::SameLine(0, p);
+        if (ImGui::Button("set Camera Animation", ImVec2((w - p) / 2.0f, 0)))
+        {
+            rndr->animationCameraIndx = prevSelectedCameraIndx;
+            errorMsg = "Successfully set animation camera";
+        }
+        ImGui::Spacing();
         if (viewer->isSplitX) {
             if (ImGui::Button("set for right", ImVec2((w - p) / 2.0f, 0)))
             {
@@ -400,6 +412,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
         if (!viewer->moveCameraBezier) {
             if (ImGui::Button("move bezier", ImVec2((w - p) / 2.0f, 0))) {
                 if (viewer->setCameraPathBezier && viewer->pathChoosen) {
+                    viewer->data_list[11]->clear();
                     viewer->cameraIdMoveBezier = prevSelectedCameraIndx;
                     viewer->moveCameraBezier = true;
                 }
@@ -460,7 +473,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
                     rndr->removeControl(true); });
         if (viewer->isSplitX) {
             ImGui::Checkbox("bloom X", &viewer->bloomIsOnSceneX);
-            ImGui::SameLine();
+            ImGui::SameLine(0,p);
             ImGui::Checkbox("blur X", [&]() { return viewer->blurIsOnSceneX; },
                 [&](bool value) {
                     viewer->blurIsOnSceneX = value;

@@ -217,7 +217,8 @@ public:
     bool tryToZoom = false;
     std::unordered_map<std::string, std::vector<Eigen::Vector3d>> cameraPrevZoomLocation;
     int currentScreenControl = 0;
-
+    int animationCameraIndx = 2;
+    int defualtCameraIndx = 0;
 private:
     // Stores all the viewing options
 //    std::vector<igl::opengl::ViewerdCore> core_list;

@@ -180,13 +180,13 @@ namespace glfw
     }
     void blurX() {
         if (blurIsOnSceneX)
-            SetShapeShader(splitXPlaneIndx,8);
+            SetShapeShader(splitXPlaneIndx, 9);
         else
             SetShapeShader(splitXPlaneIndx, 2);
     }
     void blurY() {
         if (blurIsOnSceneY)
-            SetShapeShader(splitYPlaneIndx, 8);
+            SetShapeShader(splitYPlaneIndx, 9);
         else
             SetShapeShader(splitYPlaneIndx, 2);
     }

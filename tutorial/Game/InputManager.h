@@ -6,15 +6,17 @@
 
 
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
-	{	
+	{
+		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		auto& io = ImGui::GetIO();
 		if (io.WantCaptureMouse) {
+			if (rndr->IsPressed())
+				rndr->Pressed();
 			return;
 		}
 		if (action == GLFW_PRESS)
 		{
 
-			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 			rndr->lastButtonPressed = button;
 			Game* scn = (Game*)rndr->GetScene();
 			double x2, y2;

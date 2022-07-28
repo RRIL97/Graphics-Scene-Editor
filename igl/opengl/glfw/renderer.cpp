@@ -661,6 +661,18 @@ void Renderer::changeCamera(int cameraIndx)
         splitYCameraIndx = cameraIndx;
 
     }
+    if (cameraIndx == animationCameraIndx) {
+        animationCameraIndx = 0;
+    }
+    else if (animationCameraIndx == 0) {
+        animationCameraIndx = cameraIndx;
+    }
+    if (cameraIndx == defualtCameraIndx) {
+        defualtCameraIndx = 0;
+    }
+    else if (defualtCameraIndx == 0) {
+        defualtCameraIndx = cameraIndx;
+    }
     igl::opengl::Camera* curr = cameras[0];
     cameras[0] = cameras[cameraIndx];
     cameras[cameraIndx] = curr; 

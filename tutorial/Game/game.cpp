@@ -71,6 +71,7 @@ void Game::Init()
 	AddShader("./shaders/blurShader");
 	AddShader("./shaders/pickingShader"); 
 	AddShader("./shaders/bloomShader");
+	AddShader("./shaders/blurShaderScene");
 
 	AddTexture("./textures/cubemaps/Daylight Box_", 3);
 	AddTexture("./textures/cubemaps/ocean/ocean_", 3);
@@ -234,11 +235,12 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("p4_y", bezierControlPoints[3].y());
 		s->SetUniform1f("POINT_RADIUS", g_pointRadius); 
 	} 
-	if (shaderIndx == 6 || shaderIndx == 1) {
+	if (shaderIndx == 6 || shaderIndx == 1 || shaderIndx == 9) {
 		Eigen::Vector3d pos = data_list[shapeIndx]->MakeTransd().col(3).head(3);
 		sigmaBlur = abs(GetCameraPosition().cast<float>()[2] - pos.cast<float>()[2]);
-		sigmaBlur = sigmaBlur > 4.0f ?  1.0f + sigmaBlur / 5.0f : 1.0f;
+		sigmaBlur = sigmaBlur > 4.0f ? 1.0f + sigmaBlur / 5.0f : 1.0f;
 		s->SetUniform1f("sigma", sigmaBlur);
+		
 	} 
 	if (shaderIndx == 1) {
 		s->SetUniform1f("performBlurMotion", blurMotion);
