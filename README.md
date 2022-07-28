@@ -16,19 +16,18 @@ You can clear a bezier curve that was uniquely choosen before for a specific obj
 
 - choose a bezier curve for the camera -
 The user can choose a unique bezier path for each camera. The path is declared via "3" spheres that reside in the 3d world that the user can move with his mouse .  (this spheres only exist when the user chooses the path)
-
 Each camera path is not dependent on any of the other cameras.
 
 - remove the bezier curve from the camera - 
 You can clear a bezier curve that was uniquely choosen before for a specific camera.
 
-- blur motion option -  (**Bonus**)
+- blur motion option -  (**Bonus feature**)
 This is a bonus option. It blures our motion whenever the camera is being moved via the bezier curve to give a unique "movement" effect.
 
 - time slider -
 Define how much time after the start button is hit the animation will start running.
 
-- start animation button - After the "time slider" user defined time each object will perform it's bezier curve that was uniquely choosen before.
+- start animation button - After the "time slider" user defined time has passed each object will perform it's bezier curve that was uniquely choosen by the user.
 The generated curve is shown in the 3d world with the help of layout edges.  (Both for camera & objects)
 
 - pause animation button - pause the animation , the animation can be later continued from the exact same place that it was paused at.
@@ -54,9 +53,9 @@ The generated curve is shown in the 3d world with the help of layout edges.  (Bo
 - 
 This allows the user to view the scene from different angles - even during animation !
 ##### Camera movment
-- choose path - when pressed 3 balls will appear on screen.Those balls can be used to set the camera movement path.
+- choose path - when pressed 3 balls will appear on screen. Those balls can be used to set the camera movement path.
 - set path - set the choosen path according to the position of the 3 balls .
-- move bezier - move the camera according to the choosen path - the path curve is drawn on screen.This movement has the blured motion feature
+- move bezier - move the camera according to the choosen path - the path curve is drawn on screen. This movement has the blured motion (Bonus) feature
 #### Screen Options
 - zoom area - zoom in to a choosen area and zoom out to a default state - this feature was done using scissor test and unprojecting screen coordinated to world coordinated.
 - split x - render the same scene in the right screen, the screen can have it's own camera. 
@@ -66,8 +65,8 @@ This allows the user to view the scene from different angles - even during anima
 - add material - add a new material from file 
 - set material - set the material for all choosen objects
 ##### Blur options
-- make blur -make all choosen objects blurred - the blur intensity is determinated by the distance of the object from the camera (the closer the camera gets it is less blurred)
-- remove blur - unblur all choosen objects
+- (**Bonus Feature**) make blur -make all choosen objects blurred - the blur intensity is determinated by the distance of the object from the camera (the closer the camera gets it is less blurred) , You can also blur the right screen upon split X or blur the up screen upon split Y.
+- remove blur - unblur all choosen objects / unblur right screen / unblur up screen.
 ##### Transparent options
 - make transparent - make all choosen objects transparent
 - remove transparency- remove transparency from all choosen objects
