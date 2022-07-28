@@ -122,9 +122,9 @@ public:
 
     void AddViewport(int left, int bottom, int width, int height);
 
-    unsigned int AddBuffer(int infoIndx, bool splitX);
+    unsigned int AddBuffer(int infoIndx, int action);
 
-    int Create2Dmaterial(int infoIndx, bool splitX);
+    int Create2Dmaterial(int infoIndx, int action);
 
     void AddDraw(int viewportIndx, int cameraIndx, int shaderIndx, int buffIndx, unsigned int flags);
 
@@ -176,7 +176,7 @@ public:
 
     float CalcMoveCoeff(int cameraIndx, int width);
 
-    void SetBuffers(bool isX);
+    void SetBuffers(int action);
 
     inline void UpdateZpos(int ypos) { zrel = ypos; }
 

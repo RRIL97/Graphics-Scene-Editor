@@ -178,6 +178,18 @@ namespace glfw
         else
             data_list[splitYPlaneIndx]->RemoveViewport(6);
     }
+    void blurX() {
+        if (blurIsOnSceneX)
+            SetShapeShader(splitXPlaneIndx,8);
+        else
+            SetShapeShader(splitXPlaneIndx, 2);
+    }
+    void blurY() {
+        if (blurIsOnSceneY)
+            SetShapeShader(splitYPlaneIndx, 8);
+        else
+            SetShapeShader(splitYPlaneIndx, 2);
+    }
 
 
 public:
@@ -197,6 +209,7 @@ public:
     Eigen::Vector3d pickedNormal;
     int splitXPlaneIndx;
     int splitYPlaneIndx;
+    int bloomMaterialIndx = -1;
     int selected_data_index;
     int next_data_id;
     int next_shader_id; // for flags to mack sure all shaders are initlize with data
@@ -232,13 +245,17 @@ public:
     std::vector<std::string> ThemeNames;
     int themeIndex = 0;
     float fogDensity = 0.01f;
+    float bloomIntensityObjects = 1.0f;
+    bool bloomIsOnSceneX = false;
+    bool bloomIsOnSceneY = false;
+    bool blurIsOnSceneX = false;
+    bool blurIsOnSceneY = false;
     bool showFog = false;
     float sigmaBlur = 1.0f;
     igl::opengl::Camera* currCamera;
     bool isSplitX = false;
     bool isSplitY = false;
     int cameraPathStartIndx = 0;
-    float bloomFactor = 0.8;
 
     // List of registered plugins
 //    std::vector<ViewerPlugin*> plugins;

@@ -305,6 +305,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
         ImGui::Checkbox("Show fog", &viewer->showFog);
         ImGui::DragFloat("density", &viewer->fogDensity, 0.001f, 0.005f, 0.02f);
     }
+
     // Viewing options
     if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_DefaultOpen))
     {
@@ -434,37 +435,55 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
     }
 }
 
-  if (ImGui::CollapsingHeader("screen Options", ImGuiTreeNodeFlags_DefaultOpen))
-  {
-      ImGui::Checkbox("Zoom area",
-          [&]() { return rndr->tryToZoom; },
-          [&](bool value) { rndr->tryToZoom = value; });
-      auto iter = rndr->cameraPrevZoomLocation.find(camera[0]->name);
-      //we did zoom to area 
-      if (iter != rndr->cameraPrevZoomLocation.end() && !iter->second.empty()) {
-          ImGui::SameLine();
-          if (ImGui::Button("unzoom", ImVec2((w - p)/2, 0)))
-          {
-              camera[0]->SetTranslation(iter->second.back());
-              iter->second.pop_back();
-          }
+    if (ImGui::CollapsingHeader("screen Options", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::Checkbox("Zoom area",
+            [&]() { return rndr->tryToZoom; },
+            [&](bool value) { rndr->tryToZoom = value; });
+        auto iter = rndr->cameraPrevZoomLocation.find(camera[0]->name);
+        //we did zoom to area 
+        if (iter != rndr->cameraPrevZoomLocation.end() && !iter->second.empty()) {
+            ImGui::SameLine();
+            if (ImGui::Button("unzoom", ImVec2((w - p) / 2, 0)))
+            {
+                camera[0]->SetTranslation(iter->second.back());
+                iter->second.pop_back();
+            }
 
-      }
-      ImGui::Checkbox("split x",
-          [&]() { return viewer->isSplitX; },
-          [&](bool value) {
-              viewer->isSplitX = value;
-              viewer->splitX();
-              if(!value)
-                rndr->removeControl(true);});
-      ImGui::Checkbox("split Y",
-          [&]() { return viewer->isSplitY; },
-          [&](bool value) {
-              viewer->isSplitY = value;
-              viewer->splitY();
-              if (!value)
-                rndr->removeControl(false);});
-  }
+        }
+        ImGui::Checkbox("split x",
+            [&]() { return viewer->isSplitX; },
+            [&](bool value) {
+                viewer->isSplitX = value;
+                viewer->splitX();
+                if (!value)
+                    rndr->removeControl(true); });
+        if (viewer->isSplitX) {
+            ImGui::Checkbox("bloom X", &viewer->bloomIsOnSceneX);
+            ImGui::SameLine();
+            ImGui::Checkbox("blur X", [&]() { return viewer->blurIsOnSceneX; },
+                [&](bool value) {
+                    viewer->blurIsOnSceneX = value;
+                    viewer->blurX(); });
+
+        }
+        ImGui::Checkbox("split Y",
+            [&]() { return viewer->isSplitY; },
+            [&](bool value) {
+                viewer->isSplitY = value;
+                viewer->splitY();
+                if (!value)
+                    rndr->removeControl(false); });
+        if (viewer->isSplitY) {
+            ImGui::Checkbox("bloom Y", &viewer->bloomIsOnSceneY);
+            ImGui::SameLine();
+            ImGui::Checkbox("blur Y", [&]() { return viewer->blurIsOnSceneY; },
+                [&](bool value) {
+                    viewer->blurIsOnSceneY = value;
+                    viewer->blurY(); });
+
+        }
+    }
 
   // Helper for setting viewport specific mesh options
   auto make_checkbox = [&](const char *label, unsigned int &option)
@@ -529,17 +548,16 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, s
       ImGui::Text("Bloom Options:");
 
       ImGui::PushItemWidth(80 * menu_scaling());
-
       if (ImGui::Button("make##Bloom", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->setBloom();
       }
+      ImGui::SameLine(0, p);
       if (ImGui::Button("remove##Bloom", ImVec2((w - p) / 2.0f, 0)))
       {
           viewer->resetBloom();
       }
-      ImGui::SliderFloat("Bloom Factor", &viewer->bloomFactor, 0.8, 1.5);
-
+      ImGui::SliderFloat("intensity", &viewer->bloomIntensityObjects, 1.7f, 4.7f);
 
    }
 

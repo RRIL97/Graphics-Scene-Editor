@@ -59,8 +59,8 @@ unsigned int Game::CreateTex(int width,int height)
 
 void Game::Init()
 {		
-	unsigned int texIDs[9] = {  0, 1, 2, 3, 4 , 5, 6, 7, 8};
-	unsigned int slots[9] = {  0, 1, 2, 3, 4 , 5, 6, 7, 8 };
+	unsigned int texIDs[10] = {  0, 1, 2, 3, 4 , 5, 6, 7, 8, 9};
+	unsigned int slots[10] = {  0, 1, 2, 3, 4 , 5, 6, 7, 8, 9 };
 
 	AddShader("./shaders/pickingShader");
 	AddShader("./shaders/basicShader");
@@ -83,7 +83,6 @@ void Game::Init()
 	CreateTex(300, 300);
 
 
-
 	AddMaterial(texIDs, slots, 1);
 	AddMaterial(texIDs + 1, slots + 1, 1);
 	AddMaterial(texIDs + 2, slots + 2, 1);
@@ -93,6 +92,7 @@ void Game::Init()
 	AddMaterial(texIDs + 6, slots + 6, 1, "cameraBeizer1",false);
 	AddMaterial(texIDs + 7, slots + 7, 1, "cameraBeizer2", false);
 	AddMaterial(texIDs + 8, slots + 8, 1, "cameraBeizer3", false);
+
 	//cube map
 	AddShape(Cube, -1, TRIANGLES);
 	SetShapeShader(0, 3);
@@ -244,10 +244,18 @@ void Game::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, cons
 		s->SetUniform1f("performBlurMotion", blurMotion);
 
 	}
+	if (shaderIndx == 2) {
+		if (shapeIndx == splitXPlaneIndx) {
+			s->SetUniform1f("isBloomOn", bloomIsOnSceneX);
+		}
+		else {
+			s->SetUniform1f("isBloomOn", bloomIsOnSceneY);
+		}
+	}
 
 
 	if (shaderIndx == 8) {
-		s->SetUniform1f("brightness", bloomFactor);
+		s->SetUniform1f("glowIntensity", bloomIntensityObjects);
 	}
 	if (shapeIndx == 11) {
 		if (startDrawBezierCurve) {

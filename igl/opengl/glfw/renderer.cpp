@@ -459,7 +459,7 @@ float Renderer::CalcMoveCoeff(int cameraIndx, int width)
     return cameras[cameraIndx]->CalcMoveCoeff(depth,width);
 }
 
-unsigned int Renderer::AddBuffer(int infoIndx,bool splitX)
+unsigned int Renderer::AddBuffer(int infoIndx, int action)
 {
    CopyDraw(infoIndx, buffer, buffers.size());
 
@@ -469,7 +469,7 @@ unsigned int Renderer::AddBuffer(int infoIndx,bool splitX)
 
     info->SetFlags(clearDepth | clearStencil);
     int width =  viewports[info->viewportIndx].z();
-    int height = splitX ? viewports[info->viewportIndx].w() : viewports[info->viewportIndx].w() / 2;
+    int height = action == 0 ? viewports[info->viewportIndx].w() : viewports[info->viewportIndx].w() / 2;
     printf("W %d  H %d", width, height);
     unsigned int texId;
     texId = scn->AddTexture(width, height, 0, COLOR);
@@ -478,12 +478,12 @@ unsigned int Renderer::AddBuffer(int infoIndx,bool splitX)
     return texId;
 }
 
-int Renderer::Create2Dmaterial(int infoIndx, bool splitX)
+int Renderer::Create2Dmaterial(int infoIndx, int action)
 {
     std::vector<unsigned int> texIds;
     std::vector<unsigned int> slots;
     
-    unsigned int texId = AddBuffer(infoIndx, splitX);
+    unsigned int texId = AddBuffer(infoIndx, action);
     texIds.push_back(texId);
     slots.push_back(texId);
     texIds.push_back(texId + 1);
@@ -494,16 +494,19 @@ int Renderer::Create2Dmaterial(int infoIndx, bool splitX)
 }
 
 
-void Renderer::SetBuffers(bool splitX)
+void Renderer::SetBuffers(int action)
 {
  //  AddCamera(Eigen::Vector3d(0, 0, 1), 0, 1, 1, 10,2);
-   int materialIndx = Create2Dmaterial(1, splitX);
-   if(splitX)
+    int materialIndx;
+    if(action < 2)
+        materialIndx = Create2Dmaterial(1, action);
+    else
+        materialIndx = Create2Dmaterial(1, action);
+   if(action == 0)
       scn->SetShapeMaterial(scn->splitXPlaneIndx, materialIndx);
-   else 
+   else if(action == 1)
       scn->SetShapeMaterial(scn->splitYPlaneIndx, materialIndx);
-
-   
+ 
    // SwapDrawInfo(2, 3);
 }
 
@@ -585,17 +588,17 @@ IGL_INLINE void Renderer::initProject(const int DISPLAY_WIDTH, const int DISPLAY
     //split x
      AddViewport(DISPLAY_WIDTH, 0, DISPLAY_WIDTH , DISPLAY_HEIGHT);
      CopyDraw(2, viewport, 5);
-     SetBuffers(true);
+     SetBuffers(0);
      splitXdrawInfoIndx = drawInfos.size() - 1;
      //split y
      AddViewport(0, DISPLAY_HEIGHT / 2, DISPLAY_WIDTH, DISPLAY_HEIGHT / 2);
      CopyDraw(2, viewport, 6);
-     SetBuffers(false);
+     SetBuffers(1);
      splitYdrawInfoIndx = drawInfos.size() - 1;
 
      AddDraw(3, 0, 4, 0, stencilTest | depthTest | stencil2 | scaleAbit | inAction2 | onPicking);
      AddDraw(2, 0, 4, 0, stencilTest | inAction2 | depthTest);
-    // SwapDrawInfo(2, drawInfos.size() - 1);
+
 }
 
 

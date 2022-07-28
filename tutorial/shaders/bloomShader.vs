@@ -11,6 +11,7 @@ out vec2 texCoords0;
 out vec3 normal0;
 out vec3 color0;
 out vec3 position0;
+out vec3 lookat;
 
 uniform mat4 Proj;
 uniform mat4 View;
