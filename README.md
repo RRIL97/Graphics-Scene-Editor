@@ -1,19 +1,39 @@
 # 3D scene editor
-#### This is the final project done for Computer graphics class.
+#### This is our final project that was done for the computer graphics class BGU.
 
 # Features
 
 ## Menu Features
 #### Animation  Options
-- choose a bezier curve for every objects, each object can have it own curve
-- remove a bezier curve from an objects
-- choose a bezier curve for the camera
-- remove the bezier curve from the camera
-- blur motion option - when choosen ??
-- time slider - define how much time after the start button is hit the animation will start running
-- start animation button - after the time from the time slider is passed , each object that had a curve choosen will start to move according to that curve, the objects curve is drawn on the screen.
-- pause animation button -pause the animation , the animation can be later continued from the exact same place it was paused
-- stop animation button -stop the animation , when pressing start the objects will start their movement from the beginning of their curve
+
+- choose bezier curve for any object in the scene. 
+
+Every object can have it's own uniquely generated curve in 3d space. The curve itself is choosen by the user via a 2d drawing in the right pane & is fully customizable. 
+In total there are 4 control points that the user can control via his mouse.
+
+- remove a bezier curve from an object - 
+You can clear a bezier curve that was uniquely choosen before for a specific object.
+
+- choose a bezier curve for the camera -
+Choose bezier path for each camera, this is done by adding "3" spheres to the 3d world that the user can move with his mouse . This spheres are the "control" points of the bezier curve in 3d space.
+Each camera can have it's own fully unique path & is not dependent on any of the other cameras.
+
+- remove the bezier curve from the camera - 
+You can clear a bezier curve that was uniquely choosen before for a specific camera.
+
+- blur motion option -  (**Bonus**)
+This is a bonus option. It blures our motion whenever the camera is being moved via the bezier curve to give a "movement" effect.
+
+- time slider -
+Define how much time after the start button is hit the animation will start running.
+
+- start animation button - After the "time slider" user defined time each object will perform it's bezier curve that was choosen by the user.
+The generated curve itself is shown in the 3d world with the help of layout edges. 
+
+- pause animation button - pause the animation , the animation can be later continued from the exact same place that it was paused at.
+
+- stop animation button - stop the animation , when pressing start the objects will start their movement from the beginning of their curve
+
 #### Mesh Options
 - load a new oject from file , the object will appear at (0,0,0)
 #### Theme Options
